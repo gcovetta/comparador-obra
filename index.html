@@ -8,23 +8,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <style>
   :root {
-    --c-bg: #F7F6F3;
-    --c-surface: #FFFFFF;
-    --c-border: #E5E2DC;
-    --c-border2: #D0CCC4;
-    --c-text: #1A1814;
-    --c-text2: #6B6660;
-    --c-text3: #9B9590;
-    --c-green: #1B6B45;
-    --c-green-bg: rgba(27,107,69,0.08);
-    --c-red: #A0291C;
-    --c-orange: #C26A10;
-    --c-orange-bg: rgba(194,106,16,0.1);
-    --c-accent: #1B4F7A;
-    --c-accent-bg: rgba(27,79,122,0.08);
+    --c-bg: #0F1923;
+    --c-surface: #1A2535;
+    --c-border: #243044;
+    --c-border2: #2E3D55;
+    --c-text: #E8EDF2;
+    --c-text2: #A8B4C4;
+    --c-text3: #607080;
+    --c-green: #4ADE80;
+    --c-green-bg: rgba(74,222,128,0.10);
+    --c-red: #F87171;
+    --c-orange: #F5C842;
+    --c-orange-bg: rgba(245,200,66,0.10);
+    --c-accent: #60A5FA;
+    --c-accent-bg: rgba(96,165,250,0.10);
     --radius: 10px;
     --radius-sm: 6px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow: 0 2px 8px rgba(0,0,0,0.35);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { font-size: 16px; }
@@ -32,7 +32,7 @@
 
   /* Layout */
   .app { max-width: 900px; margin: 0 auto; padding: 0 0 100px; }
-  .hdr { background: linear-gradient(135deg, #1A3050 0%, #1B6B45 100%); padding: 1.2rem 1rem; }
+  .hdr { background: linear-gradient(135deg, #0F1923 0%, #1A2535 100%); border-bottom: 1px solid #243044; padding: 1.2rem 1rem; }
   .hdr h1 { font-size: 1.15rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
   .hdr p  { font-size: 0.72rem; color: rgba(255,255,255,0.65); margin-top: 3px; }
   .hdr-provs { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
@@ -41,7 +41,7 @@
   .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
   /* Tabs */
-  .tabs-wrap { position: sticky; top: 0; z-index: 100; background: var(--c-bg); border-bottom: 1px solid var(--c-border); }
+  .tabs-wrap { position: sticky; top: 0; z-index: 100; background: #0F1923; border-bottom: 1px solid var(--c-border); }
   .tabs { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
   .tabs::-webkit-scrollbar { display: none; }
   .tab-btn { flex-shrink: 0; padding: 12px 14px; border: none; background: transparent; font-size: 0.78rem; font-weight: 500; color: var(--c-text3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
@@ -134,7 +134,7 @@
 
   /* Escenarios tabla resumen */
   .resumen-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-  .resumen-table th { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--c-border); font-weight: 600; color: var(--c-text3); font-size: 0.7rem; background: var(--c-bg); }
+  .resumen-table th { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--c-border); font-weight: 600; color: var(--c-text3); font-size: 0.7rem; background: #131E2C; }
   .resumen-table th:first-child { text-align: left; }
   .resumen-table td { padding: 8px 10px; border-bottom: 0.5px solid var(--c-border); text-align: right; }
   .resumen-table td:first-child { text-align: left; font-weight: 500; }
