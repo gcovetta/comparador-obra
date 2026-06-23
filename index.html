@@ -523,43 +523,70 @@ function App(){
 
   // ── RENDER ESCENARIOS ──────────────────────────────────────────────────────
   function renderEscenarios(){
+    const DELTA_MIN = 2.0; // % mínimo para mostrar un escenario adicional
+
+    // Filtrar escenarios: mostrar solo los que mejoran más del 2% vs el anterior
+    const escsFiltrados = [];
+    ESCENARIOS.forEach((esc,idx)=>{
+      if(!esc.r) return;
+      if(idx===0||esc.isBest){ escsFiltrados.push({...esc,idx}); return; } // siempre mostrar base y mix óptimo
+      const prev = escsFiltrados[escsFiltrados.length-1]?.r?.total;
+      const deltaP = prev ? ((prev-esc.r.total)/prev*100) : 0;
+      if(deltaP >= DELTA_MIN) escsFiltrados.push({...esc,idx});
+    });
+
+    // Escenarios que se saltearon
+    const saltados = ESCENARIOS.filter((esc,idx)=>{
+      if(!esc.r||idx===0||esc.isBest) return false;
+      return !escsFiltrados.find(e=>e.n===esc.n);
+    });
+
     return e('div',{className:'section'},
-      e('div',{style:{fontSize:'0.8rem',color:'var(--c-text2)',marginBottom:10,lineHeight:1.5}},
-        'Cuánto ahorrás sumando proveedores vs comprarle todo a uno solo. Tocá para ver el desglose.'
+      e('div',{style:{fontSize:'0.9rem',color:'var(--c-text2)',marginBottom:12,lineHeight:1.6}},
+        'Cuánto ahorrás sumando proveedores. Solo se muestran escenarios donde la mejora supera el ',
+        e('strong',{style:{color:'var(--c-orange'}},'2%'),
+        ' — por debajo no justifica la logística extra.'
       ),
-      ...ESCENARIOS.map((esc,idx)=>{
-        if(!esc.r)return null;
+      // Alerta escenarios descartados
+      saltados.length>0&&e('div',{className:'alerta pend',style:{marginBottom:12}},
+        e('span',{className:'alerta-icon'},'ℹ️'),
+        e('span',null,
+          'Se omitió',saltados.length>1?' ron':' el',': ',
+          saltados.map(s=>e('strong',{key:s.n},s.label)).reduce((a,b)=>[a,', ',b]),
+          ' — la mejora vs el escenario anterior es menor al 2%, no justifica agregar un proveedor más.'
+        )
+      ),
+      ...escsFiltrados.map((esc,idx)=>{
         const ahorro=base-esc.r.total;
         const ahorroP=((ahorro/base)*100);
-        const prev=idx>0?ESCENARIOS[idx-1].r?.total:null;
+        const prev=idx>0?escsFiltrados[idx-1].r?.total:null;
         const adicional=prev?prev-esc.r.total:0;
         const adicionalP=prev&&idx>0?((adicional/prev)*100):0;
         const barW=(esc.r.total/base*100);
         const hasBrag=esc.r.s.includes('shnos');
         const isExp=expandEsc[esc.n];
 
-        return e('div',{key:esc.n,className:'esc-card'+(esc.isBest?' best':esc.isBase?' base':'')},
+        return e('div',{key:esc.n,className:'esc-card'+(esc.isBest?' best':idx===0?' base':'')},
           e('div',{className:'esc-hdr',onClick:()=>setExpandEsc(x=>({...x,[esc.n]:!x[esc.n]}))},
             e('div',null,
-              e('div',{className:'esc-label',style:{color:esc.isBest?'var(--c-green)':esc.isBase?'var(--c-red)':'var(--c-text)'}},
-                (esc.isBest?'🏆 ':esc.isBase?'📦 ':'')+esc.label
+              e('div',{className:'esc-label',style:{color:esc.isBest?'var(--c-green)':idx===0?'var(--c-red)':'var(--c-text)'}},
+                (esc.isBest?'🏆 ':idx===0?'📦 ':'')+esc.label
               ),
               e('div',{className:'esc-sub'},esc.r.s.map(id=>PROVEEDORES.find(p=>p.id===id).nombre).join(' · '))
             ),
             e('div',{className:'esc-right'},
               e('div',{className:'esc-total',style:{color:esc.isBest?'var(--c-green)':'inherit'}},fmtM(esc.r.total)),
               idx>0&&e('div',{className:'esc-pct'},'–'+ahorroP.toFixed(1)+'% vs 1 prov.'),
-              e('span',{style:{fontSize:'0.7rem',color:'var(--c-text3)'}},isExp?'▲':'▼')
+              e('span',{style:{fontSize:'0.8rem',color:'var(--c-text3)'}},isExp?'▲':'▼')
             )
           ),
           e('div',{className:'bar-wrap'},
-            e('div',{className:'bar',style:{width:barW+'%',background:esc.isBest?'var(--c-green)':esc.isBase?'var(--c-red)':'var(--c-accent)'}})
+            e('div',{className:'bar',style:{width:barW+'%',background:esc.isBest?'var(--c-green)':idx===0?'var(--c-red)':'var(--c-accent)'}})
           ),
           e('div',{className:'esc-chips'},
-            esc.isBase&&e('span',{className:'chip chip-red'},'Costo más alto'),
+            idx===0&&e('span',{className:'chip chip-red'},'Costo más alto'),
             idx>0&&e('span',{className:'chip chip-green'},'Ahorrás '+fmt(ahorro)+' (–'+ahorroP.toFixed(1)+'%)'),
-            idx>1&&adicional>5000&&e('span',{className:'chip chip-blue'},'+'+fmt(adicional)+' adicional (–'+adicionalP.toFixed(1)+'%)'),
-            idx>1&&adicional<=5000&&e('span',{className:'chip chip-grey'},'Mejora mínima'),
+            idx>0&&adicionalP>=DELTA_MIN&&e('span',{className:'chip chip-blue'},'–'+adicionalP.toFixed(1)+'% vs escenario anterior · '+fmt(adicional)+' menos'),
             hasBrag&&e('span',{className:'chip chip-orange'},'⚠️ Bragado')
           ),
           e('div',{className:'esc-provs'},
@@ -570,14 +597,13 @@ function App(){
               );
             })
           ),
-          // Desglose expandido
           isExp&&e('div',{style:{borderTop:'1px solid var(--c-border)'}},
             ...Object.values(esc.r.desglose).map(({prov,items,subtotal})=>
               e('div',{key:prov.id,style:{borderLeft:'3px solid '+prov.color,margin:'8px 10px',paddingLeft:10}},
-                e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,fontSize:'0.82rem',color:prov.color}},
+                e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,fontSize:'0.9rem',color:prov.color}},
                   e('span',null,prov.nombre),e('span',null,fmt(subtotal))
                 ),
-                ...items.map((item,ii)=>e('div',{key:item.id,style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontSize:'0.75rem',borderTop:ii>0?'0.5px solid var(--c-border)':'none'}},
+                ...items.map((item,ii)=>e('div',{key:item.id,style:{display:'flex',justifyContent:'space-between',padding:'5px 0',fontSize:'0.85rem',borderTop:ii>0?'0.5px solid var(--c-border)':'none'}},
                   e('span',{style:{color:'var(--c-text2)'}},item.nombre+' ×'+item.cant),
                   e('span',{style:{fontWeight:600}},fmt(item.total))
                 ))
@@ -586,7 +612,41 @@ function App(){
             e('div',{style:{height:8}})
           )
         );
-      })
+      }),
+
+      // Tabla resumen — también filtrada
+      e('div',{className:'section-title',style:{paddingTop:16}},'Resumen'),
+      e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',overflow:'hidden',border:'1px solid var(--c-border)'}},
+        e('table',{className:'resumen-table'},
+          e('thead',null,e('tr',null,
+            e('th',null,'Escenario'),
+            e('th',null,'Total'),
+            e('th',null,'Ahorro vs 1 prov.'),
+            e('th',null,'Delta vs anterior'),
+          )),
+          e('tbody',null,
+            ...escsFiltrados.map((esc,idx)=>{
+              const prev=idx>0?escsFiltrados[idx-1].r?.total:null;
+              const deltaP=prev?((prev-esc.r.total)/prev*100):null;
+              return e('tr',{key:esc.n,className:esc.isBest?'best-row':''},
+                e('td',null,(esc.isBest?'🏆 ':idx===0?'📦 ':'')+esc.label),
+                e('td',null,fmtM(esc.r.total)),
+                e('td',null,idx===0?'—':e('span',{style:{color:'var(--c-green)',fontWeight:600}},
+                  '–'+((base-esc.r.total)/base*100).toFixed(1)+'%'
+                )),
+                e('td',null,
+                  deltaP===null
+                    ? e('span',{style:{color:'var(--c-text3)'}},'base')
+                    : e('div',null,
+                        e('span',{style:{color:'var(--c-green)',fontWeight:700,fontSize:'1rem'}},'–'+deltaP.toFixed(1)+'%'),
+                        e('div',{style:{fontSize:'0.78rem',color:'var(--c-text3)',marginTop:2}},fmt(prev-esc.r.total)+' menos')
+                      )
+                )
+              );
+            })
+          )
+        )
+      )
     );
   }
 
