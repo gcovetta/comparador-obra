@@ -206,23 +206,27 @@ const CATEGORIAS = [
 
 const HIERROS_IDS = ["h6","h8","h10","h12","h16","h20"];
 
+// Proveedores activos en comparación
 const PROVEEDORES = [
   {id:"caeiro",    nombre:"Casa Caeiro",   color:"#185FA5", desc:10, nota:"–10% ef.",
    p:{h6:6450,h8:10900,h10:17250,h12:24650,h16:43300,h20:67700,v180:6300,v200:7000,v220:7700,v260:9100,v280:9800,v300:10500,v320:11100,v400:15700,v500:23900,v520:25700,ladrillo:3400,malla:50500,arena:38000,piedra:68250,cemento:7200}},
   {id:"dasilva",   nombre:"Da Silva",      color:"#B45000", desc:0,  nota:"neto",
    p:{h6:5730,h8:9350,h10:14750,h12:20700,h16:36300,h20:55930,v180:6745,v200:7490,v220:8030,v260:9490,v280:10220,v300:10950,v320:12720,v400:15900,v500:24800,v520:26100,ladrillo:5400,malla:49000,arena:35700,piedra:53300,cemento:6900,cano_cemento:38136,malla1525:61723,arena_bolson:42840,piedra_bolson:65520,clavos250:5292,clavos200:5292,alambre:5393}},
-  {id:"lhhnos",    nombre:"LH Hnos",      color:"#6B21A8", desc:0,  nota:"–10% ef.",
-   p:{h6:6660,h12:23670,h16:41400,arena:45000,piedra:56790,cemento:7470,malla:54000,cano_cemento:37800,malla1525:54000,arena_bolson:41400,piedra_bolson:62100,clavos250:5040,clavos200:5040,alambre:4770},
-   pendientes:["h8","h10","h20","v180","v200","v220","v260","v280","v300","v320","v400","v500","v520","ladrillo"]},
-  {id:"curtoni",   nombre:"Curtoni",      color:"#0369A1", desc:0,  nota:"–10% ef.",
+  {id:"curtoni",   nombre:"Curtoni",       color:"#0369A1", desc:0,  nota:"–10% ef.",
    p:{h6:5625,h8:9585,h10:14985,h12:21375,h16:36720,h20:57330,v200:7298,v220:8033,v260:9476,v280:10206,v300:10920,v320:11655,v400:16249,v500:25473,v520:27379,ladrillo:3400,malla:44550,cemento:6480,malla1525:40500,arena_bolson:36900,piedra_bolson:61200,clavos250:4950,clavos200:4950},
    pendientes:["v180","arena","piedra","cano_cemento","alambre"]},
-  {id:"shnos",     nombre:"7 Hnos",       color:"#047857", desc:0,  nota:"ef. Bragado", bragado:true,
+  {id:"shnos",     nombre:"7 Hnos",        color:"#047857", desc:0,  nota:"ef. Bragado", bragado:true,
    p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:9700,v280:10500,v300:11200,v400:16700,v500:25500,v520:27400,ladrillo:3000,malla:49000,arena:33000,piedra:54000,cemento:6800,cano_cemento:36400,malla1525:40000,arena_bolson:39000,clavos250:5500,clavos200:5500,alambre:5500},
    pendientes:["v320"]},
-  {id:"esperanza", nombre:"La Esperanza", color:"#BE185D", desc:0,  nota:"ef. 22/06",
+  {id:"esperanza", nombre:"La Esperanza",  color:"#BE185D", desc:0,  nota:"ef. 22/06",
    p:{h6:5037,h8:8583,h10:14245,h12:20390,h16:34660,h20:53000,v180:6380,v200:7779,v220:7800,v260:9200,v280:9830,v300:10600,v320:11300,v400:15405,v500:24200,v520:26000,ladrillo:2995,malla:43000,arena:35100,piedra:62553,cemento:6800,cano_cemento:34300,arena_bolson:41000,piedra_bolson:70000,clavos250:4300,clavos200:4300,alambre:4300},
    pendientes:["malla1525"]},
+];
+
+// Proveedores ocultos — referencia histórica (no participan en el mix ni comparación activa)
+const PROVEEDORES_REF = [
+  {id:"lhhnos",   nombre:"LH Hnos",      color:"#6B21A8", oculto:true, motivo:"No gana en ningún ítem"},
+  {id:"curto",    nombre:"Curto Martins", color:"#555",    oculto:true, motivo:"Referencia de precio base"},
 ];
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
@@ -291,7 +295,7 @@ function App(){
   const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false});
   const [expandItem,setExpandItem]=useState({});
   const [expandEsc,setExpandEsc]=useState({});
-  const [compras,setCompras]=useState({caeiro:0,dasilva:5050000,lhhnos:0,curtoni:0,shnos:0,esperanza:0});
+  const [compras,setCompras]=useState({caeiro:0,dasilva:5050000,curtoni:0,shnos:0,esperanza:0});
   const [editCompra,setEditCompra]=useState(null);
   const [guardado,setGuardado]=useState(false);
 
@@ -321,7 +325,7 @@ function App(){
     {n:1,label:"1 proveedor",     r:b1,  isBase:true},
     {n:2,label:"2 proveedores",   r:b2},
     {n:3,label:"3 proveedores",   r:b3},
-    {n:5,label:"Mix óptimo (6)",  r:mixAll, isBest:true},
+    {n:5,label:"Mix óptimo (5)",  r:mixAll, isBest:true},
   ];
 
   // ── RENDER COMPRAS ─────────────────────────────────────────────────────────
@@ -353,7 +357,7 @@ function App(){
           );
         })
       ),
-      e('div',{style:{fontSize:'0.72rem',color:'var(--c-text3)',marginTop:6,textAlign:'center'}},
+      e('div',{style:{fontSize:'0.82rem',color:'var(--c-text3)',marginTop:8,textAlign:'center'}},
         'Total comprado: '+fmt(totalComprado)+(guardado?' · ✓ Guardado':'') + ' · Tocá el monto para editar'
       ),
       e('div',{className:'alerta warn',style:{marginTop:8}},
@@ -574,11 +578,15 @@ function App(){
     // Header
     e('div',{className:'hdr'},
       e('h1',null,'🏗 Comparador de Obra'),
-      e('p',null,'Cañuelas, Buenos Aires · 6 proveedores · actualizado 22/06/2026'),
+      e('p',null,'Cañuelas, Buenos Aires · 5 proveedores activos · actualizado 22/06/2026'),
       e('div',{className:'hdr-provs'},
         ...PROVEEDORES.map(p=>e('div',{key:p.id,className:'hdr-prov'},
           e('span',{className:'dot',style:{background:p.color}}),
           e('span',null,p.nombre+(p.bragado?' ⚠️':''))
+        )),
+        ...PROVEEDORES_REF.map(p=>e('div',{key:p.id,className:'hdr-prov',style:{opacity:0.35,border:'1px dashed rgba(255,255,255,0.2)'}},
+          e('span',{className:'dot',style:{background:p.color}}),
+          e('span',{style:{textDecoration:'line-through'}},p.nombre)
         ))
       )
     ),
