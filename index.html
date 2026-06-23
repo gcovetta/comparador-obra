@@ -475,23 +475,46 @@ function App(){
       e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',overflow:'hidden',border:'1px solid var(--c-border)'}},
         e('table',{className:'resumen-table'},
           e('thead',null,e('tr',null,
-            e('th',null,'Escenario'),e('th',null,'Total'),e('th',null,'Ahorro'),
+            e('th',null,'Escenario'),
+            e('th',null,'Total'),
+            e('th',null,'Ahorro vs 1 prov.'),
+            e('th',null,'Delta vs anterior'),
           )),
           e('tbody',null,
-            ...([
-              {label:'Todo a 1 prov.',val:b1?.total,base:true},
-              {label:'Mejor dupla (2)',val:b2?.total},
-              {label:'Mejor trio (3)', val:b3?.total},
-              {label:'Mix óptimo (6)', val:totalMix,best:true},
-            ].map((row,idx)=>
-              row.val&&e('tr',{key:idx,className:row.best?'best-row':''},
-                e('td',null,(row.best?'🏆 ':'')+row.label),
-                e('td',null,fmtM(row.val)),
-                e('td',null,idx===0?'—':e('span',{style:{color:'var(--c-green)',fontWeight:600}},
-                  '–'+((b1.total-row.val)/b1.total*100).toFixed(1)+'%'
-                ))
-              )
-            ))
+            ...(()=>{
+              const rows=[
+                {label:'Todo a 1 prov.',val:b1?.total,base:true},
+                {label:'Mejor dupla (2)',val:b2?.total},
+                {label:'Mejor trio (3)', val:b3?.total},
+                {label:'Mix óptimo (5)', val:totalMix,best:true},
+              ];
+              return rows.map((row,idx)=>{
+                if(!row.val)return null;
+                const prev=idx>0?rows[idx-1]?.val:null;
+                const deltaP=prev?((prev-row.val)/prev*100):null;
+                return e('tr',{key:idx,className:row.best?'best-row':''},
+                  e('td',null,(row.best?'🏆 ':'')+row.label),
+                  e('td',null,fmtM(row.val)),
+                  e('td',null,idx===0?'—':e('span',{style:{color:'var(--c-green)',fontWeight:600}},
+                    '–'+((b1.total-row.val)/b1.total*100).toFixed(1)+'%'
+                  )),
+                  e('td',null,
+                    deltaP===null
+                      ? e('span',{style:{color:'var(--c-text3)'}},'base')
+                      : deltaP>0
+                        ? e('div',null,
+                            e('span',{style:{color:'var(--c-green)',fontWeight:700,fontSize:'1rem'}},
+                              '–'+deltaP.toFixed(1)+'%'
+                            ),
+                            e('div',{style:{fontSize:'0.78rem',color:'var(--c-text3)',marginTop:2}},
+                              fmt(prev-row.val)+' menos'
+                            )
+                          )
+                        : e('span',{style:{color:'var(--c-text3)'}},'≈ igual')
+                  )
+                );
+              });
+            })()
           )
         )
       )
