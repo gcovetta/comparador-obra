@@ -166,13 +166,13 @@ const e = React.createElement;
 // ── DATOS ────────────────────────────────────────────────────────────────────
 
 const CATEGORIAS = [
-  { id:"hierros", nombre:"Hierros", items:[
-    {id:"h6", nombre:"Hierro ø6",  cant:436},
-    {id:"h8", nombre:"Hierro ø8",  cant:59},
-    {id:"h10",nombre:"Hierro ø10", cant:109},
-    {id:"h12",nombre:"Hierro ø12", cant:166},
-    {id:"h16",nombre:"Hierro ø16", cant:34},
-    {id:"h20",nombre:"Hierro ø20", cant:6},
+  { id:"hierros", nombre:"Hierros ✅ comprados a 7 Hnos", comprada:true, items:[
+    {id:"h6", nombre:"Hierro ø6",  cant:436, comprado:true},
+    {id:"h8", nombre:"Hierro ø8",  cant:59,  comprado:true},
+    {id:"h10",nombre:"Hierro ø10", cant:109, comprado:true},
+    {id:"h12",nombre:"Hierro ø12", cant:166, comprado:true},
+    {id:"h16",nombre:"Hierro ø16", cant:34,  comprado:true},
+    {id:"h20",nombre:"Hierro ø20", cant:6,   comprado:true},
   ]},
   { id:"viguetas", nombre:"Viguetas", items:[
     {id:"v180",nombre:"Vigueta 1,80 m",cant:6},
@@ -230,6 +230,7 @@ const PROVEEDORES_REF = [
 ];
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
+const ITEMS_ACTIVOS = TODOS_ITEMS.filter(i=>!i.comprado); // excluye hierros comprados
 const STORAGE_KEY = "comparador_obra_github_v1";
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
@@ -240,12 +241,15 @@ function isPend(prov,id){ return prov.pendientes&&prov.pendientes.includes(id); 
 function isBrag(pid,iid){ return pid==='shnos'&&HIERROS_IDS.includes(iid); }
 
 function rankingItem(itemId,cant){
+  // Si el ítem está comprado no participa en comparación
+  const item=TODOS_ITEMS.find(i=>i.id===itemId);
+  if(item?.comprado) return [];
   return PROVEEDORES.map(p=>{ const u=pu(p,itemId); return u&&u>0?{prov:p,u,total:u*cant}:null; }).filter(Boolean).sort((a,b)=>a.total-b.total);
 }
 
 function calcMix(){
   const mix={};let total=0;
-  TODOS_ITEMS.forEach(item=>{
+  ITEMS_ACTIVOS.forEach(item=>{
     const rank=rankingItem(item.id,item.cant);
     if(!rank.length)return;
     const g=rank[0],seg=rank[1]||null;
@@ -258,7 +262,7 @@ function calcMix(){
 
 function totalProv(provId){
   const prov=PROVEEDORES.find(p=>p.id===provId);
-  return TODOS_ITEMS.reduce((a,i)=>{ const u=pu(prov,i.id); return a+(u&&u>0?u*i.cant:0); },0);
+  return ITEMS_ACTIVOS.reduce((a,i)=>{ const u=pu(prov,i.id); return a+(u&&u>0?u*i.cant:0); },0);
 }
 
 function combis(arr,n){
@@ -272,7 +276,7 @@ function combis(arr,n){
 function calcSet(ids){
   const ps=PROVEEDORES.filter(p=>ids.includes(p.id));
   let total=0,cob=0,desglose={};
-  TODOS_ITEMS.forEach(item=>{
+  ITEMS_ACTIVOS.forEach(item=>{
     const ops=ps.map(p=>{const u=pu(p,item.id);return u&&u>0?{prov:p,u,t:u*item.cant}:null;}).filter(Boolean).sort((a,b)=>a.t-b.t);
     if(!ops.length)return;
     total+=ops[0].t; cob++;
@@ -286,7 +290,7 @@ function calcSet(ids){
 
 function bestN(n){
   const ids=PROVEEDORES.map(p=>p.id);
-  return combis(ids,n).map(s=>({s,...calcSet(s)})).filter(r=>r.cob===TODOS_ITEMS.length).sort((a,b)=>a.total-b.total)[0];
+  return combis(ids,n).map(s=>({s,...calcSet(s)})).filter(r=>r.cob===ITEMS_ACTIVOS.length).sort((a,b)=>a.total-b.total)[0];
 }
 
 // ── APP ───────────────────────────────────────────────────────────────────────
@@ -295,7 +299,7 @@ function App(){
   const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false});
   const [expandItem,setExpandItem]=useState({});
   const [expandEsc,setExpandEsc]=useState({});
-  const [compras,setCompras]=useState({caeiro:0,dasilva:5050000,curtoni:0,shnos:0,esperanza:0});
+  const [compras,setCompras]=useState({caeiro:0,dasilva:5050000,curtoni:0,shnos:8712180,esperanza:0});
   const [editCompra,setEditCompra]=useState(null);
   const [guardado,setGuardado]=useState(false);
 
@@ -373,6 +377,31 @@ function App(){
       ...CATEGORIAS.map(cat=>{
         const exp=expandCat[cat.id];
         const esH=cat.id==='hierros';
+
+        // Categoría comprada — mostrar como resumen, no como comparación
+        if(cat.comprada){
+          return e('div',{key:cat.id,className:'section'},
+            e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',border:'1px solid var(--c-green)',overflow:'hidden'}},
+              e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 18px',background:'var(--c-green-bg)'}},
+                e('div',{style:{display:'flex',alignItems:'center',gap:8}},
+                  e('span',{style:{fontSize:'1.1rem'}},'✅'),
+                  e('span',{style:{fontWeight:700,fontSize:'1rem',color:'var(--c-green)'}},cat.nombre)
+                ),
+                e('div',{style:{textAlign:'right'}},
+                  e('div',{style:{fontWeight:700,fontSize:'1rem',color:'var(--c-green)'}},fmt(8712180)),
+                  e('div',{style:{fontSize:'0.8rem',color:'var(--c-text3)',marginTop:2}},'Comprado a 7 Hnos · Bragado')
+                )
+              ),
+              e('div',{style:{padding:'10px 18px'}},
+                e('div',{style:{display:'flex',flexWrap:'wrap',gap:6}},
+                  ...cat.items.map(item=>e('span',{key:item.id,style:{fontSize:'0.82rem',background:'rgba(255,255,255,0.05)',padding:'4px 10px',borderRadius:4,color:'var(--c-text2)'}},
+                    item.nombre+' ×'+item.cant
+                  ))
+                )
+              )
+            )
+          );
+        }
         return e('div',{key:cat.id,className:'section'},
           e('div',{className:'cat-header',onClick:()=>setExpandCat(x=>({...x,[cat.id]:!x[cat.id]}))},
             e('span',{className:'cat-label'},cat.nombre),
