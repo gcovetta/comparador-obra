@@ -215,7 +215,7 @@ const PROVEEDORES = [
   {id:"curtoni",   nombre:"Curtoni",       color:"#0369A1", desc:0,  nota:"–10% ef.",
    p:{h6:5625,h8:9585,h10:14985,h12:21375,h16:36720,h20:57330,v200:7298,v220:8033,v260:9476,v280:10206,v300:10920,v320:11655,v400:16249,v500:25473,v520:27379,ladrillo:3400,malla:44550,cemento:6480,malla1525:40500,arena_bolson:36900,piedra_bolson:61200,clavos250:4950,clavos200:4950},
    pendientes:["v180","arena","piedra","cano_cemento","alambre"]},
-  {id:"shnos",     nombre:"7 Hnos",        color:"#047857", desc:0,  nota:"ef. Bragado", bragado:true,
+  {id:"shnos",     nombre:"7 Hnos",        color:"#047857", desc:0,  nota:"ef. efectivo",
    p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:9700,v280:10500,v300:11200,v400:16700,v500:25500,v520:27400,ladrillo:3000,malla:49000,arena:33000,piedra:54000,cemento:6800,cano_cemento:36400,malla1525:40000,arena_bolson:39000,clavos250:5500,clavos200:5500,alambre:5500},
    pendientes:["v320"]},
   {id:"esperanza", nombre:"La Esperanza",  color:"#BE185D", desc:0,  nota:"ef. 22/06",
@@ -422,7 +422,6 @@ function App(){
       ),
       e('div',{className:'alerta warn',style:{marginTop:8}},
         e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'7 Hnos hierros = marca Bragado, no Acindar. Verificar con arquitecto/ingeniero.')
       )
     );
   }
@@ -445,7 +444,7 @@ function App(){
                 ),
                 e('div',{style:{textAlign:'right'}},
                   e('div',{style:{fontWeight:700,fontSize:'1rem',color:'var(--c-green)'}},fmt(8712180)),
-                  e('div',{style:{fontSize:'0.8rem',color:'var(--c-text3)',marginTop:2}},'Comprado a 7 Hnos · Bragado')
+                  e('div',{style:{fontSize:'0.8rem',color:'var(--c-text3)',marginTop:2}},'Comprado a 7 Hnos')
                 )
               ),
               e('div',{style:{padding:'10px 18px'}},
@@ -461,7 +460,6 @@ function App(){
         return e('div',{key:cat.id,className:'section'},
           e('div',{className:'cat-header',onClick:()=>setExpandCat(x=>({...x,[cat.id]:!x[cat.id]}))},
             e('span',{className:'cat-label'},cat.nombre),
-            esH&&e('span',{style:{fontSize:'0.65rem',background:'var(--c-orange-bg)',color:'var(--c-orange)',padding:'2px 6px',borderRadius:4,marginLeft:6}},'⚠️ 7 Hnos = Bragado'),
             e('span',{className:'cat-toggle'},exp?'▲':'▼')
           ),
           exp&&e('div',null,
@@ -473,7 +471,7 @@ function App(){
                 e('div',{className:'item-header',onClick:()=>setExpandItem(x=>({...x,[item.id]:!x[item.id]}))},
                   e('span',{className:'item-nombre'},item.nombre+' ×'+item.cant),
                   ganador&&e('span',{className:'item-winner',style:{background:ganador.color+'18',color:ganador.color}},
-                    ganador.nombre+(isBrag(ganador.id,item.id)?' ⚠️':'')
+                    ganador.nombre
                   )
                 ),
                 isExpItem&&e('div',{className:'item-body'},
@@ -483,12 +481,11 @@ function App(){
                     const pos=rank.findIndex(r=>r.prov.id===p.id);
                     const isWin=pos===0&&t!==null;
                     const pend=isPend(p,item.id)&&!t;
-                    const brag=isBrag(p.id,item.id);
+                    
                     return e('div',{key:p.id,className:'item-prov-row'+(isWin?' winner':'')},
                       e('div',{className:'item-prov-name'},
                         e('span',{className:'dot',style:{background:p.color}}),
                         p.nombre,
-                        brag&&e('span',{className:'bragado-tag',style:{marginLeft:4}},'Bragado'),
                         pos>=0&&e('span',{className:'rank-chip '+(pos===0?'rank-1':pos===1?'rank-2':'rank-n'),style:{marginLeft:4}},pos+1+'°')
                       ),
                       pend
@@ -511,24 +508,120 @@ function App(){
   }
 
   // ── RENDER MIX ÓPTIMO ──────────────────────────────────────────────────────
+
+  // Tarjeta de pedido para Mix y Ahorro
+  function renderTarjetaPedido(ped){
+    const itemsConCant=ITEMS_ACTIVOS.filter(i=>ped.items[i.id]>0).map(i=>({...i,cant:ped.items[i.id]}));
+    if(!itemsConCant.length) return null;
+    const {mix:mixPed,total:totalPed}=calcMixPedido(itemsConCant);
+    if(!totalPed) return null;
+
+    // Escenarios del pedido
+    function calcSetPed(provIds){
+      const ps=PROVEEDORES.filter(p=>provIds.includes(p.id));
+      let total=0,cob=0;
+      itemsConCant.forEach(item=>{
+        const ops=ps.map(p=>{const u=pu(p,item.id);return u&&u>0?u*item.cant:null;}).filter(Boolean);
+        if(ops.length){total+=Math.min(...ops);cob++;}
+      });
+      return{total,cob};
+    }
+    function bestNPed(n){
+      const ids=PROVEEDORES.map(p=>p.id);
+      return combis(ids,n).map(s=>({s,...calcSetPed(s)})).filter(r=>r.cob===itemsConCant.length).sort((a,b)=>a.total-b.total)[0];
+    }
+    const bp1=bestNPed(1), bp2=bestNPed(2), bp3=bestNPed(3);
+    const basePed=bp1?.total||0;
+
+    return e('div',{key:ped.id,style:{background:'var(--c-surface)',border:'1px solid var(--c-border)',borderRadius:'var(--radius)',marginBottom:12,overflow:'hidden'}},
+      // Header tarjeta
+      e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 16px',background:'rgba(255,255,255,0.03)',borderBottom:'1px solid var(--c-border)'}},
+        e('div',{style:{display:'flex',alignItems:'center',gap:8}},
+          e('span',{style:{fontSize:'1.1rem'}},'🛒'),
+          e('div',null,
+            e('div',{style:{fontWeight:700,fontSize:'1rem'}},ped.nombre),
+            e('div',{style:{fontSize:'0.78rem',color:'var(--c-text3)',marginTop:1}},itemsConCant.length+' ítems · '+ped.creado)
+          )
+        ),
+        e('div',{style:{textAlign:'right'}},
+          e('div',{style:{fontSize:'1.2rem',fontWeight:800,color:'var(--c-green)'}},fmt(totalPed)),
+          e('div',{style:{fontSize:'0.78rem',color:'var(--c-text3)',marginTop:1}},'mix óptimo')
+        )
+      ),
+      // Bloques por proveedor
+      ...Object.values(mixPed).map(({prov,items,subtotal})=>
+        e('div',{key:prov.id,style:{borderLeft:'3px solid '+prov.color,margin:'8px 12px',paddingLeft:10}},
+          e('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:4}},
+            e('span',{style:{fontWeight:600,fontSize:'0.9rem',color:prov.color,display:'flex',alignItems:'center',gap:5}},
+              e('span',{className:'dot',style:{background:prov.color}}), prov.nombre
+            ),
+            e('span',{style:{fontWeight:600,fontSize:'0.9rem'}},fmt(subtotal))
+          ),
+          ...items.map((item,ii)=>e('div',{key:item.id,style:{display:'flex',justifyContent:'space-between',fontSize:'0.82rem',padding:'3px 0',borderTop:ii>0?'0.5px solid var(--c-border)':'none'}},
+            e('span',{style:{color:'var(--c-text2)'}},item.nombre+' ×'+item.cant),
+            e('div',{style:{textAlign:'right'}},
+              e('span',{style:{fontWeight:500}},fmt(item.total)),
+              item.seg&&item.seg.t>item.total&&e('span',{style:{fontSize:'0.72rem',color:'var(--c-green)',marginLeft:6}},'–'+fmt(item.seg.t-item.total))
+            )
+          ))
+        )
+      ),
+      // Tabla escenarios del pedido
+      e('div',{style:{margin:'10px 12px 12px'}},
+        e('div',{style:{fontSize:'0.75rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--c-text3)',marginBottom:6}},'Ahorro por nro. de proveedores'),
+        e('table',{className:'resumen-table'},
+          e('thead',null,e('tr',null,
+            e('th',null,'Escenario'),e('th',null,'Total'),e('th',null,'Ahorro vs 1'),e('th',null,'Delta'),
+          )),
+          e('tbody',null,
+            ...(()=>{
+              const rows=[
+                {label:'1 proveedor', val:bp1?.total, isBase:true},
+                {label:'2 proveedores',val:bp2?.total},
+                {label:'3 proveedores',val:bp3?.total},
+                {label:'Mix óptimo',  val:totalPed, isBest:true},
+              ];
+              // Filtrar con regla del 2%
+              const filtradas=[];
+              rows.forEach((row,idx)=>{
+                if(!row.val)return;
+                if(idx===0||row.isBest){filtradas.push({...row,idx});return;}
+                const prev=filtradas[filtradas.length-1]?.val;
+                const d=prev?((prev-row.val)/prev*100):0;
+                if(d>=2)filtradas.push({...row,idx});
+              });
+              return filtradas.map((row,fi)=>{
+                const prev=fi>0?filtradas[fi-1].val:null;
+                const ahorro=basePed-row.val;
+                const ahorroP=((ahorro/basePed)*100);
+                const deltaP=prev?((prev-row.val)/prev*100):null;
+                return e('tr',{key:row.label,className:row.isBest?'best-row':'',style:{background:row.isBase?'rgba(248,113,113,0.04)':'transparent'}},
+                  e('td',null,(row.isBest?'🏆 ':row.isBase?'📦 ':'')+row.label),
+                  e('td',null,fmt(row.val)),
+                  e('td',null,fi===0?'—':e('span',{style:{color:'var(--c-green)',fontWeight:600}},'–'+ahorroP.toFixed(1)+'%')),
+                  e('td',null,deltaP===null?e('span',{style:{color:'var(--c-text3)'}},'base'):e('span',{style:{color:'var(--c-green)',fontWeight:700}},'–'+deltaP.toFixed(1)+'%'))
+                );
+              });
+            })()
+          )
+        )
+      )
+    );
+  }
+
   function renderMix(){
+    const hayPedidos=pedidos.some(p=>Object.values(p.items).some(v=>v>0));
     return e('div',{className:'section'},
       e('div',{className:'alerta info'},
         e('span',{className:'alerta-icon'},'✓'),
         e('span',null,'Cada ítem al proveedor más barato. Cobertura 100%.')
       ),
-      e('div',{className:'alerta warn'},
-        e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'7 Hnos gana en hierros pero son Bragado. Confirmar equivalencia técnica.')
-      ),
       ...Object.values(mix).map(({prov,items,subtotal})=>{
-        const hasBrag=prov.id==='shnos'&&items.some(i=>HIERROS_IDS.includes(i.id));
         return e('div',{key:prov.id,className:'prov-block'},
           e('div',{className:'prov-block-hdr'},
             e('div',{className:'prov-block-nombre'},
               e('span',{className:'dot',style:{background:prov.color}}),
               e('span',{style:{color:prov.color}},prov.nombre),
-              hasBrag&&e('span',{className:'chip chip-orange',style:{fontSize:'0.65rem'}},'Bragado ⚠️'),
               compras[prov.id]>0&&e('span',{style:{fontSize:'0.7rem',fontWeight:400,color:'var(--c-text3)',marginLeft:4}},'🛒 '+fmt(compras[prov.id]))
             ),
             e('div',{className:'prov-block-total',style:{color:prov.color}},fmt(subtotal))
@@ -538,7 +631,6 @@ function App(){
             return e('div',{key:item.id,className:'mix-item-row',style:{background:idx%2===0?'transparent':'rgba(0,0,0,0.015)'}},
               e('div',{className:'mix-item-nombre'},
                 item.nombre,
-                isBrag(prov.id,item.id)&&e('span',{className:'bragado-tag',style:{marginLeft:4}},'⚠️'),
                 e('span',{style:{fontSize:'0.68rem',color:'var(--c-text3)',marginLeft:4}},'×'+item.cant)
               ),
               e('div',{className:'mix-item-right'},
@@ -551,11 +643,11 @@ function App(){
         );
       }),
       e('div',{className:'total-box'},
-        e('div',{className:'total-box-label'},'Total mix óptimo'),
+        e('div',{className:'total-box-label'},'Total mix óptimo — obra completa'),
         e('div',{className:'total-box-amount'},fmt(totalMix)),
         e('div',{className:'total-box-sub'},'Pendiente: '+fmt(totalMix-totalComprado)),
       ),
-      // Comparativa escenarios
+      // Comparativa escenarios obra completa
       e('div',{className:'section-title',style:{paddingTop:12}},'Comparativa todos los escenarios'),
       e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',overflow:'hidden',border:'1px solid var(--c-border)'}},
         e('table',{className:'resumen-table'},
@@ -602,10 +694,14 @@ function App(){
             })()
           )
         )
+      ),
+      // Tarjetas de pedidos guardados
+      hayPedidos&&e('div',null,
+        e('div',{style:{fontSize:'0.85rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--c-text3)',padding:'16px 0 8px',borderTop:'1px solid var(--c-border)',marginTop:16}},'Mix por pedido guardado'),
+        ...pedidos.filter(p=>Object.values(p.items).some(v=>v>0)).map(renderTarjetaPedido)
       )
     );
   }
-
   // ── RENDER ESCENARIOS ──────────────────────────────────────────────────────
   function renderEscenarios(){
     const DELTA_MIN = 2.0; // % mínimo para mostrar un escenario adicional
@@ -648,7 +744,6 @@ function App(){
         const adicional=prev?prev-esc.r.total:0;
         const adicionalP=prev&&idx>0?((adicional/prev)*100):0;
         const barW=(esc.r.total/base*100);
-        const hasBrag=esc.r.s.includes('shnos');
         const isExp=expandEsc[esc.n];
 
         return e('div',{key:esc.n,className:'esc-card'+(esc.isBest?' best':idx===0?' base':'')},
@@ -672,7 +767,6 @@ function App(){
             idx===0&&e('span',{className:'chip chip-red'},'Costo más alto'),
             idx>0&&e('span',{className:'chip chip-green'},'Ahorrás '+fmt(ahorro)+' (–'+ahorroP.toFixed(1)+'%)'),
             idx>0&&adicionalP>=DELTA_MIN&&e('span',{className:'chip chip-blue'},'–'+adicionalP.toFixed(1)+'% vs escenario anterior · '+fmt(adicional)+' menos'),
-            hasBrag&&e('span',{className:'chip chip-orange'},'⚠️ Bragado')
           ),
           e('div',{className:'esc-provs'},
             ...esc.r.s.map(id=>{
@@ -731,6 +825,11 @@ function App(){
             })
           )
         )
+      ),
+      // Tarjetas de pedidos guardados
+      pedidos.some(p=>Object.values(p.items).some(v=>v>0))&&e('div',null,
+        e('div',{style:{fontSize:'0.85rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--c-text3)',padding:'16px 0 8px',borderTop:'1px solid var(--c-border)',marginTop:16}},'Ahorro por pedido guardado'),
+        ...pedidos.filter(p=>Object.values(p.items).some(v=>v>0)).map(renderTarjetaPedido)
       )
     );
   }
@@ -913,7 +1012,7 @@ function App(){
       e('div',{className:'hdr-provs'},
         ...PROVEEDORES.map(p=>e('div',{key:p.id,className:'hdr-prov'},
           e('span',{className:'dot',style:{background:p.color}}),
-          e('span',null,p.nombre+(p.bragado?' ⚠️':''))
+          e('span',null,p.nombre)
         )),
         ...PROVEEDORES_REF.map(p=>e('div',{key:p.id,className:'hdr-prov',style:{opacity:0.35,border:'1px dashed rgba(255,255,255,0.2)'}},
           e('span',{className:'dot',style:{background:p.color}}),
