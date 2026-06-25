@@ -294,6 +294,25 @@ function bestN(n){
 }
 
 // ── APP ───────────────────────────────────────────────────────────────────────
+const STORAGE_PEDIDOS = "comparador_obra_pedidos_v1";
+
+function calcMixPedido(itemsConCant){
+  // itemsConCant: [{id, nombre, cant}]
+  const mix={};let total=0;
+  itemsConCant.forEach(item=>{
+    if(!item.cant||item.cant<=0)return;
+    const ops=PROVEEDORES.map(p=>{const u=pu(p,item.id);return u&&u>0?{prov:p,u,t:u*item.cant}:null;}).filter(Boolean).sort((a,b)=>a.t-b.t);
+    if(!ops.length)return;
+    const g=ops[0],seg=ops[1]||null;
+    total+=g.t;
+    const pid=g.prov.id;
+    if(!mix[pid])mix[pid]={prov:g.prov,items:[],subtotal:0};
+    mix[pid].items.push({...item,u:g.u,total:g.t,seg});
+    mix[pid].subtotal+=g.t;
+  });
+  return{mix,total};
+}
+
 function App(){
   const [tab,setTab]=useState("comparacion");
   const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false});
@@ -303,9 +322,17 @@ function App(){
   const [editCompra,setEditCompra]=useState(null);
   const [guardado,setGuardado]=useState(false);
 
-  // Cargar compras guardadas
+  // ── Estado carrito / pedidos ──
+  const [pedidos,setPedidos]=useState([]); // [{id, nombre, items:{itemId:cant}, creado}]
+  const [pedidoActivo,setPedidoActivo]=useState(null); // id del pedido en edición
+  const [expandPedido,setExpandPedido]=useState({});
+  const [nuevoPedidoNombre,setNuevoPedidoNombre]=useState('');
+  const [mostrarFormPedido,setMostrarFormPedido]=useState(false);
+
+  // Cargar datos guardados
   useState(()=>{
     try{ const s=localStorage.getItem(STORAGE_KEY); if(s)setCompras(JSON.parse(s)); }catch(e){}
+    try{ const p=localStorage.getItem(STORAGE_PEDIDOS); if(p)setPedidos(JSON.parse(p)); }catch(e){}
   });
 
   function guardarCompras(nuevas){
@@ -316,9 +343,38 @@ function App(){
     setCompras(n); guardarCompras(n); setEditCompra(null);
   }
 
+  function guardarPedidos(nuevos){
+    try{ localStorage.setItem(STORAGE_PEDIDOS,JSON.stringify(nuevos)); }catch(e){}
+  }
+  function crearPedido(){
+    if(!nuevoPedidoNombre.trim())return;
+    const nuevo={id:'p_'+Date.now(), nombre:nuevoPedidoNombre.trim(), items:{}, creado:new Date().toLocaleDateString('es-AR')};
+    const nuevos=[...pedidos,nuevo];
+    setPedidos(nuevos); guardarPedidos(nuevos);
+    setPedidoActivo(nuevo.id);
+    setNuevoPedidoNombre(''); setMostrarFormPedido(false);
+    setTab('carrito');
+  }
+  function eliminarPedido(id){
+    const nuevos=pedidos.filter(p=>p.id!==id);
+    setPedidos(nuevos); guardarPedidos(nuevos);
+    if(pedidoActivo===id)setPedidoActivo(nuevos[0]?.id||null);
+  }
+  function actualizarCantItem(pedidoId,itemId,val){
+    const cant=Number(String(val).replace(/\D/g,''))||0;
+    const nuevos=pedidos.map(p=>p.id===pedidoId?{...p,items:{...p.items,[itemId]:cant}}:p);
+    setPedidos(nuevos); guardarPedidos(nuevos);
+  }
+  function usarCantObra(pedidoId,itemId,cantObra){
+    actualizarCantItem(pedidoId,itemId,cantObra);
+  }
+  function limpiarPedido(pedidoId){
+    const nuevos=pedidos.map(p=>p.id===pedidoId?{...p,items:{}}:p);
+    setPedidos(nuevos); guardarPedidos(nuevos);
+  }
+
   const {mix,total:totalMix}=useMemo(()=>calcMix(),[]);
   const totalComprado=Object.values(compras).reduce((a,b)=>a+b,0);
-
   const b1=useMemo(()=>bestN(1),[]);
   const b2=useMemo(()=>bestN(2),[]);
   const b3=useMemo(()=>bestN(3),[]);
@@ -326,10 +382,10 @@ function App(){
   const base=b1?.total||0;
 
   const ESCENARIOS=[
-    {n:1,label:"1 proveedor",     r:b1,  isBase:true},
-    {n:2,label:"2 proveedores",   r:b2},
-    {n:3,label:"3 proveedores",   r:b3},
-    {n:5,label:"Mix óptimo (5)",  r:mixAll, isBest:true},
+    {n:1,label:"1 proveedor",    r:b1,  isBase:true},
+    {n:2,label:"2 proveedores",  r:b2},
+    {n:3,label:"3 proveedores",  r:b3},
+    {n:5,label:"Mix óptimo (5)", r:mixAll, isBest:true},
   ];
 
   // ── RENDER COMPRAS ─────────────────────────────────────────────────────────
@@ -679,11 +735,174 @@ function App(){
     );
   }
 
+  // ── RENDER CARRITO ─────────────────────────────────────────────────────────
+  function renderCarrito(){
+    const pedidoSel = pedidos.find(p=>p.id===pedidoActivo);
+
+    return e('div',{className:'section'},
+
+      // Barra superior — lista de pedidos + nuevo
+      e('div',{style:{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',marginBottom:16}},
+        ...pedidos.map(p=>e('button',{key:p.id,
+          onClick:()=>setPedidoActivo(p.id),
+          style:{padding:'7px 16px',border:'1.5px solid '+(p.id===pedidoActivo?'var(--c-green)':'var(--c-border)'),borderRadius:20,background:p.id===pedidoActivo?'var(--c-green-bg)':'transparent',color:p.id===pedidoActivo?'var(--c-green)':'var(--c-text2)',fontWeight:p.id===pedidoActivo?700:400,cursor:'pointer',fontSize:'0.9rem',display:'flex',alignItems:'center',gap:6}},
+          p.nombre,
+          e('span',{style:{fontSize:'0.75rem',color:'var(--c-text3)',marginLeft:2}},
+            Object.values(p.items).filter(v=>v>0).length+' ítems'
+          )
+        )),
+        mostrarFormPedido
+          ? e('div',{style:{display:'flex',gap:6,alignItems:'center'}},
+              e('input',{autoFocus:true,value:nuevoPedidoNombre,onChange:ev=>setNuevoPedidoNombre(ev.target.value),
+                placeholder:'Nombre del pedido...',
+                onKeyDown:ev=>{if(ev.key==='Enter')crearPedido();if(ev.key==='Escape')setMostrarFormPedido(false);},
+                style:{padding:'7px 12px',border:'1.5px solid var(--c-green)',borderRadius:8,background:'var(--c-surface)',color:'var(--c-text)',fontSize:'0.9rem',outline:'none',width:200}}),
+              e('button',{onClick:crearPedido,style:{padding:'7px 14px',background:'var(--c-green)',color:'#000',border:'none',borderRadius:8,fontWeight:600,cursor:'pointer',fontSize:'0.9rem'}},'Crear'),
+              e('button',{onClick:()=>setMostrarFormPedido(false),style:{padding:'7px 10px',background:'transparent',color:'var(--c-text3)',border:'1px solid var(--c-border)',borderRadius:8,cursor:'pointer',fontSize:'0.9rem'}},'✕')
+            )
+          : e('button',{onClick:()=>setMostrarFormPedido(true),
+              style:{padding:'7px 16px',border:'1.5px dashed var(--c-border)',borderRadius:20,background:'transparent',color:'var(--c-text3)',cursor:'pointer',fontSize:'0.9rem'}},
+              '+ Nuevo pedido'
+            )
+      ),
+
+      // Estado vacío
+      !pedidoSel&&e('div',{style:{textAlign:'center',padding:'3rem',color:'var(--c-text3)'}},
+        e('div',{style:{fontSize:'2rem',marginBottom:8}},'🛒'),
+        e('div',{style:{fontSize:'1rem',marginBottom:4}},'No hay pedidos todavía'),
+        e('div',{style:{fontSize:'0.88rem'}},'Creá un pedido nuevo para empezar'),
+      ),
+
+      // Pedido seleccionado
+      pedidoSel&&e('div',null,
+
+        // Header del pedido
+        e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}},
+          e('div',null,
+            e('div',{style:{fontSize:'1.1rem',fontWeight:700}},pedidoSel.nombre),
+            e('div',{style:{fontSize:'0.82rem',color:'var(--c-text3)',marginTop:2}},'Creado: '+pedidoSel.creado),
+          ),
+          e('div',{style:{display:'flex',gap:8}},
+            e('button',{onClick:()=>limpiarPedido(pedidoSel.id),style:{padding:'6px 12px',border:'1px solid var(--c-border)',borderRadius:6,background:'transparent',color:'var(--c-text3)',cursor:'pointer',fontSize:'0.82rem'}},'Limpiar'),
+            e('button',{onClick:()=>eliminarPedido(pedidoSel.id),style:{padding:'6px 12px',border:'1px solid #F87171',borderRadius:6,background:'rgba(248,113,113,0.08)',color:'#F87171',cursor:'pointer',fontSize:'0.82rem'}},'Eliminar')
+          )
+        ),
+
+        // Lista de ítems agrupados por categoría
+        ...CATEGORIAS.map(cat=>e('div',{key:cat.id,style:{marginBottom:12}},
+          e('div',{style:{fontSize:'0.78rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.06em',color:'var(--c-text3)',padding:'6px 0 4px',borderBottom:'1px solid var(--c-border)',marginBottom:4}},
+            cat.nombre
+          ),
+          ...cat.items.filter(i=>!i.comprado).map(item=>{
+            const cantActual=pedidoSel.items[item.id]||0;
+            // mejor precio para esta cant
+            const mejorU=cantActual>0?PROVEEDORES.map(p=>{const u=pu(p,item.id);return u&&u>0?u:null;}).filter(Boolean).reduce((a,b)=>Math.min(a,b),Infinity):0;
+            const mejorTotal=cantActual>0&&mejorU<Infinity?mejorU*cantActual:0;
+            return e('div',{key:item.id,style:{display:'flex',alignItems:'center',gap:8,padding:'8px 4px',borderBottom:'0.5px solid var(--c-border)'}},
+              // Nombre
+              e('div',{style:{flex:1,fontSize:'0.9rem'}},item.nombre),
+              // Botón "cant. obra"
+              e('button',{
+                onClick:()=>usarCantObra(pedidoSel.id,item.id,item.cant),
+                title:'Usar cantidad total de obra ('+item.cant+')',
+                style:{padding:'4px 8px',background:'var(--c-accent-bg)',color:'var(--c-accent)',border:'none',borderRadius:4,cursor:'pointer',fontSize:'0.75rem',flexShrink:0}},
+                '×'+item.cant
+              ),
+              // Input cantidad
+              e('input',{
+                type:'number',min:0,
+                value:cantActual||'',
+                placeholder:'0',
+                onChange:ev=>actualizarCantItem(pedidoSel.id,item.id,ev.target.value),
+                style:{width:80,padding:'5px 8px',border:'1.5px solid '+(cantActual>0?'var(--c-green)':'var(--c-border)'),borderRadius:6,background:'var(--c-surface)',color:'var(--c-text)',fontSize:'0.9rem',textAlign:'right',outline:'none'}}),
+              // Total al mejor precio
+              e('div',{style:{width:110,textAlign:'right',fontSize:'0.88rem',fontWeight:cantActual>0?600:400,color:cantActual>0?'var(--c-green)':'var(--c-text3)'}},
+                cantActual>0&&mejorTotal>0?fmt(mejorTotal):'—'
+              )
+            );
+          })
+        )),
+
+        // Resumen y mix del pedido
+        (()=>{
+          const itemsConCant=ITEMS_ACTIVOS.filter(i=>pedidoSel.items[i.id]>0).map(i=>({...i,cant:pedidoSel.items[i.id]}));
+          if(!itemsConCant.length) return e('div',{style:{textAlign:'center',padding:'1.5rem',color:'var(--c-text3)',fontSize:'0.9rem'}},'Cargá cantidades para ver el mix óptimo');
+          const {mix:mixPed,total:totalPed}=calcMixPedido(itemsConCant);
+
+          return e('div',{style:{marginTop:16}},
+            e('div',{style:{fontSize:'0.85rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--c-text3)',marginBottom:8}},'Mix óptimo para este pedido'),
+
+            ...Object.values(mixPed).map(({prov,items,subtotal})=>
+              e('div',{key:prov.id,style:{background:'var(--c-surface)',borderRadius:'10px',border:'1px solid var(--c-border)',marginBottom:8,overflow:'hidden',borderLeft:'3px solid '+prov.color}},
+                e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 14px',borderBottom:'1px solid var(--c-border)'}},
+                  e('span',{style:{fontWeight:700,color:prov.color,fontSize:'0.95rem',display:'flex',alignItems:'center',gap:6}},
+                    e('span',{className:'dot',style:{background:prov.color}}),prov.nombre
+                  ),
+                  e('span',{style:{fontWeight:700,fontSize:'0.95rem'}},fmt(subtotal))
+                ),
+                ...items.map((item,idx)=>{
+                  const ahorro=item.seg?item.seg.t-item.total:null;
+                  return e('div',{key:item.id,style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 14px',borderBottom:idx<items.length-1?'0.5px solid var(--c-border)':'none',background:idx%2===0?'transparent':'rgba(255,255,255,0.02)'}},
+                    e('span',{style:{fontSize:'0.88rem',color:'var(--c-text2)'}},item.nombre+' ×'+item.cant),
+                    e('div',{style:{textAlign:'right'}},
+                      e('div',{style:{fontSize:'0.88rem',fontWeight:600}},fmt(item.total)),
+                      ahorro&&ahorro>0&&e('div',{style:{fontSize:'0.75rem',color:'var(--c-green)'}},'ahorra '+fmt(ahorro)+' vs '+item.seg.prov.nombre)
+                    )
+                  );
+                })
+              )
+            ),
+
+            e('div',{style:{background:'var(--c-green-bg)',border:'1.5px solid var(--c-green)',borderRadius:10,padding:'1.2rem',textAlign:'center',marginTop:8}},
+              e('div',{style:{fontSize:'0.8rem',color:'var(--c-green)',fontWeight:600,marginBottom:4}},'TOTAL PEDIDO — MIX ÓPTIMO'),
+              e('div',{style:{fontSize:'2rem',fontWeight:800,color:'var(--c-green)',letterSpacing:'-0.03em'}},fmt(totalPed))
+            )
+          );
+        })()
+      ),
+
+      // Comparación entre todos los pedidos
+      pedidos.length>1&&e('div',{style:{marginTop:24}},
+        e('div',{style:{fontSize:'0.85rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--c-text3)',marginBottom:8}},'Comparación entre pedidos'),
+        e('div',{style:{background:'var(--c-surface)',borderRadius:10,overflow:'hidden',border:'1px solid var(--c-border)'}},
+          e('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:'0.9rem'}},
+            e('thead',null,e('tr',null,
+              e('th',{style:{textAlign:'left',padding:'10px 14px',borderBottom:'1px solid var(--c-border)',color:'var(--c-text3)',fontSize:'0.8rem',fontWeight:600,background:'#131E2C'}},'Pedido'),
+              e('th',{style:{textAlign:'right',padding:'10px 14px',borderBottom:'1px solid var(--c-border)',color:'var(--c-text3)',fontSize:'0.8rem',fontWeight:600,background:'#131E2C'}},'Ítems'),
+              e('th',{style:{textAlign:'right',padding:'10px 14px',borderBottom:'1px solid var(--c-border)',color:'var(--c-text3)',fontSize:'0.8rem',fontWeight:600,background:'#131E2C'}},'Total mix óptimo'),
+              e('th',{style:{textAlign:'right',padding:'10px 14px',borderBottom:'1px solid var(--c-border)',color:'var(--c-text3)',fontSize:'0.8rem',fontWeight:600,background:'#131E2C'}},'Proveedores'),
+            )),
+            e('tbody',null,
+              ...pedidos.map((ped,idx)=>{
+                const itemsConCant=ITEMS_ACTIVOS.filter(i=>ped.items[i.id]>0).map(i=>({...i,cant:ped.items[i.id]}));
+                const {mix:mp,total:tp}=calcMixPedido(itemsConCant);
+                const provs=Object.values(mp).map(x=>x.prov);
+                return e('tr',{key:ped.id,style:{background:ped.id===pedidoActivo?'var(--c-green-bg)':idx%2===0?'transparent':'rgba(255,255,255,0.02)',cursor:'pointer'},onClick:()=>setPedidoActivo(ped.id)},
+                  e('td',{style:{padding:'10px 14px',fontWeight:ped.id===pedidoActivo?700:400,color:ped.id===pedidoActivo?'var(--c-green)':'var(--c-text)',borderBottom:'0.5px solid var(--c-border)'}},
+                    (ped.id===pedidoActivo?'▶ ':'')+ped.nombre
+                  ),
+                  e('td',{style:{padding:'10px 14px',textAlign:'right',color:'var(--c-text3)',borderBottom:'0.5px solid var(--c-border)'}},itemsConCant.length),
+                  e('td',{style:{padding:'10px 14px',textAlign:'right',fontWeight:600,color:tp>0?'var(--c-green)':'var(--c-text3)',borderBottom:'0.5px solid var(--c-border)'}},tp>0?fmt(tp):'—'),
+                  e('td',{style:{padding:'10px 14px',textAlign:'right',borderBottom:'0.5px solid var(--c-border)'}},
+                    e('div',{style:{display:'flex',justifyContent:'flex-end',gap:4,flexWrap:'wrap'}},
+                      ...provs.map(p=>e('span',{key:p.id,style:{fontSize:'0.72rem',padding:'2px 6px',borderRadius:3,background:p.color+'18',color:p.color}},p.nombre))
+                    )
+                  )
+                );
+              })
+            )
+          )
+        )
+      )
+    );
+  }
+
   // ── TABS ───────────────────────────────────────────────────────────────────
   const TABS=[
     {id:'comparacion',label:'📊 Precios'},
     {id:'mix',        label:'🏆 Mix óptimo'},
     {id:'escenarios', label:'💰 Ahorro'},
+    {id:'carrito',    label:'🛒 Pedidos'+(pedidos.length>0?' ('+pedidos.length+')':'')},
   ];
 
   return e('div',{className:'app'},
@@ -716,6 +935,7 @@ function App(){
     tab==='comparacion'&&renderComparacion(),
     tab==='mix'&&renderMix(),
     tab==='escenarios'&&renderEscenarios(),
+    tab==='carrito'&&renderCarrito(),
   );
 }
 
