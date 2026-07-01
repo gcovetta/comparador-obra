@@ -30,131 +30,131 @@
   html { font-size: 16px; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--c-bg); color: var(--c-text); min-height: 100vh; }
 
-  /* Layout — full width */
-  .app { max-width: 1400px; margin: 0 auto; padding: 0 0 100px; }
-  .hdr { background: linear-gradient(135deg, #0F1923 0%, #1A2535 100%); border-bottom: 1px solid #243044; padding: 1.8rem 2.5rem; }
-  .hdr h1 { font-size: 1.7rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
-  .hdr p  { font-size: 1rem; color: rgba(255,255,255,0.65); margin-top: 5px; }
-  .hdr-provs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
-  .hdr-prov { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.12); padding: 6px 14px; border-radius: 20px; }
-  .hdr-prov span { font-size: 0.95rem; color: #fff; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  /* Layout */
+  .app { max-width: 900px; margin: 0 auto; padding: 0 0 100px; }
+  .hdr { background: linear-gradient(135deg, #0F1923 0%, #1A2535 100%); border-bottom: 1px solid #243044; padding: 1.2rem 1rem; }
+  .hdr h1 { font-size: 1.15rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+  .hdr p  { font-size: 0.72rem; color: rgba(255,255,255,0.65); margin-top: 3px; }
+  .hdr-provs { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+  .hdr-prov { display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.12); padding: 3px 8px; border-radius: 20px; }
+  .hdr-prov span { font-size: 0.7rem; color: #fff; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
   /* Tabs */
   .tabs-wrap { position: sticky; top: 0; z-index: 100; background: #0F1923; border-bottom: 1px solid var(--c-border); }
-  .tabs { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; padding: 0 1.5rem; }
+  .tabs { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
   .tabs::-webkit-scrollbar { display: none; }
-  .tab-btn { flex-shrink: 0; padding: 16px 24px; border: none; background: transparent; font-size: 1rem; font-weight: 500; color: var(--c-text3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
+  .tab-btn { flex-shrink: 0; padding: 12px 14px; border: none; background: transparent; font-size: 0.78rem; font-weight: 500; color: var(--c-text3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
   .tab-btn.active { color: var(--c-green); border-bottom-color: var(--c-green); font-weight: 600; }
 
   /* Secciones */
-  .section { margin: 16px 2.5rem 0; }
-  .section-title { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--c-text3); padding: 10px 0 6px; }
+  .section { margin: 12px 10px 0; }
+  .section-title { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--c-text3); padding: 8px 0 4px; }
 
   /* Cards */
-  .card { background: var(--c-surface); border-radius: var(--radius); border: 1px solid var(--c-border); padding: 16px 18px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .card { background: var(--c-surface); border-radius: var(--radius); border: 1px solid var(--c-border); padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow); }
   .card.green  { border-color: var(--c-green); background: var(--c-green-bg); }
   .card.orange { border-color: #F59E0B; background: var(--c-orange-bg); }
   .card.red    { border-color: #FCA5A5; background: rgba(160,41,28,0.04); }
 
   /* Compras */
-  .compras-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
-  @media(max-width:900px){ .compras-grid { grid-template-columns: repeat(3, 1fr); } }
+  .compras-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
   @media(max-width:480px){ .compras-grid { grid-template-columns: repeat(2, 1fr); } }
-  .compra-card { background: var(--c-surface); border-radius: var(--radius-sm); border: 1.5px solid var(--c-border); padding: 12px 14px; }
-  .compra-card.activa { border-color: var(--accent-color, #4ADE80); }
-  .compra-nombre { font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-  .compra-monto { font-size: 1.15rem; font-weight: 700; margin-top: 4px; }
-  .compra-bar-wrap { height: 4px; background: var(--c-border); border-radius: 2px; margin-top: 7px; overflow: hidden; }
+  .compra-card { background: var(--c-surface); border-radius: var(--radius-sm); border: 1.5px solid var(--c-border); padding: 8px 10px; }
+  .compra-card.activa { border-color: var(--accent-color, #1B6B45); }
+  .compra-nombre { font-size: 0.72rem; font-weight: 600; }
+  .compra-monto { font-size: 1rem; font-weight: 700; margin-top: 2px; }
+  .compra-bar-wrap { height: 3px; background: var(--c-border); border-radius: 2px; margin-top: 5px; overflow: hidden; }
   .compra-bar { height: 100%; border-radius: 2px; }
-  .compra-pct { font-size: 0.78rem; color: var(--c-text3); margin-top: 3px; }
+  .compra-pct { font-size: 0.65rem; color: var(--c-text3); margin-top: 2px; }
 
-  /* Items — card por ítem */
-  .item-card { background: var(--c-surface); border-radius: var(--radius-sm); border: 1px solid var(--c-border); margin-bottom: 8px; overflow: hidden; }
-  .item-header { display: flex; justify-content: space-between; align-items: center; padding: 13px 16px; cursor: pointer; }
-  .item-nombre { font-size: 1rem; font-weight: 500; flex: 1; }
-  .item-winner { font-size: 0.85rem; font-weight: 600; padding: 3px 10px; border-radius: 4px; background: var(--c-green-bg); color: var(--c-green); flex-shrink: 0; margin-left: 10px; }
+  /* Items móvil — card por ítem */
+  .item-card { background: var(--c-surface); border-radius: var(--radius-sm); border: 1px solid var(--c-border); margin-bottom: 6px; overflow: hidden; }
+  .item-header { display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; cursor: pointer; }
+  .item-nombre { font-size: 0.82rem; font-weight: 500; flex: 1; }
+  .item-winner { font-size: 0.7rem; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--c-green-bg); color: var(--c-green); flex-shrink: 0; margin-left: 8px; }
   .item-body { border-top: 1px solid var(--c-border); }
-  .item-prov-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 0.5px solid var(--c-border); }
+  .item-prov-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 12px; border-bottom: 0.5px solid var(--c-border); }
   .item-prov-row:last-child { border-bottom: none; }
   .item-prov-row.winner { background: var(--c-green-bg); }
-  .item-prov-name { font-size: 0.92rem; display: flex; align-items: center; gap: 7px; }
+  .item-prov-name { font-size: 0.75rem; display: flex; align-items: center; gap: 5px; }
   .item-prov-right { text-align: right; }
-  .item-prov-total { font-size: 1rem; font-weight: 600; }
-  .item-prov-unit  { font-size: 0.82rem; color: var(--c-text3); }
-  .rank-chip { font-size: 0.75rem; padding: 2px 6px; border-radius: 3px; }
+  .item-prov-total { font-size: 0.82rem; font-weight: 600; }
+  .item-prov-unit  { font-size: 0.68rem; color: var(--c-text3); }
+  .rank-chip { font-size: 0.6rem; padding: 1px 4px; border-radius: 3px; }
   .rank-1 { background: var(--c-green-bg); color: var(--c-green); }
   .rank-2 { background: var(--c-accent-bg); color: var(--c-accent); }
-  .rank-n { background: rgba(255,255,255,0.06); color: var(--c-text3); }
-  .bragado-tag { font-size: 0.75rem; background: var(--c-orange-bg); color: var(--c-orange); padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+  .rank-n { background: rgba(0,0,0,0.06); color: var(--c-text3); }
+  .bragado-tag { font-size: 0.6rem; background: var(--c-orange-bg); color: var(--c-orange); padding: 1px 4px; border-radius: 3px; }
 
-  /* Categorías */
-  .cat-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px 6px; cursor: pointer; }
-  .cat-label { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--c-text2); }
-  .cat-toggle { font-size: 0.9rem; color: var(--c-text3); }
+  /* Subtotal categoría */
+  .cat-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 4px 4px; cursor: pointer; }
+  .cat-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--c-text2); }
+  .cat-toggle { font-size: 0.7rem; color: var(--c-text3); }
 
   /* Mix óptimo */
-  .prov-block { background: var(--c-surface); border-radius: var(--radius); border: 1px solid var(--c-border); margin-bottom: 12px; overflow: hidden; }
-  .prov-block-hdr { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--c-border); }
-  .prov-block-nombre { font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-  .prov-block-total  { font-size: 1.1rem; font-weight: 700; }
-  .mix-item-row { display: flex; justify-content: space-between; padding: 10px 20px; border-bottom: 0.5px solid var(--c-border); font-size: 0.95rem; }
+  .prov-block { background: var(--c-surface); border-radius: var(--radius); border: 1px solid var(--c-border); margin-bottom: 10px; overflow: hidden; }
+  .prov-block-hdr { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--c-border); }
+  .prov-block-nombre { font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+  .prov-block-total  { font-size: 0.9rem; font-weight: 700; }
+  .mix-item-row { display: flex; justify-content: space-between; padding: 7px 14px; border-bottom: 0.5px solid var(--c-border); font-size: 0.8rem; }
   .mix-item-row:last-child { border-bottom: none; }
   .mix-item-nombre { color: var(--c-text2); flex: 1; }
   .mix-item-right { text-align: right; }
-  .mix-item-total { font-weight: 600; font-size: 0.95rem; }
-  .mix-item-ahorro { font-size: 0.82rem; color: var(--c-green); }
+  .mix-item-total { font-weight: 600; }
+  .mix-item-ahorro { font-size: 0.68rem; color: var(--c-green); }
 
   /* Total box */
-  .total-box { background: var(--c-green-bg); border: 1.5px solid var(--c-green); border-radius: var(--radius); padding: 2rem; text-align: center; margin: 16px 0; }
-  .total-box-label { font-size: 0.88rem; color: var(--c-green); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-  .total-box-amount { font-size: 2.4rem; font-weight: 800; color: var(--c-green); letter-spacing: -0.03em; }
-  .total-box-sub { font-size: 0.92rem; color: var(--c-text3); margin-top: 6px; }
+  .total-box { background: var(--c-green-bg); border: 1.5px solid var(--c-green); border-radius: var(--radius); padding: 1.2rem; text-align: center; margin: 12px 0; }
+  .total-box-label { font-size: 0.72rem; color: var(--c-green); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .total-box-amount { font-size: 1.8rem; font-weight: 800; color: var(--c-green); letter-spacing: -0.03em; }
+  .total-box-sub { font-size: 0.75rem; color: var(--c-text3); margin-top: 4px; }
 
   /* Escenarios */
-  .esc-card { background: var(--c-surface); border-radius: var(--radius); border: 1px solid var(--c-border); margin-bottom: 10px; overflow: hidden; }
+  .esc-card { background: var(--c-surface); border-radius: var(--radius); border: 1px solid var(--c-border); margin-bottom: 8px; overflow: hidden; }
   .esc-card.best { border-color: var(--c-green); border-width: 2px; background: var(--c-green-bg); }
   .esc-card.base { border-color: #FCA5A5; }
-  .esc-hdr { display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 20px; cursor: pointer; gap: 12px; }
-  .esc-label { font-size: 1.05rem; font-weight: 700; }
-  .esc-sub   { font-size: 0.88rem; color: var(--c-text3); margin-top: 4px; }
+  .esc-hdr { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 14px; cursor: pointer; gap: 8px; }
+  .esc-label { font-size: 0.88rem; font-weight: 700; }
+  .esc-sub   { font-size: 0.7rem; color: var(--c-text3); margin-top: 2px; }
   .esc-right { text-align: right; flex-shrink: 0; }
-  .esc-total { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; }
-  .esc-pct   { font-size: 0.92rem; font-weight: 600; color: var(--c-green); }
-  .bar-wrap  { height: 8px; background: var(--c-bg); margin: 0 20px 12px; border-radius: 4px; overflow: hidden; }
-  .bar       { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
-  .esc-chips { display: flex; gap: 7px; flex-wrap: wrap; padding: 0 20px 12px; }
-  .chip { font-size: 0.85rem; padding: 4px 12px; border-radius: 4px; font-weight: 500; }
+  .esc-total { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; }
+  .esc-pct   { font-size: 0.75rem; font-weight: 600; color: var(--c-green); }
+  .bar-wrap  { height: 6px; background: var(--c-bg); margin: 0 14px 10px; border-radius: 3px; overflow: hidden; }
+  .bar       { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+  .esc-chips { display: flex; gap: 5px; flex-wrap: wrap; padding: 0 14px 10px; }
+  .chip { font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; font-weight: 500; }
   .chip-green  { background: var(--c-green-bg);  color: var(--c-green);  }
   .chip-blue   { background: var(--c-accent-bg); color: var(--c-accent); }
-  .chip-red    { background: rgba(248,113,113,0.12); color: var(--c-red); }
+  .chip-red    { background: rgba(160,41,28,0.08); color: var(--c-red); }
   .chip-orange { background: var(--c-orange-bg); color: var(--c-orange); }
-  .chip-grey   { background: rgba(255,255,255,0.07); color: var(--c-text3); }
-  .esc-provs   { display: flex; gap: 7px; flex-wrap: wrap; padding: 0 20px 16px; }
-  .prov-pill   { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 20px; font-size: 0.88rem; font-weight: 500; }
+  .chip-grey   { background: rgba(0,0,0,0.05); color: var(--c-text3); }
+  .esc-provs   { display: flex; gap: 5px; flex-wrap: wrap; padding: 0 14px 12px; }
+  .prov-pill   { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 500; }
 
-  /* Tabla resumen escenarios */
-  .resumen-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
-  .resumen-table th { padding: 12px 16px; text-align: right; border-bottom: 1px solid var(--c-border); font-weight: 600; color: var(--c-text3); font-size: 0.82rem; background: #131E2C; }
+  /* Escenarios tabla resumen */
+  .resumen-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .resumen-table th { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--c-border); font-weight: 600; color: var(--c-text3); font-size: 0.7rem; background: #131E2C; }
   .resumen-table th:first-child { text-align: left; }
-  .resumen-table td { padding: 12px 16px; border-bottom: 0.5px solid var(--c-border); text-align: right; }
+  .resumen-table td { padding: 8px 10px; border-bottom: 0.5px solid var(--c-border); text-align: right; }
   .resumen-table td:first-child { text-align: left; font-weight: 500; }
   .resumen-table tr.best-row { background: var(--c-green-bg); font-weight: 700; }
   .resumen-table tr.best-row td { color: var(--c-green); }
 
   /* Alertas */
-  .alerta { display: flex; gap: 10px; padding: 12px 16px; border-radius: var(--radius-sm); margin-bottom: 10px; font-size: 0.92rem; line-height: 1.5; }
-  .alerta.warn   { background: var(--c-orange-bg); border: 1px solid #F59E0B; color: var(--c-orange); }
+  .alerta { display: flex; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); margin-bottom: 8px; font-size: 0.75rem; }
+  .alerta.warn   { background: var(--c-orange-bg); border: 1px solid #F59E0B; color: #92400E; }
   .alerta.info   { background: var(--c-green-bg);  border: 1px solid var(--c-green); color: var(--c-green); }
-  .alerta.pend   { background: rgba(245,200,66,0.08); border: 1px solid #F59E0B; color: var(--c-orange); }
-  .alerta-icon   { flex-shrink: 0; font-size: 1rem; margin-top: 1px; }
+  .alerta.pend   { background: #FFF9C4; border: 1px solid #F59E0B; color: #92400E; }
+  .alerta-icon   { flex-shrink: 0; font-size: 0.9rem; }
 
   /* Input compra */
-  .compra-input { width: 100%; padding: 5px 8px; font-size: 1rem; font-weight: 700; border: 1.5px solid; border-radius: 4px; outline: none; background: transparent; color: inherit; }
+  .compra-input { width: 100%; padding: 4px 6px; font-size: 0.85rem; font-weight: 700; border: 1.5px solid; border-radius: 4px; outline: none; background: transparent; }
+  .compra-add-btn { margin-top: 5px; width: 100%; padding: 3px 0; font-size: 0.65rem; font-weight: 600; background: transparent; border: 1px dashed; border-radius: 4px; cursor: pointer; }
 
-  /* Pendiente */
-  .pend-tag { font-size: 0.78rem; background: rgba(245,200,66,0.12); color: var(--c-orange); padding: 2px 6px; border-radius: 3px; }
-  .consultar { font-size: 0.85rem; color: var(--c-orange); font-style: italic; }
+  /* Pendiente tag */
+  .pend-tag { font-size: 0.62rem; background: #FFF9C4; color: #92400E; padding: 1px 5px; border-radius: 3px; }
+  .consultar { font-size: 0.7rem; color: #92400E; font-style: italic; }
 </style>
 </head>
 <body>
@@ -166,13 +166,13 @@ const e = React.createElement;
 // ── DATOS ────────────────────────────────────────────────────────────────────
 
 const CATEGORIAS = [
-  { id:"hierros", nombre:"Hierros ✅ comprados a 7 Hnos", comprada:true, items:[
-    {id:"h6", nombre:"Hierro ø6",  cant:436, comprado:true},
-    {id:"h8", nombre:"Hierro ø8",  cant:59,  comprado:true},
-    {id:"h10",nombre:"Hierro ø10", cant:109, comprado:true},
-    {id:"h12",nombre:"Hierro ø12", cant:166, comprado:true},
-    {id:"h16",nombre:"Hierro ø16", cant:34,  comprado:true},
-    {id:"h20",nombre:"Hierro ø20", cant:6,   comprado:true},
+  { id:"hierros", nombre:"Hierros", items:[
+    {id:"h6", nombre:"Hierro ø6",  cant:436},
+    {id:"h8", nombre:"Hierro ø8",  cant:59},
+    {id:"h10",nombre:"Hierro ø10", cant:109},
+    {id:"h12",nombre:"Hierro ø12", cant:166},
+    {id:"h16",nombre:"Hierro ø16", cant:34},
+    {id:"h20",nombre:"Hierro ø20", cant:6},
   ]},
   { id:"viguetas", nombre:"Viguetas", items:[
     {id:"v180",nombre:"Vigueta 1,80 m",cant:6},
@@ -206,31 +206,26 @@ const CATEGORIAS = [
 
 const HIERROS_IDS = ["h6","h8","h10","h12","h16","h20"];
 
-// Proveedores activos en comparación
 const PROVEEDORES = [
   {id:"caeiro",    nombre:"Casa Caeiro",   color:"#185FA5", desc:10, nota:"–10% ef.",
    p:{h6:6450,h8:10900,h10:17250,h12:24650,h16:43300,h20:67700,v180:6300,v200:7000,v220:7700,v260:9100,v280:9800,v300:10500,v320:11100,v400:15700,v500:23900,v520:25700,ladrillo:3400,malla:50500,arena:38000,piedra:68250,cemento:7200}},
   {id:"dasilva",   nombre:"Da Silva",      color:"#B45000", desc:0,  nota:"neto",
    p:{h6:5730,h8:9350,h10:14750,h12:20700,h16:36300,h20:55930,v180:6745,v200:7490,v220:8030,v260:9490,v280:10220,v300:10950,v320:12720,v400:15900,v500:24800,v520:26100,ladrillo:5400,malla:49000,arena:35700,piedra:53300,cemento:6900,cano_cemento:38136,malla1525:61723,arena_bolson:42840,piedra_bolson:65520,clavos250:5292,clavos200:5292,alambre:5393}},
-  {id:"curtoni",   nombre:"Curtoni",       color:"#0369A1", desc:0,  nota:"–10% ef.",
+  {id:"lhhnos",    nombre:"LH Hnos",      color:"#6B21A8", desc:0,  nota:"–10% ef.",
+   p:{h6:6660,h12:23670,h16:41400,arena:45000,piedra:56790,cemento:7470,malla:54000,cano_cemento:37800,malla1525:54000,arena_bolson:41400,piedra_bolson:62100,clavos250:5040,clavos200:5040,alambre:4770},
+   pendientes:["h8","h10","h20","v180","v200","v220","v260","v280","v300","v320","v400","v500","v520","ladrillo"]},
+  {id:"curtoni",   nombre:"Curtoni",      color:"#0369A1", desc:0,  nota:"–10% ef.",
    p:{h6:5625,h8:9585,h10:14985,h12:21375,h16:36720,h20:57330,v200:7298,v220:8033,v260:9476,v280:10206,v300:10920,v320:11655,v400:16249,v500:25473,v520:27379,ladrillo:3400,malla:44550,cemento:6480,malla1525:40500,arena_bolson:36900,piedra_bolson:61200,clavos250:4950,clavos200:4950},
    pendientes:["v180","arena","piedra","cano_cemento","alambre"]},
-  {id:"shnos",     nombre:"7 Hnos",        color:"#047857", desc:0,  nota:"ef. efectivo",
+  {id:"shnos",     nombre:"7 Hnos",       color:"#047857", desc:0,  nota:"ef. Bragado", bragado:true,
    p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:9700,v280:10500,v300:11200,v400:16700,v500:25500,v520:27400,ladrillo:3000,malla:49000,arena:33000,piedra:54000,cemento:6800,cano_cemento:36400,malla1525:40000,arena_bolson:39000,clavos250:5500,clavos200:5500,alambre:5500},
    pendientes:["v320"]},
-  {id:"esperanza", nombre:"La Esperanza",  color:"#BE185D", desc:0,  nota:"ef. 22/06",
+  {id:"esperanza", nombre:"La Esperanza", color:"#BE185D", desc:0,  nota:"ef. 22/06",
    p:{h6:5037,h8:8583,h10:14245,h12:20390,h16:34660,h20:53000,v180:6380,v200:7779,v220:7800,v260:9200,v280:9830,v300:10600,v320:11300,v400:15405,v500:24200,v520:26000,ladrillo:2995,malla:43000,arena:35100,piedra:62553,cemento:6800,cano_cemento:34300,arena_bolson:41000,piedra_bolson:70000,clavos250:4300,clavos200:4300,alambre:4300},
    pendientes:["malla1525"]},
 ];
 
-// Proveedores ocultos — referencia histórica (no participan en el mix ni comparación activa)
-const PROVEEDORES_REF = [
-  {id:"lhhnos",   nombre:"LH Hnos",      color:"#6B21A8", oculto:true, motivo:"No gana en ningún ítem"},
-  {id:"curto",    nombre:"Curto Martins", color:"#555",    oculto:true, motivo:"Referencia de precio base"},
-];
-
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
-const ITEMS_ACTIVOS = TODOS_ITEMS.filter(i=>!i.comprado); // excluye hierros comprados
 const STORAGE_KEY = "comparador_obra_github_v1";
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
@@ -241,15 +236,12 @@ function isPend(prov,id){ return prov.pendientes&&prov.pendientes.includes(id); 
 function isBrag(pid,iid){ return pid==='shnos'&&HIERROS_IDS.includes(iid); }
 
 function rankingItem(itemId,cant){
-  // Si el ítem está comprado no participa en comparación
-  const item=TODOS_ITEMS.find(i=>i.id===itemId);
-  if(item?.comprado) return [];
   return PROVEEDORES.map(p=>{ const u=pu(p,itemId); return u&&u>0?{prov:p,u,total:u*cant}:null; }).filter(Boolean).sort((a,b)=>a.total-b.total);
 }
 
 function calcMix(){
   const mix={};let total=0;
-  ITEMS_ACTIVOS.forEach(item=>{
+  TODOS_ITEMS.forEach(item=>{
     const rank=rankingItem(item.id,item.cant);
     if(!rank.length)return;
     const g=rank[0],seg=rank[1]||null;
@@ -262,7 +254,7 @@ function calcMix(){
 
 function totalProv(provId){
   const prov=PROVEEDORES.find(p=>p.id===provId);
-  return ITEMS_ACTIVOS.reduce((a,i)=>{ const u=pu(prov,i.id); return a+(u&&u>0?u*i.cant:0); },0);
+  return TODOS_ITEMS.reduce((a,i)=>{ const u=pu(prov,i.id); return a+(u&&u>0?u*i.cant:0); },0);
 }
 
 function combis(arr,n){
@@ -276,7 +268,7 @@ function combis(arr,n){
 function calcSet(ids){
   const ps=PROVEEDORES.filter(p=>ids.includes(p.id));
   let total=0,cob=0,desglose={};
-  ITEMS_ACTIVOS.forEach(item=>{
+  TODOS_ITEMS.forEach(item=>{
     const ops=ps.map(p=>{const u=pu(p,item.id);return u&&u>0?{prov:p,u,t:u*item.cant}:null;}).filter(Boolean).sort((a,b)=>a.t-b.t);
     if(!ops.length)return;
     total+=ops[0].t; cob++;
@@ -290,49 +282,23 @@ function calcSet(ids){
 
 function bestN(n){
   const ids=PROVEEDORES.map(p=>p.id);
-  return combis(ids,n).map(s=>({s,...calcSet(s)})).filter(r=>r.cob===ITEMS_ACTIVOS.length).sort((a,b)=>a.total-b.total)[0];
+  return combis(ids,n).map(s=>({s,...calcSet(s)})).filter(r=>r.cob===TODOS_ITEMS.length).sort((a,b)=>a.total-b.total)[0];
 }
 
 // ── APP ───────────────────────────────────────────────────────────────────────
-const STORAGE_PEDIDOS = "comparador_obra_pedidos_v1";
-
-function calcMixPedido(itemsConCant){
-  // itemsConCant: [{id, nombre, cant}]
-  const mix={};let total=0;
-  itemsConCant.forEach(item=>{
-    if(!item.cant||item.cant<=0)return;
-    const ops=PROVEEDORES.map(p=>{const u=pu(p,item.id);return u&&u>0?{prov:p,u,t:u*item.cant}:null;}).filter(Boolean).sort((a,b)=>a.t-b.t);
-    if(!ops.length)return;
-    const g=ops[0],seg=ops[1]||null;
-    total+=g.t;
-    const pid=g.prov.id;
-    if(!mix[pid])mix[pid]={prov:g.prov,items:[],subtotal:0};
-    mix[pid].items.push({...item,u:g.u,total:g.t,seg});
-    mix[pid].subtotal+=g.t;
-  });
-  return{mix,total};
-}
-
 function App(){
   const [tab,setTab]=useState("comparacion");
   const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false});
   const [expandItem,setExpandItem]=useState({});
   const [expandEsc,setExpandEsc]=useState({});
-  const [compras,setCompras]=useState({caeiro:0,dasilva:5050000,curtoni:0,shnos:8712180,esperanza:0});
+  const [compras,setCompras]=useState({caeiro:0,dasilva:5500000,lhhnos:0,curtoni:0,shnos:0,esperanza:0});
   const [editCompra,setEditCompra]=useState(null);
+  const [addCompra,setAddCompra]=useState(null);
   const [guardado,setGuardado]=useState(false);
 
-  // ── Estado carrito / pedidos ──
-  const [pedidos,setPedidos]=useState([]); // [{id, nombre, items:{itemId:cant}, creado}]
-  const [pedidoActivo,setPedidoActivo]=useState(null); // id del pedido en edición
-  const [expandPedido,setExpandPedido]=useState({});
-  const [nuevoPedidoNombre,setNuevoPedidoNombre]=useState('');
-  const [mostrarFormPedido,setMostrarFormPedido]=useState(false);
-
-  // Cargar datos guardados
+  // Cargar compras guardadas
   useState(()=>{
     try{ const s=localStorage.getItem(STORAGE_KEY); if(s)setCompras(JSON.parse(s)); }catch(e){}
-    try{ const p=localStorage.getItem(STORAGE_PEDIDOS); if(p)setPedidos(JSON.parse(p)); }catch(e){}
   });
 
   function guardarCompras(nuevas){
@@ -342,39 +308,18 @@ function App(){
     const n={...compras,[id]:Number(String(val).replace(/\D/g,''))||0};
     setCompras(n); guardarCompras(n); setEditCompra(null);
   }
-
-  function guardarPedidos(nuevos){
-    try{ localStorage.setItem(STORAGE_PEDIDOS,JSON.stringify(nuevos)); }catch(e){}
-  }
-  function crearPedido(){
-    if(!nuevoPedidoNombre.trim())return;
-    const nuevo={id:'p_'+Date.now(), nombre:nuevoPedidoNombre.trim(), items:{}, creado:new Date().toLocaleDateString('es-AR')};
-    const nuevos=[...pedidos,nuevo];
-    setPedidos(nuevos); guardarPedidos(nuevos);
-    setPedidoActivo(nuevo.id);
-    setNuevoPedidoNombre(''); setMostrarFormPedido(false);
-    setTab('carrito');
-  }
-  function eliminarPedido(id){
-    const nuevos=pedidos.filter(p=>p.id!==id);
-    setPedidos(nuevos); guardarPedidos(nuevos);
-    if(pedidoActivo===id)setPedidoActivo(nuevos[0]?.id||null);
-  }
-  function actualizarCantItem(pedidoId,itemId,val){
-    const cant=Number(String(val).replace(/\D/g,''))||0;
-    const nuevos=pedidos.map(p=>p.id===pedidoId?{...p,items:{...p.items,[itemId]:cant}}:p);
-    setPedidos(nuevos); guardarPedidos(nuevos);
-  }
-  function usarCantObra(pedidoId,itemId,cantObra){
-    actualizarCantItem(pedidoId,itemId,cantObra);
-  }
-  function limpiarPedido(pedidoId){
-    const nuevos=pedidos.map(p=>p.id===pedidoId?{...p,items:{}}:p);
-    setPedidos(nuevos); guardarPedidos(nuevos);
+  function sumarCompra(id,val){
+    const monto=Number(String(val).replace(/\D/g,''))||0;
+    if(monto>0){
+      const n={...compras,[id]:(compras[id]||0)+monto};
+      setCompras(n); guardarCompras(n);
+    }
+    setAddCompra(null);
   }
 
   const {mix,total:totalMix}=useMemo(()=>calcMix(),[]);
   const totalComprado=Object.values(compras).reduce((a,b)=>a+b,0);
+
   const b1=useMemo(()=>bestN(1),[]);
   const b2=useMemo(()=>bestN(2),[]);
   const b3=useMemo(()=>bestN(3),[]);
@@ -382,10 +327,10 @@ function App(){
   const base=b1?.total||0;
 
   const ESCENARIOS=[
-    {n:1,label:"1 proveedor",    r:b1,  isBase:true},
-    {n:2,label:"2 proveedores",  r:b2},
-    {n:3,label:"3 proveedores",  r:b3},
-    {n:5,label:"Mix óptimo (5)", r:mixAll, isBest:true},
+    {n:1,label:"1 proveedor",     r:b1,  isBase:true},
+    {n:2,label:"2 proveedores",   r:b2},
+    {n:3,label:"3 proveedores",   r:b3},
+    {n:5,label:"Mix óptimo (6)",  r:mixAll, isBest:true},
   ];
 
   // ── RENDER COMPRAS ─────────────────────────────────────────────────────────
@@ -398,18 +343,24 @@ function App(){
           const pres=totalProv(p.id);
           const pct=pres>0?(c/pres*100):0;
           const isEdit=editCompra===p.id;
+          const isAdd=addCompra===p.id;
           return e('div',{key:p.id,className:'compra-card'+(c>0?' activa':''),style:{'--accent-color':p.color}},
             e('div',{className:'compra-nombre',style:{color:p.color}},
               e('span',{className:'dot',style:{background:p.color}}),
               ' '+p.nombre
             ),
             isEdit
-              ? e('input',{className:'compra-input',style:{borderColor:p.color,color:p.color},autoFocus:true,defaultValue:c||'',placeholder:'0',
+              ? e('input',{className:'compra-input',style:{borderColor:p.color,color:p.color},autoFocus:true,defaultValue:c||'',placeholder:'0',inputMode:'numeric',
                   onBlur:ev=>actualizarCompra(p.id,ev.target.value),
                   onKeyDown:ev=>{if(ev.key==='Enter')actualizarCompra(p.id,ev.target.value);if(ev.key==='Escape')setEditCompra(null);}})
               : e('div',{className:'compra-monto',style:{color:c>0?p.color:'#bbb',cursor:'pointer'},onClick:()=>setEditCompra(p.id)},
                   c>0?fmt(c):'—'
                 ),
+            isAdd
+              ? e('input',{className:'compra-input',style:{borderColor:p.color,color:p.color,marginTop:4},autoFocus:true,placeholder:'+ monto a sumar',inputMode:'numeric',
+                  onBlur:ev=>sumarCompra(p.id,ev.target.value),
+                  onKeyDown:ev=>{if(ev.key==='Enter')sumarCompra(p.id,ev.target.value);if(ev.key==='Escape')setAddCompra(null);}})
+              : !isEdit&&e('button',{className:'compra-add-btn',style:{color:p.color,borderColor:p.color+'55'},onClick:()=>setAddCompra(p.id)},'+ Sumar'),
             c>0&&e('div',null,
               e('div',{className:'compra-bar-wrap'},e('div',{className:'compra-bar',style:{width:Math.min(pct,100)+'%',background:p.color}})),
               e('div',{className:'compra-pct'},pct.toFixed(0)+'% · '+fmtM(pres))
@@ -417,11 +368,12 @@ function App(){
           );
         })
       ),
-      e('div',{style:{fontSize:'0.82rem',color:'var(--c-text3)',marginTop:8,textAlign:'center'}},
-        'Total comprado: '+fmt(totalComprado)+(guardado?' · ✓ Guardado':'') + ' · Tocá el monto para editar'
+      e('div',{style:{fontSize:'0.72rem',color:'var(--c-text3)',marginTop:6,textAlign:'center'}},
+        'Total comprado: '+fmt(totalComprado)+(guardado?' · ✓ Guardado':'') + ' · Tocá el monto para editar · + Sumar para agregar una compra'
       ),
       e('div',{className:'alerta warn',style:{marginTop:8}},
         e('span',{className:'alerta-icon'},'⚠️'),
+        e('span',null,'7 Hnos hierros = marca Bragado, no Acindar. Verificar con arquitecto/ingeniero.')
       )
     );
   }
@@ -432,34 +384,10 @@ function App(){
       ...CATEGORIAS.map(cat=>{
         const exp=expandCat[cat.id];
         const esH=cat.id==='hierros';
-
-        // Categoría comprada — mostrar como resumen, no como comparación
-        if(cat.comprada){
-          return e('div',{key:cat.id,className:'section'},
-            e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',border:'1px solid var(--c-green)',overflow:'hidden'}},
-              e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 18px',background:'var(--c-green-bg)'}},
-                e('div',{style:{display:'flex',alignItems:'center',gap:8}},
-                  e('span',{style:{fontSize:'1.1rem'}},'✅'),
-                  e('span',{style:{fontWeight:700,fontSize:'1rem',color:'var(--c-green)'}},cat.nombre)
-                ),
-                e('div',{style:{textAlign:'right'}},
-                  e('div',{style:{fontWeight:700,fontSize:'1rem',color:'var(--c-green)'}},fmt(8712180)),
-                  e('div',{style:{fontSize:'0.8rem',color:'var(--c-text3)',marginTop:2}},'Comprado a 7 Hnos')
-                )
-              ),
-              e('div',{style:{padding:'10px 18px'}},
-                e('div',{style:{display:'flex',flexWrap:'wrap',gap:6}},
-                  ...cat.items.map(item=>e('span',{key:item.id,style:{fontSize:'0.82rem',background:'rgba(255,255,255,0.05)',padding:'4px 10px',borderRadius:4,color:'var(--c-text2)'}},
-                    item.nombre+' ×'+item.cant
-                  ))
-                )
-              )
-            )
-          );
-        }
         return e('div',{key:cat.id,className:'section'},
           e('div',{className:'cat-header',onClick:()=>setExpandCat(x=>({...x,[cat.id]:!x[cat.id]}))},
             e('span',{className:'cat-label'},cat.nombre),
+            esH&&e('span',{style:{fontSize:'0.65rem',background:'var(--c-orange-bg)',color:'var(--c-orange)',padding:'2px 6px',borderRadius:4,marginLeft:6}},'⚠️ 7 Hnos = Bragado'),
             e('span',{className:'cat-toggle'},exp?'▲':'▼')
           ),
           exp&&e('div',null,
@@ -471,7 +399,7 @@ function App(){
                 e('div',{className:'item-header',onClick:()=>setExpandItem(x=>({...x,[item.id]:!x[item.id]}))},
                   e('span',{className:'item-nombre'},item.nombre+' ×'+item.cant),
                   ganador&&e('span',{className:'item-winner',style:{background:ganador.color+'18',color:ganador.color}},
-                    ganador.nombre
+                    ganador.nombre+(isBrag(ganador.id,item.id)?' ⚠️':'')
                   )
                 ),
                 isExpItem&&e('div',{className:'item-body'},
@@ -481,11 +409,12 @@ function App(){
                     const pos=rank.findIndex(r=>r.prov.id===p.id);
                     const isWin=pos===0&&t!==null;
                     const pend=isPend(p,item.id)&&!t;
-                    
+                    const brag=isBrag(p.id,item.id);
                     return e('div',{key:p.id,className:'item-prov-row'+(isWin?' winner':'')},
                       e('div',{className:'item-prov-name'},
                         e('span',{className:'dot',style:{background:p.color}}),
                         p.nombre,
+                        brag&&e('span',{className:'bragado-tag',style:{marginLeft:4}},'Bragado'),
                         pos>=0&&e('span',{className:'rank-chip '+(pos===0?'rank-1':pos===1?'rank-2':'rank-n'),style:{marginLeft:4}},pos+1+'°')
                       ),
                       pend
@@ -508,120 +437,24 @@ function App(){
   }
 
   // ── RENDER MIX ÓPTIMO ──────────────────────────────────────────────────────
-
-  // Tarjeta de pedido para Mix y Ahorro
-  function renderTarjetaPedido(ped){
-    const itemsConCant=ITEMS_ACTIVOS.filter(i=>ped.items[i.id]>0).map(i=>({...i,cant:ped.items[i.id]}));
-    if(!itemsConCant.length) return null;
-    const {mix:mixPed,total:totalPed}=calcMixPedido(itemsConCant);
-    if(!totalPed) return null;
-
-    // Escenarios del pedido
-    function calcSetPed(provIds){
-      const ps=PROVEEDORES.filter(p=>provIds.includes(p.id));
-      let total=0,cob=0;
-      itemsConCant.forEach(item=>{
-        const ops=ps.map(p=>{const u=pu(p,item.id);return u&&u>0?u*item.cant:null;}).filter(Boolean);
-        if(ops.length){total+=Math.min(...ops);cob++;}
-      });
-      return{total,cob};
-    }
-    function bestNPed(n){
-      const ids=PROVEEDORES.map(p=>p.id);
-      return combis(ids,n).map(s=>({s,...calcSetPed(s)})).filter(r=>r.cob===itemsConCant.length).sort((a,b)=>a.total-b.total)[0];
-    }
-    const bp1=bestNPed(1), bp2=bestNPed(2), bp3=bestNPed(3);
-    const basePed=bp1?.total||0;
-
-    return e('div',{key:ped.id,style:{background:'var(--c-surface)',border:'1px solid var(--c-border)',borderRadius:'var(--radius)',marginBottom:12,overflow:'hidden'}},
-      // Header tarjeta
-      e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 16px',background:'rgba(255,255,255,0.03)',borderBottom:'1px solid var(--c-border)'}},
-        e('div',{style:{display:'flex',alignItems:'center',gap:8}},
-          e('span',{style:{fontSize:'1.1rem'}},'🛒'),
-          e('div',null,
-            e('div',{style:{fontWeight:700,fontSize:'1rem'}},ped.nombre),
-            e('div',{style:{fontSize:'0.78rem',color:'var(--c-text3)',marginTop:1}},itemsConCant.length+' ítems · '+ped.creado)
-          )
-        ),
-        e('div',{style:{textAlign:'right'}},
-          e('div',{style:{fontSize:'1.2rem',fontWeight:800,color:'var(--c-green)'}},fmt(totalPed)),
-          e('div',{style:{fontSize:'0.78rem',color:'var(--c-text3)',marginTop:1}},'mix óptimo')
-        )
-      ),
-      // Bloques por proveedor
-      ...Object.values(mixPed).map(({prov,items,subtotal})=>
-        e('div',{key:prov.id,style:{borderLeft:'3px solid '+prov.color,margin:'8px 12px',paddingLeft:10}},
-          e('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:4}},
-            e('span',{style:{fontWeight:600,fontSize:'0.9rem',color:prov.color,display:'flex',alignItems:'center',gap:5}},
-              e('span',{className:'dot',style:{background:prov.color}}), prov.nombre
-            ),
-            e('span',{style:{fontWeight:600,fontSize:'0.9rem'}},fmt(subtotal))
-          ),
-          ...items.map((item,ii)=>e('div',{key:item.id,style:{display:'flex',justifyContent:'space-between',fontSize:'0.82rem',padding:'3px 0',borderTop:ii>0?'0.5px solid var(--c-border)':'none'}},
-            e('span',{style:{color:'var(--c-text2)'}},item.nombre+' ×'+item.cant),
-            e('div',{style:{textAlign:'right'}},
-              e('span',{style:{fontWeight:500}},fmt(item.total)),
-              item.seg&&item.seg.t>item.total&&e('span',{style:{fontSize:'0.72rem',color:'var(--c-green)',marginLeft:6}},'–'+fmt(item.seg.t-item.total))
-            )
-          ))
-        )
-      ),
-      // Tabla escenarios del pedido
-      e('div',{style:{margin:'10px 12px 12px'}},
-        e('div',{style:{fontSize:'0.75rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--c-text3)',marginBottom:6}},'Ahorro por nro. de proveedores'),
-        e('table',{className:'resumen-table'},
-          e('thead',null,e('tr',null,
-            e('th',null,'Escenario'),e('th',null,'Total'),e('th',null,'Ahorro vs 1'),e('th',null,'Delta'),
-          )),
-          e('tbody',null,
-            ...(()=>{
-              const rows=[
-                {label:'1 proveedor', val:bp1?.total, isBase:true},
-                {label:'2 proveedores',val:bp2?.total},
-                {label:'3 proveedores',val:bp3?.total},
-                {label:'Mix óptimo',  val:totalPed, isBest:true},
-              ];
-              // Filtrar con regla del 2%
-              const filtradas=[];
-              rows.forEach((row,idx)=>{
-                if(!row.val)return;
-                if(idx===0||row.isBest){filtradas.push({...row,idx});return;}
-                const prev=filtradas[filtradas.length-1]?.val;
-                const d=prev?((prev-row.val)/prev*100):0;
-                if(d>=2)filtradas.push({...row,idx});
-              });
-              return filtradas.map((row,fi)=>{
-                const prev=fi>0?filtradas[fi-1].val:null;
-                const ahorro=basePed-row.val;
-                const ahorroP=((ahorro/basePed)*100);
-                const deltaP=prev?((prev-row.val)/prev*100):null;
-                return e('tr',{key:row.label,className:row.isBest?'best-row':'',style:{background:row.isBase?'rgba(248,113,113,0.04)':'transparent'}},
-                  e('td',null,(row.isBest?'🏆 ':row.isBase?'📦 ':'')+row.label),
-                  e('td',null,fmt(row.val)),
-                  e('td',null,fi===0?'—':e('span',{style:{color:'var(--c-green)',fontWeight:600}},'–'+ahorroP.toFixed(1)+'%')),
-                  e('td',null,deltaP===null?e('span',{style:{color:'var(--c-text3)'}},'base'):e('span',{style:{color:'var(--c-green)',fontWeight:700}},'–'+deltaP.toFixed(1)+'%'))
-                );
-              });
-            })()
-          )
-        )
-      )
-    );
-  }
-
   function renderMix(){
-    const hayPedidos=pedidos.some(p=>Object.values(p.items).some(v=>v>0));
     return e('div',{className:'section'},
       e('div',{className:'alerta info'},
         e('span',{className:'alerta-icon'},'✓'),
         e('span',null,'Cada ítem al proveedor más barato. Cobertura 100%.')
       ),
+      e('div',{className:'alerta warn'},
+        e('span',{className:'alerta-icon'},'⚠️'),
+        e('span',null,'7 Hnos gana en hierros pero son Bragado. Confirmar equivalencia técnica.')
+      ),
       ...Object.values(mix).map(({prov,items,subtotal})=>{
+        const hasBrag=prov.id==='shnos'&&items.some(i=>HIERROS_IDS.includes(i.id));
         return e('div',{key:prov.id,className:'prov-block'},
           e('div',{className:'prov-block-hdr'},
             e('div',{className:'prov-block-nombre'},
               e('span',{className:'dot',style:{background:prov.color}}),
               e('span',{style:{color:prov.color}},prov.nombre),
+              hasBrag&&e('span',{className:'chip chip-orange',style:{fontSize:'0.65rem'}},'Bragado ⚠️'),
               compras[prov.id]>0&&e('span',{style:{fontSize:'0.7rem',fontWeight:400,color:'var(--c-text3)',marginLeft:4}},'🛒 '+fmt(compras[prov.id]))
             ),
             e('div',{className:'prov-block-total',style:{color:prov.color}},fmt(subtotal))
@@ -631,6 +464,7 @@ function App(){
             return e('div',{key:item.id,className:'mix-item-row',style:{background:idx%2===0?'transparent':'rgba(0,0,0,0.015)'}},
               e('div',{className:'mix-item-nombre'},
                 item.nombre,
+                isBrag(prov.id,item.id)&&e('span',{className:'bragado-tag',style:{marginLeft:4}},'⚠️'),
                 e('span',{style:{fontSize:'0.68rem',color:'var(--c-text3)',marginLeft:4}},'×'+item.cant)
               ),
               e('div',{className:'mix-item-right'},
@@ -643,130 +477,78 @@ function App(){
         );
       }),
       e('div',{className:'total-box'},
-        e('div',{className:'total-box-label'},'Total mix óptimo — obra completa'),
+        e('div',{className:'total-box-label'},'Total mix óptimo'),
         e('div',{className:'total-box-amount'},fmt(totalMix)),
         e('div',{className:'total-box-sub'},'Pendiente: '+fmt(totalMix-totalComprado)),
       ),
-      // Comparativa escenarios obra completa
+      // Comparativa escenarios
       e('div',{className:'section-title',style:{paddingTop:12}},'Comparativa todos los escenarios'),
       e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',overflow:'hidden',border:'1px solid var(--c-border)'}},
         e('table',{className:'resumen-table'},
           e('thead',null,e('tr',null,
-            e('th',null,'Escenario'),
-            e('th',null,'Total'),
-            e('th',null,'Ahorro vs 1 prov.'),
-            e('th',null,'Delta vs anterior'),
+            e('th',null,'Escenario'),e('th',null,'Total'),e('th',null,'Ahorro'),
           )),
           e('tbody',null,
-            ...(()=>{
-              const rows=[
-                {label:'Todo a 1 prov.',val:b1?.total,base:true},
-                {label:'Mejor dupla (2)',val:b2?.total},
-                {label:'Mejor trio (3)', val:b3?.total},
-                {label:'Mix óptimo (5)', val:totalMix,best:true},
-              ];
-              return rows.map((row,idx)=>{
-                if(!row.val)return null;
-                const prev=idx>0?rows[idx-1]?.val:null;
-                const deltaP=prev?((prev-row.val)/prev*100):null;
-                return e('tr',{key:idx,className:row.best?'best-row':''},
-                  e('td',null,(row.best?'🏆 ':'')+row.label),
-                  e('td',null,fmtM(row.val)),
-                  e('td',null,idx===0?'—':e('span',{style:{color:'var(--c-green)',fontWeight:600}},
-                    '–'+((b1.total-row.val)/b1.total*100).toFixed(1)+'%'
-                  )),
-                  e('td',null,
-                    deltaP===null
-                      ? e('span',{style:{color:'var(--c-text3)'}},'base')
-                      : deltaP>0
-                        ? e('div',null,
-                            e('span',{style:{color:'var(--c-green)',fontWeight:700,fontSize:'1rem'}},
-                              '–'+deltaP.toFixed(1)+'%'
-                            ),
-                            e('div',{style:{fontSize:'0.78rem',color:'var(--c-text3)',marginTop:2}},
-                              fmt(prev-row.val)+' menos'
-                            )
-                          )
-                        : e('span',{style:{color:'var(--c-text3)'}},'≈ igual')
-                  )
-                );
-              });
-            })()
+            ...([
+              {label:'Todo a 1 prov.',val:b1?.total,base:true},
+              {label:'Mejor dupla (2)',val:b2?.total},
+              {label:'Mejor trio (3)', val:b3?.total},
+              {label:'Mix óptimo (6)', val:totalMix,best:true},
+            ].map((row,idx)=>
+              row.val&&e('tr',{key:idx,className:row.best?'best-row':''},
+                e('td',null,(row.best?'🏆 ':'')+row.label),
+                e('td',null,fmtM(row.val)),
+                e('td',null,idx===0?'—':e('span',{style:{color:'var(--c-green)',fontWeight:600}},
+                  '–'+((b1.total-row.val)/b1.total*100).toFixed(1)+'%'
+                ))
+              )
+            ))
           )
         )
-      ),
-      // Tarjetas de pedidos guardados
-      hayPedidos&&e('div',null,
-        e('div',{style:{fontSize:'0.85rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--c-text3)',padding:'16px 0 8px',borderTop:'1px solid var(--c-border)',marginTop:16}},'Mix por pedido guardado'),
-        ...pedidos.filter(p=>Object.values(p.items).some(v=>v>0)).map(renderTarjetaPedido)
       )
     );
   }
+
   // ── RENDER ESCENARIOS ──────────────────────────────────────────────────────
   function renderEscenarios(){
-    const DELTA_MIN = 2.0; // % mínimo para mostrar un escenario adicional
-
-    // Filtrar escenarios: mostrar solo los que mejoran más del 2% vs el anterior
-    const escsFiltrados = [];
-    ESCENARIOS.forEach((esc,idx)=>{
-      if(!esc.r) return;
-      if(idx===0||esc.isBest){ escsFiltrados.push({...esc,idx}); return; } // siempre mostrar base y mix óptimo
-      const prev = escsFiltrados[escsFiltrados.length-1]?.r?.total;
-      const deltaP = prev ? ((prev-esc.r.total)/prev*100) : 0;
-      if(deltaP >= DELTA_MIN) escsFiltrados.push({...esc,idx});
-    });
-
-    // Escenarios que se saltearon
-    const saltados = ESCENARIOS.filter((esc,idx)=>{
-      if(!esc.r||idx===0||esc.isBest) return false;
-      return !escsFiltrados.find(e=>e.n===esc.n);
-    });
-
     return e('div',{className:'section'},
-      e('div',{style:{fontSize:'0.9rem',color:'var(--c-text2)',marginBottom:12,lineHeight:1.6}},
-        'Cuánto ahorrás sumando proveedores. Solo se muestran escenarios donde la mejora supera el ',
-        e('strong',{style:{color:'var(--c-orange'}},'2%'),
-        ' — por debajo no justifica la logística extra.'
+      e('div',{style:{fontSize:'0.8rem',color:'var(--c-text2)',marginBottom:10,lineHeight:1.5}},
+        'Cuánto ahorrás sumando proveedores vs comprarle todo a uno solo. Tocá para ver el desglose.'
       ),
-      // Alerta escenarios descartados
-      saltados.length>0&&e('div',{className:'alerta pend',style:{marginBottom:12}},
-        e('span',{className:'alerta-icon'},'ℹ️'),
-        e('span',null,
-          'Se omitió',saltados.length>1?' ron':' el',': ',
-          saltados.map(s=>e('strong',{key:s.n},s.label)).reduce((a,b)=>[a,', ',b]),
-          ' — la mejora vs el escenario anterior es menor al 2%, no justifica agregar un proveedor más.'
-        )
-      ),
-      ...escsFiltrados.map((esc,idx)=>{
+      ...ESCENARIOS.map((esc,idx)=>{
+        if(!esc.r)return null;
         const ahorro=base-esc.r.total;
         const ahorroP=((ahorro/base)*100);
-        const prev=idx>0?escsFiltrados[idx-1].r?.total:null;
+        const prev=idx>0?ESCENARIOS[idx-1].r?.total:null;
         const adicional=prev?prev-esc.r.total:0;
         const adicionalP=prev&&idx>0?((adicional/prev)*100):0;
         const barW=(esc.r.total/base*100);
+        const hasBrag=esc.r.s.includes('shnos');
         const isExp=expandEsc[esc.n];
 
-        return e('div',{key:esc.n,className:'esc-card'+(esc.isBest?' best':idx===0?' base':'')},
+        return e('div',{key:esc.n,className:'esc-card'+(esc.isBest?' best':esc.isBase?' base':'')},
           e('div',{className:'esc-hdr',onClick:()=>setExpandEsc(x=>({...x,[esc.n]:!x[esc.n]}))},
             e('div',null,
-              e('div',{className:'esc-label',style:{color:esc.isBest?'var(--c-green)':idx===0?'var(--c-red)':'var(--c-text)'}},
-                (esc.isBest?'🏆 ':idx===0?'📦 ':'')+esc.label
+              e('div',{className:'esc-label',style:{color:esc.isBest?'var(--c-green)':esc.isBase?'var(--c-red)':'var(--c-text)'}},
+                (esc.isBest?'🏆 ':esc.isBase?'📦 ':'')+esc.label
               ),
               e('div',{className:'esc-sub'},esc.r.s.map(id=>PROVEEDORES.find(p=>p.id===id).nombre).join(' · '))
             ),
             e('div',{className:'esc-right'},
               e('div',{className:'esc-total',style:{color:esc.isBest?'var(--c-green)':'inherit'}},fmtM(esc.r.total)),
               idx>0&&e('div',{className:'esc-pct'},'–'+ahorroP.toFixed(1)+'% vs 1 prov.'),
-              e('span',{style:{fontSize:'0.8rem',color:'var(--c-text3)'}},isExp?'▲':'▼')
+              e('span',{style:{fontSize:'0.7rem',color:'var(--c-text3)'}},isExp?'▲':'▼')
             )
           ),
           e('div',{className:'bar-wrap'},
-            e('div',{className:'bar',style:{width:barW+'%',background:esc.isBest?'var(--c-green)':idx===0?'var(--c-red)':'var(--c-accent)'}})
+            e('div',{className:'bar',style:{width:barW+'%',background:esc.isBest?'var(--c-green)':esc.isBase?'var(--c-red)':'var(--c-accent)'}})
           ),
           e('div',{className:'esc-chips'},
-            idx===0&&e('span',{className:'chip chip-red'},'Costo más alto'),
+            esc.isBase&&e('span',{className:'chip chip-red'},'Costo más alto'),
             idx>0&&e('span',{className:'chip chip-green'},'Ahorrás '+fmt(ahorro)+' (–'+ahorroP.toFixed(1)+'%)'),
-            idx>0&&adicionalP>=DELTA_MIN&&e('span',{className:'chip chip-blue'},'–'+adicionalP.toFixed(1)+'% vs escenario anterior · '+fmt(adicional)+' menos'),
+            idx>1&&adicional>5000&&e('span',{className:'chip chip-blue'},'+'+fmt(adicional)+' adicional (–'+adicionalP.toFixed(1)+'%)'),
+            idx>1&&adicional<=5000&&e('span',{className:'chip chip-grey'},'Mejora mínima'),
+            hasBrag&&e('span',{className:'chip chip-orange'},'⚠️ Bragado')
           ),
           e('div',{className:'esc-provs'},
             ...esc.r.s.map(id=>{
@@ -776,13 +558,14 @@ function App(){
               );
             })
           ),
+          // Desglose expandido
           isExp&&e('div',{style:{borderTop:'1px solid var(--c-border)'}},
             ...Object.values(esc.r.desglose).map(({prov,items,subtotal})=>
               e('div',{key:prov.id,style:{borderLeft:'3px solid '+prov.color,margin:'8px 10px',paddingLeft:10}},
-                e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,fontSize:'0.9rem',color:prov.color}},
+                e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,fontSize:'0.82rem',color:prov.color}},
                   e('span',null,prov.nombre),e('span',null,fmt(subtotal))
                 ),
-                ...items.map((item,ii)=>e('div',{key:item.id,style:{display:'flex',justifyContent:'space-between',padding:'5px 0',fontSize:'0.85rem',borderTop:ii>0?'0.5px solid var(--c-border)':'none'}},
+                ...items.map((item,ii)=>e('div',{key:item.id,style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontSize:'0.75rem',borderTop:ii>0?'0.5px solid var(--c-border)':'none'}},
                   e('span',{style:{color:'var(--c-text2)'}},item.nombre+' ×'+item.cant),
                   e('span',{style:{fontWeight:600}},fmt(item.total))
                 ))
@@ -791,208 +574,7 @@ function App(){
             e('div',{style:{height:8}})
           )
         );
-      }),
-
-      // Tabla resumen — también filtrada
-      e('div',{className:'section-title',style:{paddingTop:16}},'Resumen'),
-      e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',overflow:'hidden',border:'1px solid var(--c-border)'}},
-        e('table',{className:'resumen-table'},
-          e('thead',null,e('tr',null,
-            e('th',null,'Escenario'),
-            e('th',null,'Total'),
-            e('th',null,'Ahorro vs 1 prov.'),
-            e('th',null,'Delta vs anterior'),
-          )),
-          e('tbody',null,
-            ...escsFiltrados.map((esc,idx)=>{
-              const prev=idx>0?escsFiltrados[idx-1].r?.total:null;
-              const deltaP=prev?((prev-esc.r.total)/prev*100):null;
-              return e('tr',{key:esc.n,className:esc.isBest?'best-row':''},
-                e('td',null,(esc.isBest?'🏆 ':idx===0?'📦 ':'')+esc.label),
-                e('td',null,fmtM(esc.r.total)),
-                e('td',null,idx===0?'—':e('span',{style:{color:'var(--c-green)',fontWeight:600}},
-                  '–'+((base-esc.r.total)/base*100).toFixed(1)+'%'
-                )),
-                e('td',null,
-                  deltaP===null
-                    ? e('span',{style:{color:'var(--c-text3)'}},'base')
-                    : e('div',null,
-                        e('span',{style:{color:'var(--c-green)',fontWeight:700,fontSize:'1rem'}},'–'+deltaP.toFixed(1)+'%'),
-                        e('div',{style:{fontSize:'0.78rem',color:'var(--c-text3)',marginTop:2}},fmt(prev-esc.r.total)+' menos')
-                      )
-                )
-              );
-            })
-          )
-        )
-      ),
-      // Tarjetas de pedidos guardados
-      pedidos.some(p=>Object.values(p.items).some(v=>v>0))&&e('div',null,
-        e('div',{style:{fontSize:'0.85rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--c-text3)',padding:'16px 0 8px',borderTop:'1px solid var(--c-border)',marginTop:16}},'Ahorro por pedido guardado'),
-        ...pedidos.filter(p=>Object.values(p.items).some(v=>v>0)).map(renderTarjetaPedido)
-      )
-    );
-  }
-
-  // ── RENDER CARRITO ─────────────────────────────────────────────────────────
-  function renderCarrito(){
-    const pedidoSel = pedidos.find(p=>p.id===pedidoActivo);
-
-    return e('div',{className:'section'},
-
-      // Barra superior — lista de pedidos + nuevo
-      e('div',{style:{display:'flex',gap:8,flexWrap:'wrap',alignItems:'center',marginBottom:16}},
-        ...pedidos.map(p=>e('button',{key:p.id,
-          onClick:()=>setPedidoActivo(p.id),
-          style:{padding:'7px 16px',border:'1.5px solid '+(p.id===pedidoActivo?'var(--c-green)':'var(--c-border)'),borderRadius:20,background:p.id===pedidoActivo?'var(--c-green-bg)':'transparent',color:p.id===pedidoActivo?'var(--c-green)':'var(--c-text2)',fontWeight:p.id===pedidoActivo?700:400,cursor:'pointer',fontSize:'0.9rem',display:'flex',alignItems:'center',gap:6}},
-          p.nombre,
-          e('span',{style:{fontSize:'0.75rem',color:'var(--c-text3)',marginLeft:2}},
-            Object.values(p.items).filter(v=>v>0).length+' ítems'
-          )
-        )),
-        mostrarFormPedido
-          ? e('div',{style:{display:'flex',gap:6,alignItems:'center'}},
-              e('input',{autoFocus:true,value:nuevoPedidoNombre,onChange:ev=>setNuevoPedidoNombre(ev.target.value),
-                placeholder:'Nombre del pedido...',
-                onKeyDown:ev=>{if(ev.key==='Enter')crearPedido();if(ev.key==='Escape')setMostrarFormPedido(false);},
-                style:{padding:'7px 12px',border:'1.5px solid var(--c-green)',borderRadius:8,background:'var(--c-surface)',color:'var(--c-text)',fontSize:'0.9rem',outline:'none',width:200}}),
-              e('button',{onClick:crearPedido,style:{padding:'7px 14px',background:'var(--c-green)',color:'#000',border:'none',borderRadius:8,fontWeight:600,cursor:'pointer',fontSize:'0.9rem'}},'Crear'),
-              e('button',{onClick:()=>setMostrarFormPedido(false),style:{padding:'7px 10px',background:'transparent',color:'var(--c-text3)',border:'1px solid var(--c-border)',borderRadius:8,cursor:'pointer',fontSize:'0.9rem'}},'✕')
-            )
-          : e('button',{onClick:()=>setMostrarFormPedido(true),
-              style:{padding:'7px 16px',border:'1.5px dashed var(--c-border)',borderRadius:20,background:'transparent',color:'var(--c-text3)',cursor:'pointer',fontSize:'0.9rem'}},
-              '+ Nuevo pedido'
-            )
-      ),
-
-      // Estado vacío
-      !pedidoSel&&e('div',{style:{textAlign:'center',padding:'3rem',color:'var(--c-text3)'}},
-        e('div',{style:{fontSize:'2rem',marginBottom:8}},'🛒'),
-        e('div',{style:{fontSize:'1rem',marginBottom:4}},'No hay pedidos todavía'),
-        e('div',{style:{fontSize:'0.88rem'}},'Creá un pedido nuevo para empezar'),
-      ),
-
-      // Pedido seleccionado
-      pedidoSel&&e('div',null,
-
-        // Header del pedido
-        e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}},
-          e('div',null,
-            e('div',{style:{fontSize:'1.1rem',fontWeight:700}},pedidoSel.nombre),
-            e('div',{style:{fontSize:'0.82rem',color:'var(--c-text3)',marginTop:2}},'Creado: '+pedidoSel.creado),
-          ),
-          e('div',{style:{display:'flex',gap:8}},
-            e('button',{onClick:()=>limpiarPedido(pedidoSel.id),style:{padding:'6px 12px',border:'1px solid var(--c-border)',borderRadius:6,background:'transparent',color:'var(--c-text3)',cursor:'pointer',fontSize:'0.82rem'}},'Limpiar'),
-            e('button',{onClick:()=>eliminarPedido(pedidoSel.id),style:{padding:'6px 12px',border:'1px solid #F87171',borderRadius:6,background:'rgba(248,113,113,0.08)',color:'#F87171',cursor:'pointer',fontSize:'0.82rem'}},'Eliminar')
-          )
-        ),
-
-        // Lista de ítems agrupados por categoría
-        ...CATEGORIAS.map(cat=>e('div',{key:cat.id,style:{marginBottom:12}},
-          e('div',{style:{fontSize:'0.78rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.06em',color:'var(--c-text3)',padding:'6px 0 4px',borderBottom:'1px solid var(--c-border)',marginBottom:4}},
-            cat.nombre
-          ),
-          ...cat.items.filter(i=>!i.comprado).map(item=>{
-            const cantActual=pedidoSel.items[item.id]||0;
-            // mejor precio para esta cant
-            const mejorU=cantActual>0?PROVEEDORES.map(p=>{const u=pu(p,item.id);return u&&u>0?u:null;}).filter(Boolean).reduce((a,b)=>Math.min(a,b),Infinity):0;
-            const mejorTotal=cantActual>0&&mejorU<Infinity?mejorU*cantActual:0;
-            return e('div',{key:item.id,style:{display:'flex',alignItems:'center',gap:8,padding:'8px 4px',borderBottom:'0.5px solid var(--c-border)'}},
-              // Nombre
-              e('div',{style:{flex:1,fontSize:'0.9rem'}},item.nombre),
-              // Botón "cant. obra"
-              e('button',{
-                onClick:()=>usarCantObra(pedidoSel.id,item.id,item.cant),
-                title:'Usar cantidad total de obra ('+item.cant+')',
-                style:{padding:'4px 8px',background:'var(--c-accent-bg)',color:'var(--c-accent)',border:'none',borderRadius:4,cursor:'pointer',fontSize:'0.75rem',flexShrink:0}},
-                '×'+item.cant
-              ),
-              // Input cantidad
-              e('input',{
-                type:'number',min:0,
-                value:cantActual||'',
-                placeholder:'0',
-                onChange:ev=>actualizarCantItem(pedidoSel.id,item.id,ev.target.value),
-                style:{width:80,padding:'5px 8px',border:'1.5px solid '+(cantActual>0?'var(--c-green)':'var(--c-border)'),borderRadius:6,background:'var(--c-surface)',color:'var(--c-text)',fontSize:'0.9rem',textAlign:'right',outline:'none'}}),
-              // Total al mejor precio
-              e('div',{style:{width:110,textAlign:'right',fontSize:'0.88rem',fontWeight:cantActual>0?600:400,color:cantActual>0?'var(--c-green)':'var(--c-text3)'}},
-                cantActual>0&&mejorTotal>0?fmt(mejorTotal):'—'
-              )
-            );
-          })
-        )),
-
-        // Resumen y mix del pedido
-        (()=>{
-          const itemsConCant=ITEMS_ACTIVOS.filter(i=>pedidoSel.items[i.id]>0).map(i=>({...i,cant:pedidoSel.items[i.id]}));
-          if(!itemsConCant.length) return e('div',{style:{textAlign:'center',padding:'1.5rem',color:'var(--c-text3)',fontSize:'0.9rem'}},'Cargá cantidades para ver el mix óptimo');
-          const {mix:mixPed,total:totalPed}=calcMixPedido(itemsConCant);
-
-          return e('div',{style:{marginTop:16}},
-            e('div',{style:{fontSize:'0.85rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--c-text3)',marginBottom:8}},'Mix óptimo para este pedido'),
-
-            ...Object.values(mixPed).map(({prov,items,subtotal})=>
-              e('div',{key:prov.id,style:{background:'var(--c-surface)',borderRadius:'10px',border:'1px solid var(--c-border)',marginBottom:8,overflow:'hidden',borderLeft:'3px solid '+prov.color}},
-                e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 14px',borderBottom:'1px solid var(--c-border)'}},
-                  e('span',{style:{fontWeight:700,color:prov.color,fontSize:'0.95rem',display:'flex',alignItems:'center',gap:6}},
-                    e('span',{className:'dot',style:{background:prov.color}}),prov.nombre
-                  ),
-                  e('span',{style:{fontWeight:700,fontSize:'0.95rem'}},fmt(subtotal))
-                ),
-                ...items.map((item,idx)=>{
-                  const ahorro=item.seg?item.seg.t-item.total:null;
-                  return e('div',{key:item.id,style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 14px',borderBottom:idx<items.length-1?'0.5px solid var(--c-border)':'none',background:idx%2===0?'transparent':'rgba(255,255,255,0.02)'}},
-                    e('span',{style:{fontSize:'0.88rem',color:'var(--c-text2)'}},item.nombre+' ×'+item.cant),
-                    e('div',{style:{textAlign:'right'}},
-                      e('div',{style:{fontSize:'0.88rem',fontWeight:600}},fmt(item.total)),
-                      ahorro&&ahorro>0&&e('div',{style:{fontSize:'0.75rem',color:'var(--c-green)'}},'ahorra '+fmt(ahorro)+' vs '+item.seg.prov.nombre)
-                    )
-                  );
-                })
-              )
-            ),
-
-            e('div',{style:{background:'var(--c-green-bg)',border:'1.5px solid var(--c-green)',borderRadius:10,padding:'1.2rem',textAlign:'center',marginTop:8}},
-              e('div',{style:{fontSize:'0.8rem',color:'var(--c-green)',fontWeight:600,marginBottom:4}},'TOTAL PEDIDO — MIX ÓPTIMO'),
-              e('div',{style:{fontSize:'2rem',fontWeight:800,color:'var(--c-green)',letterSpacing:'-0.03em'}},fmt(totalPed))
-            )
-          );
-        })()
-      ),
-
-      // Comparación entre todos los pedidos
-      pedidos.length>1&&e('div',{style:{marginTop:24}},
-        e('div',{style:{fontSize:'0.85rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--c-text3)',marginBottom:8}},'Comparación entre pedidos'),
-        e('div',{style:{background:'var(--c-surface)',borderRadius:10,overflow:'hidden',border:'1px solid var(--c-border)'}},
-          e('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:'0.9rem'}},
-            e('thead',null,e('tr',null,
-              e('th',{style:{textAlign:'left',padding:'10px 14px',borderBottom:'1px solid var(--c-border)',color:'var(--c-text3)',fontSize:'0.8rem',fontWeight:600,background:'#131E2C'}},'Pedido'),
-              e('th',{style:{textAlign:'right',padding:'10px 14px',borderBottom:'1px solid var(--c-border)',color:'var(--c-text3)',fontSize:'0.8rem',fontWeight:600,background:'#131E2C'}},'Ítems'),
-              e('th',{style:{textAlign:'right',padding:'10px 14px',borderBottom:'1px solid var(--c-border)',color:'var(--c-text3)',fontSize:'0.8rem',fontWeight:600,background:'#131E2C'}},'Total mix óptimo'),
-              e('th',{style:{textAlign:'right',padding:'10px 14px',borderBottom:'1px solid var(--c-border)',color:'var(--c-text3)',fontSize:'0.8rem',fontWeight:600,background:'#131E2C'}},'Proveedores'),
-            )),
-            e('tbody',null,
-              ...pedidos.map((ped,idx)=>{
-                const itemsConCant=ITEMS_ACTIVOS.filter(i=>ped.items[i.id]>0).map(i=>({...i,cant:ped.items[i.id]}));
-                const {mix:mp,total:tp}=calcMixPedido(itemsConCant);
-                const provs=Object.values(mp).map(x=>x.prov);
-                return e('tr',{key:ped.id,style:{background:ped.id===pedidoActivo?'var(--c-green-bg)':idx%2===0?'transparent':'rgba(255,255,255,0.02)',cursor:'pointer'},onClick:()=>setPedidoActivo(ped.id)},
-                  e('td',{style:{padding:'10px 14px',fontWeight:ped.id===pedidoActivo?700:400,color:ped.id===pedidoActivo?'var(--c-green)':'var(--c-text)',borderBottom:'0.5px solid var(--c-border)'}},
-                    (ped.id===pedidoActivo?'▶ ':'')+ped.nombre
-                  ),
-                  e('td',{style:{padding:'10px 14px',textAlign:'right',color:'var(--c-text3)',borderBottom:'0.5px solid var(--c-border)'}},itemsConCant.length),
-                  e('td',{style:{padding:'10px 14px',textAlign:'right',fontWeight:600,color:tp>0?'var(--c-green)':'var(--c-text3)',borderBottom:'0.5px solid var(--c-border)'}},tp>0?fmt(tp):'—'),
-                  e('td',{style:{padding:'10px 14px',textAlign:'right',borderBottom:'0.5px solid var(--c-border)'}},
-                    e('div',{style:{display:'flex',justifyContent:'flex-end',gap:4,flexWrap:'wrap'}},
-                      ...provs.map(p=>e('span',{key:p.id,style:{fontSize:'0.72rem',padding:'2px 6px',borderRadius:3,background:p.color+'18',color:p.color}},p.nombre))
-                    )
-                  )
-                );
-              })
-            )
-          )
-        )
-      )
+      })
     );
   }
 
@@ -1001,22 +583,17 @@ function App(){
     {id:'comparacion',label:'📊 Precios'},
     {id:'mix',        label:'🏆 Mix óptimo'},
     {id:'escenarios', label:'💰 Ahorro'},
-    {id:'carrito',    label:'🛒 Pedidos'+(pedidos.length>0?' ('+pedidos.length+')':'')},
   ];
 
   return e('div',{className:'app'},
     // Header
     e('div',{className:'hdr'},
       e('h1',null,'🏗 Comparador de Obra'),
-      e('p',null,'Cañuelas, Buenos Aires · 5 proveedores activos · actualizado 22/06/2026'),
+      e('p',null,'Cañuelas, Buenos Aires · 6 proveedores · actualizado 22/06/2026'),
       e('div',{className:'hdr-provs'},
         ...PROVEEDORES.map(p=>e('div',{key:p.id,className:'hdr-prov'},
           e('span',{className:'dot',style:{background:p.color}}),
-          e('span',null,p.nombre)
-        )),
-        ...PROVEEDORES_REF.map(p=>e('div',{key:p.id,className:'hdr-prov',style:{opacity:0.35,border:'1px dashed rgba(255,255,255,0.2)'}},
-          e('span',{className:'dot',style:{background:p.color}}),
-          e('span',{style:{textDecoration:'line-through'}},p.nombre)
+          e('span',null,p.nombre+(p.bragado?' ⚠️':''))
         ))
       )
     ),
@@ -1034,7 +611,6 @@ function App(){
     tab==='comparacion'&&renderComparacion(),
     tab==='mix'&&renderMix(),
     tab==='escenarios'&&renderEscenarios(),
-    tab==='carrito'&&renderCarrito(),
   );
 }
 
