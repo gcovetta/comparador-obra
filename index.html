@@ -36,8 +36,10 @@
   .hdr h1 { font-size: 1.15rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
   .hdr p  { font-size: 0.72rem; color: rgba(255,255,255,0.65); margin-top: 3px; }
   .hdr-provs { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
-  .hdr-prov { display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.12); padding: 3px 8px; border-radius: 20px; }
+  .hdr-prov { display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.12); padding: 3px 8px; border-radius: 20px; border: none; cursor: pointer; font-family: inherit; }
   .hdr-prov span { font-size: 0.7rem; color: #fff; }
+  .hdr-prov.off { background: rgba(255,255,255,0.05); }
+  .hdr-prov.off span { color: rgba(255,255,255,0.4); text-decoration: line-through; }
   .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
   /* Tabs */
@@ -85,12 +87,12 @@
   .rank-1 { background: var(--c-green-bg); color: var(--c-green); }
   .rank-2 { background: var(--c-accent-bg); color: var(--c-accent); }
   .rank-n { background: rgba(0,0,0,0.06); color: var(--c-text3); }
-  .bragado-tag { font-size: 0.6rem; background: var(--c-orange-bg); color: var(--c-orange); padding: 1px 4px; border-radius: 3px; }
 
   /* Subtotal categoría */
   .cat-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 4px 4px; cursor: pointer; }
   .cat-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--c-text2); }
   .cat-toggle { font-size: 0.7rem; color: var(--c-text3); }
+  .cat-toggle-btn { font-size: 0.62rem; font-weight: 600; background: transparent; border: 1px solid var(--c-border2); color: var(--c-text3); border-radius: 4px; padding: 3px 8px; cursor: pointer; font-family: inherit; }
 
   /* Mix óptimo */
   .prov-block { background: var(--c-surface); border-radius: var(--radius); border: 1px solid var(--c-border); margin-bottom: 10px; overflow: hidden; }
@@ -217,7 +219,7 @@ const PROVEEDORES = [
   {id:"curtoni",   nombre:"Curtoni",      color:"#0369A1", desc:0,  nota:"–10% ef.",
    p:{h6:5625,h8:9585,h10:14985,h12:21375,h16:36720,h20:57330,v200:7298,v220:8033,v260:9476,v280:10206,v300:10920,v320:11655,v400:16249,v500:25473,v520:27379,ladrillo:3400,malla:44550,cemento:6480,malla1525:40500,arena_bolson:36900,piedra_bolson:61200,clavos250:4950,clavos200:4950},
    pendientes:["v180","arena","piedra","cano_cemento","alambre"]},
-  {id:"shnos",     nombre:"7 Hnos",       color:"#047857", desc:0,  nota:"ef. Bragado", bragado:true,
+  {id:"shnos",     nombre:"7 Hnos",       color:"#047857", desc:0,  nota:"ef.",
    p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:9700,v280:10500,v300:11200,v400:16700,v500:25500,v520:27400,ladrillo:3000,malla:49000,arena:33000,piedra:54000,cemento:6800,cano_cemento:36400,malla1525:40000,arena_bolson:39000,clavos250:5500,clavos200:5500,alambre:5500},
    pendientes:["v320"]},
   {id:"esperanza", nombre:"La Esperanza", color:"#BE185D", desc:0,  nota:"ef. 22/06",
@@ -227,22 +229,26 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v1";
+const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
+const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shnos:true,esperanza:true};
+const STORAGE_ITEMS = "comparador_obra_items_v1";
+const ITEMS_DEFAULT = {};
+TODOS_ITEMS.forEach(i=>{ ITEMS_DEFAULT[i.id] = !HIERROS_IDS.includes(i.id); });
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function pu(prov,id){ const r=prov.p[id]; if(!r)return null; return r*(1-prov.desc/100); }
 function fmt(n){ if(!n||isNaN(n))return'—'; return "$"+Math.round(n).toLocaleString("es-AR"); }
 function fmtM(n){ if(!n||isNaN(n))return'—'; return "$"+(n/1000000).toFixed(2)+"M"; }
 function isPend(prov,id){ return prov.pendientes&&prov.pendientes.includes(id); }
-function isBrag(pid,iid){ return pid==='shnos'&&HIERROS_IDS.includes(iid); }
 
-function rankingItem(itemId,cant){
-  return PROVEEDORES.map(p=>{ const u=pu(p,itemId); return u&&u>0?{prov:p,u,total:u*cant}:null; }).filter(Boolean).sort((a,b)=>a.total-b.total);
+function rankingItem(itemId,cant,provs){
+  return (provs||PROVEEDORES).map(p=>{ const u=pu(p,itemId); return u&&u>0?{prov:p,u,total:u*cant}:null; }).filter(Boolean).sort((a,b)=>a.total-b.total);
 }
 
-function calcMix(){
+function calcMix(provs,items){
   const mix={};let total=0;
-  TODOS_ITEMS.forEach(item=>{
-    const rank=rankingItem(item.id,item.cant);
+  (items||TODOS_ITEMS).forEach(item=>{
+    const rank=rankingItem(item.id,item.cant,provs);
     if(!rank.length)return;
     const g=rank[0],seg=rank[1]||null;
     if(!mix[g.prov.id])mix[g.prov.id]={prov:g.prov,items:[],subtotal:0};
@@ -265,10 +271,11 @@ function combis(arr,n){
   return r;
 }
 
-function calcSet(ids){
+function calcSet(ids,items){
   const ps=PROVEEDORES.filter(p=>ids.includes(p.id));
   let total=0,cob=0,desglose={};
-  TODOS_ITEMS.forEach(item=>{
+  const lista=items||TODOS_ITEMS;
+  lista.forEach(item=>{
     const ops=ps.map(p=>{const u=pu(p,item.id);return u&&u>0?{prov:p,u,t:u*item.cant}:null;}).filter(Boolean).sort((a,b)=>a.t-b.t);
     if(!ops.length)return;
     total+=ops[0].t; cob++;
@@ -280,9 +287,11 @@ function calcSet(ids){
   return{total,cob,desglose};
 }
 
-function bestN(n){
-  const ids=PROVEEDORES.map(p=>p.id);
-  return combis(ids,n).map(s=>({s,...calcSet(s)})).filter(r=>r.cob===TODOS_ITEMS.length).sort((a,b)=>a.total-b.total)[0];
+function bestN(n,ids,items){
+  ids=ids||PROVEEDORES.map(p=>p.id);
+  const lista=items||TODOS_ITEMS;
+  if(ids.length<n||!lista.length)return null;
+  return combis(ids,n).map(s=>({s,...calcSet(s,lista)})).filter(r=>r.cob===lista.length).sort((a,b)=>a.total-b.total)[0];
 }
 
 // ── APP ───────────────────────────────────────────────────────────────────────
@@ -295,6 +304,39 @@ function App(){
   const [editCompra,setEditCompra]=useState(null);
   const [addCompra,setAddCompra]=useState(null);
   const [guardado,setGuardado]=useState(false);
+  const [activos,setActivos]=useState(()=>{
+    try{ const s=localStorage.getItem(STORAGE_ACTIVOS); if(s)return {...ACTIVOS_DEFAULT,...JSON.parse(s)}; }catch(e){}
+    return ACTIVOS_DEFAULT;
+  });
+
+  function toggleProv(id){
+    setActivos(prev=>{
+      const n={...prev,[id]:prev[id]===false?true:false};
+      if(!Object.values(n).some(v=>v!==false))return prev;
+      try{ localStorage.setItem(STORAGE_ACTIVOS,JSON.stringify(n)); }catch(e){}
+      return n;
+    });
+  }
+
+  const provsActivos=useMemo(()=>PROVEEDORES.filter(p=>activos[p.id]!==false),[activos]);
+  const idsActivos=useMemo(()=>provsActivos.map(p=>p.id),[provsActivos]);
+
+  const [itemsAct,setItemsAct]=useState(()=>{
+    try{ const s=localStorage.getItem(STORAGE_ITEMS); if(s)return {...ITEMS_DEFAULT,...JSON.parse(s)}; }catch(e){}
+    return ITEMS_DEFAULT;
+  });
+  function guardarItems(n){ try{ localStorage.setItem(STORAGE_ITEMS,JSON.stringify(n)); }catch(e){} }
+  function toggleItem(id){
+    setItemsAct(prev=>{ const n={...prev,[id]:prev[id]===false?true:false}; guardarItems(n); return n; });
+  }
+  function toggleCat(cat){
+    setItemsAct(prev=>{
+      const allOn=cat.items.every(i=>prev[i.id]!==false);
+      const n={...prev}; cat.items.forEach(i=>{ n[i.id]=!allOn; });
+      guardarItems(n); return n;
+    });
+  }
+  const itemsActivos=useMemo(()=>TODOS_ITEMS.filter(i=>itemsAct[i.id]!==false),[itemsAct]);
 
   // Cargar compras guardadas
   useState(()=>{
@@ -317,20 +359,21 @@ function App(){
     setAddCompra(null);
   }
 
-  const {mix,total:totalMix}=useMemo(()=>calcMix(),[]);
+  const {mix,total:totalMix}=useMemo(()=>calcMix(provsActivos,itemsActivos),[provsActivos,itemsActivos]);
   const totalComprado=Object.values(compras).reduce((a,b)=>a+b,0);
 
-  const b1=useMemo(()=>bestN(1),[]);
-  const b2=useMemo(()=>bestN(2),[]);
-  const b3=useMemo(()=>bestN(3),[]);
-  const mixAll=useMemo(()=>({s:PROVEEDORES.map(p=>p.id),...calcSet(PROVEEDORES.map(p=>p.id))}),[]);
+  const b1=useMemo(()=>bestN(1,idsActivos,itemsActivos),[idsActivos,itemsActivos]);
+  const b2=useMemo(()=>bestN(2,idsActivos,itemsActivos),[idsActivos,itemsActivos]);
+  const b3=useMemo(()=>bestN(3,idsActivos,itemsActivos),[idsActivos,itemsActivos]);
+  const mixAll=useMemo(()=>({s:idsActivos,...calcSet(idsActivos,itemsActivos)}),[idsActivos,itemsActivos]);
   const base=b1?.total||0;
+  const nAct=provsActivos.length;
 
   const ESCENARIOS=[
     {n:1,label:"1 proveedor",     r:b1,  isBase:true},
     {n:2,label:"2 proveedores",   r:b2},
     {n:3,label:"3 proveedores",   r:b3},
-    {n:5,label:"Mix óptimo (6)",  r:mixAll, isBest:true},
+    {n:5,label:"Mix óptimo ("+nAct+")",  r:mixAll, isBest:true},
   ];
 
   // ── RENDER COMPRAS ─────────────────────────────────────────────────────────
@@ -347,7 +390,8 @@ function App(){
           return e('div',{key:p.id,className:'compra-card'+(c>0?' activa':''),style:{'--accent-color':p.color}},
             e('div',{className:'compra-nombre',style:{color:p.color}},
               e('span',{className:'dot',style:{background:p.color}}),
-              ' '+p.nombre
+              ' '+p.nombre,
+              activos[p.id]===false&&e('span',{style:{fontSize:'0.58rem',color:'var(--c-text3)',fontWeight:400,marginLeft:4}},'excluido')
             ),
             isEdit
               ? e('input',{className:'compra-input',style:{borderColor:p.color,color:p.color},autoFocus:true,defaultValue:c||'',placeholder:'0',inputMode:'numeric',
@@ -370,10 +414,6 @@ function App(){
       ),
       e('div',{style:{fontSize:'0.72rem',color:'var(--c-text3)',marginTop:6,textAlign:'center'}},
         'Total comprado: '+fmt(totalComprado)+(guardado?' · ✓ Guardado':'') + ' · Tocá el monto para editar · + Sumar para agregar una compra'
-      ),
-      e('div',{className:'alerta warn',style:{marginTop:8}},
-        e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'7 Hnos hierros = marca Bragado, no Acindar. Verificar con arquitecto/ingeniero.')
       )
     );
   }
@@ -383,38 +423,45 @@ function App(){
     return e('div',null,
       ...CATEGORIAS.map(cat=>{
         const exp=expandCat[cat.id];
-        const esH=cat.id==='hierros';
+        const nOn=cat.items.filter(i=>itemsAct[i.id]!==false).length;
+        const allOn=nOn===cat.items.length;
         return e('div',{key:cat.id,className:'section'},
           e('div',{className:'cat-header',onClick:()=>setExpandCat(x=>({...x,[cat.id]:!x[cat.id]}))},
-            e('span',{className:'cat-label'},cat.nombre),
-            esH&&e('span',{style:{fontSize:'0.65rem',background:'var(--c-orange-bg)',color:'var(--c-orange)',padding:'2px 6px',borderRadius:4,marginLeft:6}},'⚠️ 7 Hnos = Bragado'),
-            e('span',{className:'cat-toggle'},exp?'▲':'▼')
+            e('div',{style:{display:'flex',alignItems:'center',gap:6}},
+              e('span',{className:'cat-label'},cat.nombre),
+              e('span',{style:{fontSize:'0.65rem',color:nOn===0?'var(--c-text3)':'var(--c-green)'}},nOn+'/'+cat.items.length)
+            ),
+            e('div',{style:{display:'flex',alignItems:'center',gap:8}},
+              e('button',{className:'cat-toggle-btn',onClick:ev=>{ev.stopPropagation();toggleCat(cat);}},allOn?'Omitir todo':'Incluir todo'),
+              e('span',{className:'cat-toggle'},exp?'▲':'▼')
+            )
           ),
           exp&&e('div',null,
             ...cat.items.map(item=>{
-              const rank=rankingItem(item.id,item.cant);
+              const on=itemsAct[item.id]!==false;
+              const rank=rankingItem(item.id,item.cant,provsActivos);
               const ganador=rank[0]?.prov;
               const isExpItem=expandItem[item.id];
-              return e('div',{key:item.id,className:'item-card'},
+              return e('div',{key:item.id,className:'item-card',style:on?null:{opacity:0.45}},
                 e('div',{className:'item-header',onClick:()=>setExpandItem(x=>({...x,[item.id]:!x[item.id]}))},
-                  e('span',{className:'item-nombre'},item.nombre+' ×'+item.cant),
-                  ganador&&e('span',{className:'item-winner',style:{background:ganador.color+'18',color:ganador.color}},
-                    ganador.nombre+(isBrag(ganador.id,item.id)?' ⚠️':'')
-                  )
+                  e('input',{type:'checkbox',checked:on,onClick:ev=>ev.stopPropagation(),onChange:()=>toggleItem(item.id),
+                    style:{width:16,height:16,accentColor:'#4ADE80',flexShrink:0,marginRight:9,cursor:'pointer'}}),
+                  e('span',{className:'item-nombre',style:on?null:{textDecoration:'line-through',color:'var(--c-text3)'}},item.nombre+' ×'+item.cant),
+                  !on
+                    ? e('span',{className:'item-winner',style:{background:'rgba(0,0,0,0.2)',color:'var(--c-text3)'}},'omitido')
+                    : ganador&&e('span',{className:'item-winner',style:{background:ganador.color+'18',color:ganador.color}},ganador.nombre)
                 ),
                 isExpItem&&e('div',{className:'item-body'},
-                  ...PROVEEDORES.map((p,idx)=>{
+                  ...provsActivos.map((p,idx)=>{
                     const u=pu(p,item.id);
                     const t=u?u*item.cant:null;
                     const pos=rank.findIndex(r=>r.prov.id===p.id);
                     const isWin=pos===0&&t!==null;
                     const pend=isPend(p,item.id)&&!t;
-                    const brag=isBrag(p.id,item.id);
                     return e('div',{key:p.id,className:'item-prov-row'+(isWin?' winner':'')},
                       e('div',{className:'item-prov-name'},
                         e('span',{className:'dot',style:{background:p.color}}),
                         p.nombre,
-                        brag&&e('span',{className:'bragado-tag',style:{marginLeft:4}},'Bragado'),
                         pos>=0&&e('span',{className:'rank-chip '+(pos===0?'rank-1':pos===1?'rank-2':'rank-n'),style:{marginLeft:4}},pos+1+'°')
                       ),
                       pend
@@ -438,23 +485,21 @@ function App(){
 
   // ── RENDER MIX ÓPTIMO ──────────────────────────────────────────────────────
   function renderMix(){
+    if(!itemsActivos.length)return e('div',{className:'section'},
+      e('div',{className:'alerta warn'},e('span',{className:'alerta-icon'},'⚠️'),
+        e('span',null,'No hay ítems incluidos. Tildá al menos uno en la pestaña Precios.'))
+    );
     return e('div',{className:'section'},
       e('div',{className:'alerta info'},
         e('span',{className:'alerta-icon'},'✓'),
-        e('span',null,'Cada ítem al proveedor más barato. Cobertura 100%.')
-      ),
-      e('div',{className:'alerta warn'},
-        e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'7 Hnos gana en hierros pero son Bragado. Confirmar equivalencia técnica.')
+        e('span',null,'Cada ítem al proveedor más barato. '+itemsActivos.length+' de '+TODOS_ITEMS.length+' ítems incluidos.')
       ),
       ...Object.values(mix).map(({prov,items,subtotal})=>{
-        const hasBrag=prov.id==='shnos'&&items.some(i=>HIERROS_IDS.includes(i.id));
         return e('div',{key:prov.id,className:'prov-block'},
           e('div',{className:'prov-block-hdr'},
             e('div',{className:'prov-block-nombre'},
               e('span',{className:'dot',style:{background:prov.color}}),
               e('span',{style:{color:prov.color}},prov.nombre),
-              hasBrag&&e('span',{className:'chip chip-orange',style:{fontSize:'0.65rem'}},'Bragado ⚠️'),
               compras[prov.id]>0&&e('span',{style:{fontSize:'0.7rem',fontWeight:400,color:'var(--c-text3)',marginLeft:4}},'🛒 '+fmt(compras[prov.id]))
             ),
             e('div',{className:'prov-block-total',style:{color:prov.color}},fmt(subtotal))
@@ -464,7 +509,6 @@ function App(){
             return e('div',{key:item.id,className:'mix-item-row',style:{background:idx%2===0?'transparent':'rgba(0,0,0,0.015)'}},
               e('div',{className:'mix-item-nombre'},
                 item.nombre,
-                isBrag(prov.id,item.id)&&e('span',{className:'bragado-tag',style:{marginLeft:4}},'⚠️'),
                 e('span',{style:{fontSize:'0.68rem',color:'var(--c-text3)',marginLeft:4}},'×'+item.cant)
               ),
               e('div',{className:'mix-item-right'},
@@ -479,7 +523,7 @@ function App(){
       e('div',{className:'total-box'},
         e('div',{className:'total-box-label'},'Total mix óptimo'),
         e('div',{className:'total-box-amount'},fmt(totalMix)),
-        e('div',{className:'total-box-sub'},'Pendiente: '+fmt(totalMix-totalComprado)),
+        e('div',{className:'total-box-sub'},'Sobre '+itemsActivos.length+' de '+TODOS_ITEMS.length+' ítems · Comprado hasta ahora: '+fmt(totalComprado)),
       ),
       // Comparativa escenarios
       e('div',{className:'section-title',style:{paddingTop:12}},'Comparativa todos los escenarios'),
@@ -493,7 +537,7 @@ function App(){
               {label:'Todo a 1 prov.',val:b1?.total,base:true},
               {label:'Mejor dupla (2)',val:b2?.total},
               {label:'Mejor trio (3)', val:b3?.total},
-              {label:'Mix óptimo (6)', val:totalMix,best:true},
+              {label:'Mix óptimo ('+nAct+')', val:totalMix,best:true},
             ].map((row,idx)=>
               row.val&&e('tr',{key:idx,className:row.best?'best-row':''},
                 e('td',null,(row.best?'🏆 ':'')+row.label),
@@ -511,6 +555,10 @@ function App(){
 
   // ── RENDER ESCENARIOS ──────────────────────────────────────────────────────
   function renderEscenarios(){
+    if(!itemsActivos.length)return e('div',{className:'section'},
+      e('div',{className:'alerta warn'},e('span',{className:'alerta-icon'},'⚠️'),
+        e('span',null,'No hay ítems incluidos. Tildá al menos uno en la pestaña Precios.'))
+    );
     return e('div',{className:'section'},
       e('div',{style:{fontSize:'0.8rem',color:'var(--c-text2)',marginBottom:10,lineHeight:1.5}},
         'Cuánto ahorrás sumando proveedores vs comprarle todo a uno solo. Tocá para ver el desglose.'
@@ -523,7 +571,6 @@ function App(){
         const adicional=prev?prev-esc.r.total:0;
         const adicionalP=prev&&idx>0?((adicional/prev)*100):0;
         const barW=(esc.r.total/base*100);
-        const hasBrag=esc.r.s.includes('shnos');
         const isExp=expandEsc[esc.n];
 
         return e('div',{key:esc.n,className:'esc-card'+(esc.isBest?' best':esc.isBase?' base':'')},
@@ -547,8 +594,7 @@ function App(){
             esc.isBase&&e('span',{className:'chip chip-red'},'Costo más alto'),
             idx>0&&e('span',{className:'chip chip-green'},'Ahorrás '+fmt(ahorro)+' (–'+ahorroP.toFixed(1)+'%)'),
             idx>1&&adicional>5000&&e('span',{className:'chip chip-blue'},'+'+fmt(adicional)+' adicional (–'+adicionalP.toFixed(1)+'%)'),
-            idx>1&&adicional<=5000&&e('span',{className:'chip chip-grey'},'Mejora mínima'),
-            hasBrag&&e('span',{className:'chip chip-orange'},'⚠️ Bragado')
+            idx>1&&adicional<=5000&&e('span',{className:'chip chip-grey'},'Mejora mínima')
           ),
           e('div',{className:'esc-provs'},
             ...esc.r.s.map(id=>{
@@ -589,12 +635,19 @@ function App(){
     // Header
     e('div',{className:'hdr'},
       e('h1',null,'🏗 Comparador de Obra'),
-      e('p',null,'Cañuelas, Buenos Aires · 6 proveedores · actualizado 22/06/2026'),
+      e('p',null,'Cañuelas, Buenos Aires · '+nAct+' de '+PROVEEDORES.length+' proveedores activos · actualizado 22/06/2026'),
       e('div',{className:'hdr-provs'},
-        ...PROVEEDORES.map(p=>e('div',{key:p.id,className:'hdr-prov'},
-          e('span',{className:'dot',style:{background:p.color}}),
-          e('span',null,p.nombre+(p.bragado?' ⚠️':''))
-        ))
+        ...PROVEEDORES.map(p=>{
+          const off=activos[p.id]===false;
+          return e('button',{key:p.id,className:'hdr-prov'+(off?' off':''),onClick:()=>toggleProv(p.id),title:off?'Tocá para incluir':'Tocá para excluir'},
+            e('span',{className:'dot',style:{background:off?'var(--c-text3)':p.color}}),
+            e('span',null,p.nombre),
+            off&&e('span',{style:{fontSize:'0.65rem',opacity:0.8}},'✕')
+          );
+        })
+      ),
+      e('p',{style:{fontSize:'0.65rem',color:'rgba(255,255,255,0.5)',marginTop:6}},
+        'Tocá un proveedor para incluirlo o excluirlo de las comparaciones'
       )
     ),
 
