@@ -245,7 +245,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v1";
-const APP_VERSION = "v17";
+const APP_VERSION = "v18";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shnos:true,esperanza:true};
 const STORAGE_ITEMS = "comparador_obra_items_v1";
@@ -289,6 +289,32 @@ function calcMix(provs,items){
 function totalProv(provId){
   const prov=PROVEEDORES.find(p=>p.id===provId);
   return TODOS_ITEMS.reduce((a,i)=>{ const u=pu(prov,i.id); return a+(u&&u>0?u*i.cant:0); },0);
+}
+
+function bestUno(provs,items){
+  const lista=items||TODOS_ITEMS;
+  let best=null;
+  provs.forEach(p=>{
+    let total=0,desglose={},fuera=0,cob=0;
+    lista.forEach(item=>{
+      let u=pu(p,item.id),prov=p;
+      if(!u||u<=0){
+        const alt=provs.filter(q=>q.id!==p.id)
+          .map(q=>{const v=pu(q,item.id);return v&&v>0?{prov:q,u:v}:null;})
+          .filter(Boolean).sort((a,b)=>a.u-b.u)[0];
+        if(!alt)return;
+        u=alt.u; prov=alt.prov; fuera++;
+      }
+      const t=u*item.cant; total+=t; cob++;
+      if(!desglose[prov.id])desglose[prov.id]={prov:prov,items:[],subtotal:0};
+      desglose[prov.id].items.push({...item,u:u,total:t,seg:null});
+      desglose[prov.id].subtotal+=t;
+    });
+    if(cob===0)return;
+    const r={s:Object.keys(desglose),total,desglose,cob,mainId:p.id,fuera};
+    if(!best||total<best.total)best=r;
+  });
+  return best;
 }
 
 function combis(arr,n){
@@ -415,7 +441,7 @@ function App(){
   const {mix,total:totalMix}=useMemo(()=>calcMix(provsActivos,itemsActivos),[provsActivos,itemsActivos]);
   const totalComprado=Object.values(compras).reduce((a,b)=>a+b,0);
 
-  const b1=useMemo(()=>bestN(1,idsActivos,itemsActivos),[idsActivos,itemsActivos]);
+  const b1=useMemo(()=>bestUno(provsActivos,itemsActivos),[provsActivos,itemsActivos]);
   const b2=useMemo(()=>bestN(2,idsActivos,itemsActivos),[idsActivos,itemsActivos]);
   const b3=useMemo(()=>bestN(3,idsActivos,itemsActivos),[idsActivos,itemsActivos]);
   const mixAll=useMemo(()=>({s:idsActivos,...calcSet(idsActivos,itemsActivos)}),[idsActivos,itemsActivos]);
@@ -423,10 +449,10 @@ function App(){
   const nAct=provsActivos.length;
 
   const ESCENARIOS=[
-    {n:1,label:"1 proveedor",     r:b1,  isBase:true},
-    {n:2,label:"2 proveedores",   r:b2},
-    {n:3,label:"3 proveedores",   r:b3},
-    {n:5,label:"Mix óptimo ("+nAct+")",  r:mixAll, isBest:true},
+    {n:1,label:"1 proveedor",     short:"1 prov.", r:b1,  isBase:true},
+    {n:2,label:"2 proveedores",   short:"2 prov.", r:b2},
+    {n:3,label:"3 proveedores",   short:"3 prov.", r:b3},
+    {n:5,label:"Mix óptimo ("+nAct+")", short:"3 prov.", r:mixAll, isBest:true},
   ];
 
   // ── RENDER COMPRAS ─────────────────────────────────────────────────────────
@@ -588,23 +614,26 @@ function App(){
       e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',overflow:'hidden',border:'1px solid var(--c-border)'}},
         e('table',{className:'resumen-table'},
           e('thead',null,e('tr',null,
-            e('th',null,'Escenario'),e('th',null,'Total'),e('th',null,'Ahorro'),
+            e('th',null,'Escenario'),e('th',null,'Total'),e('th',null,'Ahorro vs anterior'),
           )),
           e('tbody',null,
-            ...([
-              {label:'Todo a 1 prov.',val:b1?.total,base:true},
-              {label:'Mejor dupla (2)',val:b2?.total},
-              {label:'Mejor trio (3)', val:b3?.total},
-              {label:'Mix óptimo ('+nAct+')', val:totalMix,best:true},
-            ].map((row,idx)=>
-              row.val&&e('tr',{key:idx,className:row.best?'best-row':''},
-                e('td',null,(row.best?'🏆 ':'')+row.label),
-                e('td',null,fmtM(row.val)),
-                e('td',null,idx===0?'—':e('span',{style:{color:'var(--c-green)',fontWeight:600}},
-                  '–'+((b1.total-row.val)/b1.total*100).toFixed(1)+'%'
-                ))
-              )
-            ))
+            ...(function(){
+              const filas=[
+                {label:'Todo a 1 prov.',val:b1?.total,base:true},
+                {label:'Mejor dupla (2)',val:b2?.total},
+                {label:'Mejor trio (3)', val:b3?.total},
+                {label:'Mix óptimo ('+nAct+')', val:totalMix,best:true},
+              ].filter(r=>r.val);
+              return filas.map((row,idx)=>
+                e('tr',{key:idx,className:row.best?'best-row':''},
+                  e('td',null,(row.best?'🏆 ':'')+row.label),
+                  e('td',null,fmtM(row.val)),
+                  e('td',null,idx===0?'—':e('span',{style:{color:'var(--c-green)',fontWeight:600}},
+                    '–'+((filas[idx-1].val-row.val)/filas[idx-1].val*100).toFixed(1)+'%'
+                  ))
+                )
+              );
+            })()
           )
         )
       )
@@ -625,12 +654,14 @@ function App(){
       ...ESCENARIOS.map((esc,idx)=>{
         if(!esc.r)return null;
         const ahorro=base-esc.r.total;
-        const ahorroP=((ahorro/base)*100);
+        const ahorroP=base>0?((ahorro/base)*100):0;
         const prev=idx>0?ESCENARIOS[idx-1].r?.total:null;
-        const adicional=prev?prev-esc.r.total:0;
-        const adicionalP=prev&&idx>0?((adicional/prev)*100):0;
-        const barW=(esc.r.total/base*100);
+        const marginal=prev?prev-esc.r.total:0;
+        const marginalP=prev?((marginal/prev)*100):0;
+        const vsLabel=idx>0?ESCENARIOS[idx-1].short:'';
+        const barW=base>0?(esc.r.total/base*100):0;
         const isExp=expandEsc[esc.n];
+        const mainProv=esc.r.mainId?PROVEEDORES.find(p=>p.id===esc.r.mainId):null;
 
         return e('div',{key:esc.n,className:'esc-card'+(esc.isBest?' best':esc.isBase?' base':'')},
           e('div',{className:'esc-hdr',onClick:()=>setExpandEsc(x=>({...x,[esc.n]:!x[esc.n]}))},
@@ -638,11 +669,15 @@ function App(){
               e('div',{className:'esc-label',style:{color:esc.isBest?'var(--c-green)':esc.isBase?'var(--c-red)':'var(--c-text)'}},
                 (esc.isBest?'🏆 ':esc.isBase?'📦 ':'')+esc.label
               ),
-              e('div',{className:'esc-sub'},esc.r.s.map(id=>PROVEEDORES.find(p=>p.id===id).nombre).join(' · '))
+              e('div',{className:'esc-sub'},
+                mainProv
+                  ? mainProv.nombre+(esc.r.fuera>0?' · '+esc.r.fuera+' ítem'+(esc.r.fuera>1?'s':'')+' que no cotiza, al mejor precio de otro':'')
+                  : esc.r.s.map(id=>PROVEEDORES.find(p=>p.id===id).nombre).join(' · ')
+              )
             ),
             e('div',{className:'esc-right'},
               e('div',{className:'esc-total',style:{color:esc.isBest?'var(--c-green)':'inherit'}},fmtM(esc.r.total)),
-              idx>0&&e('div',{className:'esc-pct'},'–'+ahorroP.toFixed(1)+'% vs 1 prov.'),
+              idx>0&&e('div',{className:'esc-pct'},'–'+marginalP.toFixed(1)+'% vs '+vsLabel),
               e('span',{style:{fontSize:'0.7rem',color:'var(--c-text3)'}},isExp?'▲':'▼')
             )
           ),
@@ -651,9 +686,9 @@ function App(){
           ),
           e('div',{className:'esc-chips'},
             esc.isBase&&e('span',{className:'chip chip-red'},'Costo más alto'),
-            idx>0&&e('span',{className:'chip chip-green'},'Ahorrás '+fmt(ahorro)+' (–'+ahorroP.toFixed(1)+'%)'),
-            idx>1&&adicional>5000&&e('span',{className:'chip chip-blue'},'+'+fmt(adicional)+' adicional (–'+adicionalP.toFixed(1)+'%)'),
-            idx>1&&adicional<=5000&&e('span',{className:'chip chip-grey'},'Mejora mínima')
+            idx>0&&marginal>5000&&e('span',{className:'chip chip-blue'},'Sumar proveedor ahorra '+fmt(marginal)),
+            idx>0&&marginal<=5000&&e('span',{className:'chip chip-grey'},'Mejora mínima vs '+vsLabel),
+            idx>0&&e('span',{className:'chip chip-green'},'Total vs 1 prov.: –'+fmt(ahorro)+' (–'+ahorroP.toFixed(1)+'%)')
           ),
           e('div',{className:'esc-provs'},
             ...esc.r.s.map(id=>{
