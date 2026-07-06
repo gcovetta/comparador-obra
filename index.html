@@ -236,6 +236,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v1";
+const APP_VERSION = "v14";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shnos:true,esperanza:true};
 const STORAGE_ITEMS = "comparador_obra_items_v1";
@@ -753,7 +754,7 @@ function App(){
     // Header
     e('div',{className:'hdr'},
       e('h1',null,'🏗 Comparador de Obra'),
-      e('p',null,'Cañuelas, Buenos Aires · '+nAct+' de '+PROVEEDORES.length+' proveedores activos · precios 22/06 (⚠️ revalidar) y 03/07'),
+      e('p',null,'Cañuelas, Buenos Aires · '+nAct+' de '+PROVEEDORES.length+' proveedores activos · precios 22/06 (⚠️ revalidar) y 05/07 · '+APP_VERSION),
       e('div',{className:'hdr-provs'},
         ...PROVEEDORES.map(p=>{
           const off=activos[p.id]===false;
