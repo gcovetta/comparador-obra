@@ -225,8 +225,8 @@ const CATEGORIAS = [
 const HIERROS_IDS = ["h6","h8","h10","h12","h16","h20"];
 
 const PROVEEDORES = [
-  {id:"caeiro",    nombre:"Casa Caeiro",   color:"#185FA5", desc:10, nota:"–10% ef.",
-   p:{h6:6450,h8:10900,h10:17250,h12:24650,h16:43300,h20:67700,v180:6300,v200:7000,v220:7700,v260:9100,v280:9800,v300:10500,v320:11100,v400:15700,v500:23900,v520:25700,ladrillo:3400,malla:50500,arena:38000,piedra:68250,cemento:7200}},
+  {id:"caeiro",    nombre:"Casa Caeiro",   color:"#185FA5", desc:8, nota:"–8% ef. 06/07",
+   p:{h6:6450,h8:10900,h10:17250,h12:24650,h16:43300,h20:67700,v180:6300,v200:7000,v220:7700,v260:9100,v280:9800,v300:10500,v320:11100,v400:15700,v500:23900,v520:25700,ladrillo:3400,malla:50500,arena:38000,piedra:68250,cemento:7650}},
   {id:"dasilva",   nombre:"Da Silva",      color:"#B45000", desc:0,  nota:"neto",
    p:{h6:5730,h8:9350,h10:14750,h12:20700,h16:36300,h20:55930,v180:6745,v200:7490,v220:8030,v260:9490,v280:10220,v300:10950,v320:12720,v400:15900,v500:24800,v520:26100,ladrillo:5400,malla:49000,arena:35700,piedra:53300,cemento:7216,cano_cemento:38136,malla1525:61723,arena_bolson:44880,piedra_bolson:68640,clavos250:5292,clavos200:5292,alambre:5852}},
   {id:"lhhnos",    nombre:"LH Hnos",      color:"#6B21A8", desc:0,  nota:"–10% ef.",
@@ -245,7 +245,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v1";
-const APP_VERSION = "v18";
+const APP_VERSION = "v19";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shnos:true,esperanza:true};
 const STORAGE_ITEMS = "comparador_obra_items_v1";
@@ -496,7 +496,7 @@ function App(){
       ),
       e('div',{className:'alerta warn',style:{marginTop:8}},
         e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'Aumentos de julio confirmados (5-13%). Da Silva y La Esperanza actualizados al 03/07; Caeiro, LH y 7 Hnos siguen al 22/06 — revalidar precios antes de comprar.')
+        e('span',null,'Aumentos de julio confirmados. Caeiro (06/07, –8% ef.), Da Silva y La Esperanza ya actualizados; LH y 7 Hnos siguen al 22/06 — revalidar antes de comprar.')
       )
     );
   }
@@ -816,7 +816,7 @@ function App(){
     // Header
     e('div',{className:'hdr'},
       e('h1',null,'🏗 Comparador de Obra'),
-      e('p',null,'Cañuelas, Buenos Aires · '+nAct+' de '+PROVEEDORES.length+' proveedores activos · precios 22/06 (⚠️ revalidar) y 05/07 · '+APP_VERSION),
+      e('p',null,'Cañuelas, Buenos Aires · '+nAct+' de '+PROVEEDORES.length+' proveedores activos · precios jul/26 (⚠️ LH y 7 Hnos al 22/06) · '+APP_VERSION),
       e('div',{className:'hdr-provs'},
         ...PROVEEDORES.map(p=>{
           const off=activos[p.id]===false;
