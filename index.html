@@ -157,6 +157,13 @@
   /* Pendiente tag */
   .pend-tag { font-size: 0.62rem; background: #FFF9C4; color: #92400E; padding: 1px 5px; border-radius: 3px; }
   .consultar { font-size: 0.7rem; color: #92400E; font-style: italic; }
+
+  /* Faltantes */
+  .stepper { display: inline-flex; align-items: center; gap: 3px; }
+  .stepper button { width: 27px; height: 27px; border-radius: 6px; border: 1px solid var(--c-border2); background: var(--c-bg); color: var(--c-text2); font-size: 1rem; line-height: 1; cursor: pointer; flex-shrink: 0; }
+  .stepper button:active { background: var(--c-border); }
+  .stepper input { width: 54px; text-align: center; background: transparent; border: 1px solid var(--c-border); border-radius: 6px; color: var(--c-text); font-size: 0.85rem; font-weight: 700; padding: 4px 2px; outline: none; }
+  .falt-label { font-size: 0.6rem; color: var(--c-text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
 </style>
 </head>
 <body>
@@ -223,7 +230,7 @@ const PROVEEDORES = [
    p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:9700,v280:10500,v300:11200,v400:16700,v500:25500,v520:27400,ladrillo:3000,malla:49000,arena:33000,piedra:54000,cemento:6800,cano_cemento:36400,malla1525:40000,arena_bolson:39000,clavos250:5500,clavos200:5500,alambre:5500},
    pendientes:["v320"]},
   {id:"esperanza", nombre:"La Esperanza", color:"#BE185D", desc:0,  nota:"ef. 22/06",
-   p:{h6:5037,h8:8583,h10:14245,h12:20390,h16:34660,h20:53000,v180:6380,v200:7779,v220:7800,v260:9200,v280:9830,v300:10600,v320:11300,v400:15405,v500:24200,v520:26000,ladrillo:3127,malla:46008,arena:35100,piedra:62553,cemento:7132,cano_cemento:38502,arena_bolson:45094,piedra_bolson:74727,clavos250:4300,clavos200:4300,alambre:4864},
+   p:{h6:5037,h8:8583,h10:14245,h12:20390,h16:34660,h20:53000,v180:6380,v200:7779,v220:7800,v260:9200,v280:9830,v300:10600,v320:11300,v400:15405,v500:24200,v520:26000,ladrillo:3127,malla:45087,arena:35100,piedra:62553,cemento:7132,cano_cemento:36577,arena_bolson:45094,piedra_bolson:74727,clavos250:4300,clavos200:4300,alambre:4864},
    pendientes:["malla1525"]},
 ];
 
@@ -234,6 +241,17 @@ const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shno
 const STORAGE_ITEMS = "comparador_obra_items_v1";
 const ITEMS_DEFAULT = {};
 TODOS_ITEMS.forEach(i=>{ ITEMS_DEFAULT[i.id] = !HIERROS_IDS.includes(i.id); });
+const STORAGE_CANT = "comparador_obra_cantidades_v1";
+const CANT_DEFAULT = {};
+TODOS_ITEMS.forEach(i=>{
+  let comp=0;
+  if(HIERROS_IDS.includes(i.id))comp=i.cant;        // hierros ya comprados (7 Hnos)
+  else if(i.id==='cemento')comp=80;                  // compra La Esperanza 03/07
+  else if(i.id==='arena_bolson')comp=2;              // cubierto (se compraron 6)
+  else if(i.id==='piedra_bolson')comp=2;             // cubierto (se compraron 6)
+  else if(i.id==='alambre')comp=5;                   // cubierto (se compraron 20 kg)
+  CANT_DEFAULT[i.id]={nec:i.cant,comp};
+});
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function pu(prov,id){ const r=prov.p[id]; if(!r)return null; return r*(1-prov.desc/100); }
@@ -296,7 +314,7 @@ function bestN(n,ids,items){
 
 // ── APP ───────────────────────────────────────────────────────────────────────
 function App(){
-  const [tab,setTab]=useState("comparacion");
+  const [tab,setTab]=useState("faltantes");
   const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false});
   const [expandItem,setExpandItem]=useState({});
   const [expandEsc,setExpandEsc]=useState({});
@@ -337,6 +355,22 @@ function App(){
     });
   }
   const itemsActivos=useMemo(()=>TODOS_ITEMS.filter(i=>itemsAct[i.id]!==false),[itemsAct]);
+
+  const [cants,setCants]=useState(()=>{
+    try{
+      const s=localStorage.getItem(STORAGE_CANT);
+      if(s){ const p=JSON.parse(s); const m={}; TODOS_ITEMS.forEach(i=>{ m[i.id]={...CANT_DEFAULT[i.id],...(p[i.id]||{})}; }); return m; }
+    }catch(e){}
+    return CANT_DEFAULT;
+  });
+  function setCant(id,campo,val){
+    const v=Math.max(0,Math.round(Number(String(val).replace(/[^\d]/g,''))||0));
+    setCants(prev=>{
+      const n={...prev,[id]:{...prev[id],[campo]:v}};
+      try{ localStorage.setItem(STORAGE_CANT,JSON.stringify(n)); }catch(e){}
+      return n;
+    });
+  }
 
   // Cargar compras guardadas
   useState(()=>{
@@ -628,8 +662,88 @@ function App(){
     );
   }
 
-  // ── TABS ───────────────────────────────────────────────────────────────────
+  // ── RENDER FALTANTES ───────────────────────────────────────────────────────
+  function Stepper(id,campo,val,color){
+    return e('div',{className:'stepper'},
+      e('button',{onClick:()=>setCant(id,campo,val-1)},'−'),
+      e('input',{key:id+campo+val,defaultValue:val,inputMode:'numeric',
+        onBlur:ev=>setCant(id,campo,ev.target.value),
+        onKeyDown:ev=>{if(ev.key==='Enter')ev.target.blur();},
+        style:color?{color:color,borderColor:color+'66'}:null}),
+      e('button',{onClick:()=>setCant(id,campo,val+1)},'+')
+    );
+  }
+
+  function renderFaltantes(){
+    let granTotal=0, sinCotizar=[];
+    const bloques=CATEGORIAS.map(cat=>{
+      const rows=cat.items.map(item=>{
+        const c=cants[item.id]||{nec:item.cant,comp:0};
+        const falt=Math.max(0,c.nec-c.comp);
+        const rank=rankingItem(item.id,1,provsActivos);
+        const best=rank[0]||null;
+        const total=best&&falt>0?falt*best.u:0;
+        if(falt>0&&!best)sinCotizar.push(item.nombre);
+        granTotal+=total;
+        return {item,c,falt,best,total};
+      });
+      const sub=rows.reduce((a,r)=>a+r.total,0);
+      return {cat,rows,sub};
+    });
+
+    return e('div',{className:'section'},
+      e('div',{className:'alerta info'},
+        e('span',{className:'alerta-icon'},'🧮'),
+        e('span',null,'Ajustá "Necesito" y "Compré" con +/− o tocando el número. El costo usa el mejor precio unitario vigente de los proveedores activos.')
+      ),
+      ...bloques.map(({cat,rows,sub})=>
+        e('div',{key:cat.id},
+          e('div',{className:'cat-header',style:{cursor:'default'}},
+            e('span',{className:'cat-label'},cat.nombre),
+            e('span',{style:{fontSize:'0.78rem',fontWeight:700,color:sub>0?'var(--c-text)':'var(--c-text3)'}},sub>0?fmt(sub):'✓ completo')
+          ),
+          ...rows.map(({item,c,falt,best,total})=>
+            e('div',{key:item.id,className:'item-card',style:{padding:'10px 12px',opacity:falt===0?0.5:1}},
+              e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8}},
+                e('span',{className:'item-nombre'},item.nombre),
+                falt===0
+                  ? e('span',{style:{fontSize:'0.7rem',fontWeight:600,color:'var(--c-green)'}},'✓ Completo')
+                  : best
+                    ? e('div',{style:{textAlign:'right'}},
+                        e('div',{style:{fontSize:'0.9rem',fontWeight:700,color:best.prov.color}},fmt(total)),
+                        e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},falt+' × '+fmt(best.u)+' · '+best.prov.nombre)
+                      )
+                    : e('span',{className:'consultar'},'sin cotizar')
+              ),
+              e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:8,flexWrap:'wrap'}},
+                e('div',null,
+                  e('div',{className:'falt-label'},'Necesito'),
+                  Stepper(item.id,'nec',c.nec,null)
+                ),
+                e('div',null,
+                  e('div',{className:'falt-label'},'Compré'),
+                  Stepper(item.id,'comp',c.comp,best?best.prov.color:null)
+                ),
+                e('div',{style:{marginLeft:'auto',textAlign:'right'}},
+                  e('div',{className:'falt-label'},'Faltan'),
+                  e('div',{style:{fontSize:'1rem',fontWeight:800,color:falt>0?'var(--c-text)':'var(--c-green)'}},falt)
+                )
+              )
+            )
+          )
+        )
+      ),
+      e('div',{className:'total-box'},
+        e('div',{className:'total-box-label'},'Costo de lo que falta comprar'),
+        e('div',{className:'total-box-amount'},fmt(granTotal)),
+        e('div',{className:'total-box-sub'},'Cada faltante al mejor precio unitario vigente'+(sinCotizar.length?' · Sin cotizar: '+sinCotizar.join(', '):''))
+      )
+    );
+  }
+
+
   const TABS=[
+    {id:'faltantes',  label:'🧮 Faltantes'},
     {id:'comparacion',label:'📊 Precios'},
     {id:'mix',        label:'🏆 Mix óptimo'},
     {id:'escenarios', label:'💰 Ahorro'},
@@ -665,6 +779,7 @@ function App(){
       )
     ),
 
+    tab==='faltantes'&&renderFaltantes(),
     tab==='comparacion'&&renderComparacion(),
     tab==='mix'&&renderMix(),
     tab==='escenarios'&&renderEscenarios(),
