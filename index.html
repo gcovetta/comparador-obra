@@ -31,7 +31,16 @@
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--c-bg); color: var(--c-text); min-height: 100vh; }
 
   /* Layout */
-  .app { max-width: 900px; margin: 0 auto; padding: 0 0 100px; }
+  .app { max-width: 1500px; margin: 0 auto; padding: 0 0 100px; }
+
+  /* Grillas de escritorio: en pantallas anchas los ítems van lado a lado */
+  @media (min-width: 900px) {
+    .app { padding-left: 16px; padding-right: 16px; }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 8px; align-items: start; }
+    .cards-grid .item-card { margin-bottom: 0; }
+    .cards-grid-lg { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 10px; align-items: start; }
+    .cards-grid-lg .prov-block, .cards-grid-lg .esc-card { margin-bottom: 0; }
+  }
   .hdr { background: linear-gradient(135deg, #0F1923 0%, #1A2535 100%); border-bottom: 1px solid #243044; padding: 1.2rem 1rem; }
   .hdr h1 { font-size: 1.15rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
   .hdr p  { font-size: 0.72rem; color: rgba(255,255,255,0.65); margin-top: 3px; }
@@ -219,7 +228,7 @@ const PROVEEDORES = [
   {id:"caeiro",    nombre:"Casa Caeiro",   color:"#185FA5", desc:10, nota:"–10% ef.",
    p:{h6:6450,h8:10900,h10:17250,h12:24650,h16:43300,h20:67700,v180:6300,v200:7000,v220:7700,v260:9100,v280:9800,v300:10500,v320:11100,v400:15700,v500:23900,v520:25700,ladrillo:3400,malla:50500,arena:38000,piedra:68250,cemento:7200}},
   {id:"dasilva",   nombre:"Da Silva",      color:"#B45000", desc:0,  nota:"neto",
-   p:{h6:5730,h8:9350,h10:14750,h12:20700,h16:36300,h20:55930,v180:6745,v200:7490,v220:8030,v260:9490,v280:10220,v300:10950,v320:12720,v400:15900,v500:24800,v520:26100,ladrillo:5400,malla:49000,arena:35700,piedra:53300,cemento:6350,cano_cemento:38136,malla1525:61723,arena_bolson:39494,piedra_bolson:60403,clavos250:5292,clavos200:5292,alambre:5150}},
+   p:{h6:5730,h8:9350,h10:14750,h12:20700,h16:36300,h20:55930,v180:6745,v200:7490,v220:8030,v260:9490,v280:10220,v300:10950,v320:12720,v400:15900,v500:24800,v520:26100,ladrillo:5400,malla:49000,arena:35700,piedra:53300,cemento:7216,cano_cemento:38136,malla1525:61723,arena_bolson:44880,piedra_bolson:68640,clavos250:5292,clavos200:5292,alambre:5852}},
   {id:"lhhnos",    nombre:"LH Hnos",      color:"#6B21A8", desc:0,  nota:"–10% ef.",
    p:{h6:6660,h12:23670,h16:41400,arena:45000,piedra:56790,cemento:7470,malla:54000,cano_cemento:37800,malla1525:54000,arena_bolson:41400,piedra_bolson:62100,clavos250:5040,clavos200:5040,alambre:4770},
    pendientes:["h8","h10","h20","v180","v200","v220","v260","v280","v300","v320","v400","v500","v520","ladrillo"]},
@@ -236,7 +245,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v1";
-const APP_VERSION = "v14";
+const APP_VERSION = "v17";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shnos:true,esperanza:true};
 const STORAGE_ITEMS = "comparador_obra_items_v1";
@@ -394,6 +403,15 @@ function App(){
     setAddCompra(null);
   }
 
+  const [expandFalt,setExpandFalt]=useState(()=>{
+    const m={};
+    TODOS_ITEMS.forEach(i=>{
+      const c=cants[i.id]||CANT_DEFAULT[i.id];
+      m[i.id]=Math.max(0,c.nec-c.comp)>0;   // completos arrancan colapsados
+    });
+    return m;
+  });
+
   const {mix,total:totalMix}=useMemo(()=>calcMix(provsActivos,itemsActivos),[provsActivos,itemsActivos]);
   const totalComprado=Object.values(compras).reduce((a,b)=>a+b,0);
 
@@ -475,7 +493,7 @@ function App(){
               e('span',{className:'cat-toggle'},exp?'▲':'▼')
             )
           ),
-          exp&&e('div',null,
+          exp&&e('div',{className:'cards-grid'},
             ...cat.items.map(item=>{
               const on=itemsAct[item.id]!==false;
               const rank=rankingItem(item.id,item.cant,provsActivos);
@@ -533,6 +551,7 @@ function App(){
         e('span',{className:'alerta-icon'},'✓'),
         e('span',null,'Cada ítem al proveedor más barato. '+itemsActivos.length+' de '+TODOS_ITEMS.length+' ítems incluidos.')
       ),
+      e('div',{className:'cards-grid-lg'},
       ...Object.values(mix).map(({prov,items,subtotal})=>{
         return e('div',{key:prov.id,className:'prov-block'},
           e('div',{className:'prov-block-hdr'},
@@ -558,7 +577,7 @@ function App(){
             );
           })
         );
-      }),
+      })),
       e('div',{className:'total-box'},
         e('div',{className:'total-box-label'},'Total mix óptimo'),
         e('div',{className:'total-box-amount'},fmt(totalMix)),
@@ -602,6 +621,7 @@ function App(){
       e('div',{style:{fontSize:'0.8rem',color:'var(--c-text2)',marginBottom:10,lineHeight:1.5}},
         'Cuánto ahorrás sumando proveedores vs comprarle todo a uno solo. Tocá para ver el desglose.'
       ),
+      e('div',{className:'cards-grid-lg'},
       ...ESCENARIOS.map((esc,idx)=>{
         if(!esc.r)return null;
         const ahorro=base-esc.r.total;
@@ -659,7 +679,7 @@ function App(){
             e('div',{style:{height:8}})
           )
         );
-      })
+      }))
     );
   }
 
@@ -703,20 +723,26 @@ function App(){
             e('span',{className:'cat-label'},cat.nombre),
             e('span',{style:{fontSize:'0.78rem',fontWeight:700,color:sub>0?'var(--c-text)':'var(--c-text3)'}},sub>0?fmt(sub):'✓ completo')
           ),
-          ...rows.map(({item,c,falt,best,total})=>
-            e('div',{key:item.id,className:'item-card',style:{padding:'10px 12px',opacity:falt===0?0.5:1}},
-              e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8}},
+          e('div',{className:'cards-grid'},
+            ...rows.map(({item,c,falt,best,total})=>{
+            const abierto=!!expandFalt[item.id];
+            return e('div',{key:item.id,className:'item-card',style:{padding:'10px 12px',opacity:falt===0?0.5:1}},
+              e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8,cursor:'pointer'},
+                 onClick:()=>setExpandFalt(x=>({...x,[item.id]:!x[item.id]}))},
                 e('span',{className:'item-nombre'},item.nombre),
-                falt===0
-                  ? e('span',{style:{fontSize:'0.7rem',fontWeight:600,color:'var(--c-green)'}},'✓ Completo')
-                  : best
-                    ? e('div',{style:{textAlign:'right'}},
-                        e('div',{style:{fontSize:'0.9rem',fontWeight:700,color:best.prov.color}},fmt(total)),
-                        e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},falt+' × '+fmt(best.u)+' · '+best.prov.nombre)
-                      )
-                    : e('span',{className:'consultar'},'sin cotizar')
+                e('div',{style:{display:'flex',alignItems:'baseline',gap:8}},
+                  falt===0
+                    ? e('span',{style:{fontSize:'0.7rem',fontWeight:600,color:'var(--c-green)'}},'✓ Completo')
+                    : best
+                      ? e('div',{style:{textAlign:'right'}},
+                          e('div',{style:{fontSize:'0.9rem',fontWeight:700,color:best.prov.color}},fmt(total)),
+                          e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},falt+' × '+fmt(best.u)+' · '+best.prov.nombre)
+                        )
+                      : e('span',{className:'consultar'},'sin cotizar'),
+                  e('span',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},abierto?'▲':'▼')
+                )
               ),
-              e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:8,flexWrap:'wrap'}},
+              abierto&&e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:8,flexWrap:'wrap'}},
                 e('div',null,
                   e('div',{className:'falt-label'},'Necesito'),
                   Stepper(item.id,'nec',c.nec,null)
@@ -730,7 +756,8 @@ function App(){
                   e('div',{style:{fontSize:'1rem',fontWeight:800,color:falt>0?'var(--c-text)':'var(--c-green)'}},falt)
                 )
               )
-            )
+            );
+          })
           )
         )
       ),
