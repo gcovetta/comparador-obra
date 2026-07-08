@@ -235,9 +235,9 @@ const PROVEEDORES = [
   {id:"curtoni",   nombre:"Curtoni",      color:"#0369A1", desc:0,  nota:"–10% ef.",
    p:{h6:5625,h8:9585,h10:14985,h12:21375,h16:36720,h20:57330,v200:7298,v220:8033,v260:9476,v280:10206,v300:10920,v320:11655,v400:16249,v500:25473,v520:27379,ladrillo:3400,malla:44550,cemento:6480,malla1525:40500,arena_bolson:36900,piedra_bolson:61200,clavos250:4950,clavos200:4950},
    pendientes:["v180","arena","piedra","cano_cemento","alambre"]},
-  {id:"shnos",     nombre:"7 Hnos",       color:"#047857", desc:0,  nota:"ef. 07/07",
-   p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:9700,v280:10500,v300:11200,v400:16700,v500:25500,v520:27400,malla:49000,arena:34000,piedra:54000,cemento:6800,cano_cemento:36400,malla1525:44500,arena_bolson:41000,clavos250:5500,clavos200:5500,alambre:5500},
-   pendientes:["v320","ladrillo","piedra_bolson"]},
+  {id:"shnos",     nombre:"7 Hnos",       color:"#047857", desc:0,  nota:"ef. 08/07",
+   p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:9700,v280:10500,v300:11200,v400:16700,v500:25500,v520:27400,ladrillo:3300,malla:49000,arena:34000,piedra:54000,cemento:6800,cano_cemento:36400,malla1525:44500,arena_bolson:41000,clavos250:5500,clavos200:5500,alambre:5500},
+   pendientes:["v320","piedra_bolson"]},
   {id:"esperanza", nombre:"La Esperanza", color:"#BE185D", desc:0,  nota:"ef. 22/06",
    p:{h6:5037,h8:8583,h10:14245,h12:20390,h16:34660,h20:53000,v180:6380,v200:7779,v220:7800,v260:9200,v280:9830,v300:10600,v320:11300,v400:15405,v500:24200,v520:26000,ladrillo:3127,malla:45087,arena:35100,piedra:62553,cemento:7132,cano_cemento:36577,arena_bolson:45094,piedra_bolson:74727,clavos250:4300,clavos200:4300,alambre:4864},
    pendientes:["malla1525"]},
@@ -245,7 +245,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v1";
-const APP_VERSION = "v22";
+const APP_VERSION = "v23";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shnos:true,esperanza:true};
 const STORAGE_ITEMS = "comparador_obra_items_v2";
@@ -520,7 +520,7 @@ function App(){
       ),
       e('div',{className:'alerta warn',style:{marginTop:8}},
         e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'Precios de julio cargados: Caeiro, Da Silva, La Esperanza y 7 Hnos. LH sigue al 22/06. ⚠️ 7 Hnos cotizó ladrillo HUECO, no telgopor: recotizar antes de comprar ladrillo ahí.')
+        e('span',null,'Precios de julio confirmados: Caeiro, Da Silva, La Esperanza y 7 Hnos (08/07, telgopor corregido). Solo LH Hnos sigue al 22/06. Piedra suelta de Da Silva ($53.300) es de junio: confirmar antes de comprarle.')
       )
     );
   }
