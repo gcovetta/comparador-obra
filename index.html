@@ -245,22 +245,21 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v1";
-const APP_VERSION = "v21";
+const APP_VERSION = "v22";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shnos:true,esperanza:true};
-const STORAGE_ITEMS = "comparador_obra_items_v1";
+const STORAGE_ITEMS = "comparador_obra_items_v2";
+const COMPRADOS_IDS = ["cano_cemento","malla1525","arena_bolson","piedra_bolson","alambre","clavos250","clavos200"];
 const ITEMS_DEFAULT = {};
-TODOS_ITEMS.forEach(i=>{ ITEMS_DEFAULT[i.id] = !HIERROS_IDS.includes(i.id); });
-const STORAGE_CANT = "comparador_obra_cantidades_v1";
+TODOS_ITEMS.forEach(i=>{ ITEMS_DEFAULT[i.id] = !HIERROS_IDS.includes(i.id) && !COMPRADOS_IDS.includes(i.id); });
+const STORAGE_CANT = "comparador_obra_cantidades_v2";
 const STORAGE_CARRITO = "comparador_obra_carrito_v1";
 const CANT_DEFAULT = {};
 TODOS_ITEMS.forEach(i=>{
   let comp=0;
-  if(HIERROS_IDS.includes(i.id))comp=i.cant;        // hierros ya comprados (7 Hnos)
-  else if(i.id==='cemento')comp=80;                  // compra La Esperanza 03/07
-  else if(i.id==='arena_bolson')comp=2;              // cubierto (se compraron 6)
-  else if(i.id==='piedra_bolson')comp=2;             // cubierto (se compraron 6)
-  else if(i.id==='alambre')comp=5;                   // cubierto (se compraron 20 kg)
+  if(HIERROS_IDS.includes(i.id))comp=i.cant;         // hierros ya comprados (7 Hnos)
+  else if(i.id==='cemento')comp=95;                   // 80 La Esperanza 03/07 + 15 previas
+  else if(COMPRADOS_IDS.includes(i.id))comp=i.cant;   // varios ya comprados (caño, mallas 15×25, bolsones, clavos, alambre)
   CANT_DEFAULT[i.id]={nec:i.cant,comp};
 });
 
