@@ -244,24 +244,26 @@ const PROVEEDORES = [
 ];
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
-const STORAGE_KEY = "comparador_obra_github_v1";
-const APP_VERSION = "v24";
+const STORAGE_KEY = "comparador_obra_github_v4";
+const APP_VERSION = "v27";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shnos:true,esperanza:true};
-const STORAGE_ITEMS = "comparador_obra_items_v2";
-const COMPRADOS_IDS = ["cano_cemento","malla1525","arena_bolson","piedra_bolson","alambre","clavos250","clavos200"];
+const STORAGE_ITEMS = "comparador_obra_items_v4";
+const COMPRADOS_IDS = ["cano_cemento","malla1525","arena_bolson","piedra_bolson","alambre","clavos250","clavos200","ladrillo","arena","cemento","piedra"];
 const ITEMS_DEFAULT = {};
 TODOS_ITEMS.forEach(i=>{ ITEMS_DEFAULT[i.id] = !HIERROS_IDS.includes(i.id) && !COMPRADOS_IDS.includes(i.id); });
-const STORAGE_CANT = "comparador_obra_cantidades_v2";
+const STORAGE_CANT = "comparador_obra_cantidades_v4";
 const STORAGE_CARRITO = "comparador_obra_carrito_v1";
 const CANT_DEFAULT = {};
 TODOS_ITEMS.forEach(i=>{
   let comp=0;
   if(HIERROS_IDS.includes(i.id))comp=i.cant;         // hierros ya comprados (7 Hnos)
-  else if(i.id==='cemento')comp=95;                   // 80 La Esperanza 03/07 + 15 previas
+  else if(i.id==='cemento')comp=745;                  // 80 Esperanza + 15 previas + 650 7 Hnos 08/07
   else if(COMPRADOS_IDS.includes(i.id))comp=i.cant;   // varios ya comprados (caño, mallas 15×25, bolsones, clavos, alambre)
   CANT_DEFAULT[i.id]={nec:i.cant,comp};
 });
+CANT_DEFAULT.arena={nec:46,comp:46};   // cómputo real 46 m³ (se devolvieron 6 pedidos de más)
+CANT_DEFAULT.piedra={nec:46,comp:46};  // comprada 08/07 a 7 Hnos, $53.000/m³
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function pu(prov,id){ const r=prov.p[id]; if(!r)return null; return r*(1-prov.desc/100); }
@@ -354,7 +356,7 @@ function App(){
   const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false});
   const [expandItem,setExpandItem]=useState({});
   const [expandEsc,setExpandEsc]=useState({});
-  const [compras,setCompras]=useState({caeiro:0,dasilva:5500000,lhhnos:0,curtoni:0,shnos:0,esperanza:0});
+  const [compras,setCompras]=useState({caeiro:0,dasilva:5500000,lhhnos:0,curtoni:0,shnos:17784200,esperanza:1386766});
   const [editCompra,setEditCompra]=useState(null);
   const [addCompra,setAddCompra]=useState(null);
   const [guardado,setGuardado]=useState(false);
