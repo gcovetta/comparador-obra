@@ -220,6 +220,42 @@ const CATEGORIAS = [
     {id:"clavos200",     nombre:"Clavos 2\" (kg)",          cant:2},
     {id:"alambre",       nombre:"Alambre fardo (kg)",       cant:5},
   ]},
+  { id:"etapa2_mamposteria", nombre:"Mampostería y revoque grueso (Etapa 2)", items:[
+    {id:"e2_cemento",            nombre:"Cemento x50kg (bolsa)",                         cant:1359},
+    {id:"e2_cal_hidraulica",     nombre:"Cal Hidráulica x20kg (Loma Negra o sim.)",      cant:780},
+    {id:"e2_cal_milagro",        nombre:"Cal Milagro x25kg",                             cant:174},
+    {id:"e2_pegamento_klaukol",  nombre:"Pegamento Klaukol FLEX x25kg",                  cant:142},
+    {id:"e2_arena",              nombre:"Arena (m³)",                                    cant:166},
+    {id:"e2_piedra",             nombre:"Piedra (m³)",                                   cant:79},
+    {id:"e2_granza",             nombre:"Granza (m³)",                                   cant:40},
+    {id:"e2_ladrillo_comun",     nombre:"Ladrillos comunes (pallet x100u)",              cant:50},
+    {id:"e2_ceramico_12x18x33",  nombre:"Lad. Cerámico 12x18x33",                        cant:2250},
+    {id:"e2_ceramico_18x18x33",  nombre:"Lad. Cerámico 18x18x33",                        cant:7360},
+    {id:"e2_ceramico_8x18x33",   nombre:"Lad. Cerámico 8x18x33",                         cant:0},
+    {id:"e2_cerecita",           nombre:"Cerecita (tambor x200kg)",                      cant:2},
+    {id:"e2_film_polietileno",   nombre:"Film polietileno 200 micrones (rollo x200mic 3x50)", cant:6},
+    {id:"e2_malla_hierro5",      nombre:"Malla hierro 5mm",                              cant:75},
+    {id:"e2_piedra_binder",      nombre:"Piedra binder 4-8 (m³)",                        cant:17},
+  ]},
+  { id:"etapa2_refractarios", nombre:"Refractarios, revoques finos y fijaciones (Etapa 2)", items:[
+    {id:"e2_ladrillo_refractario", nombre:"Ladrillos refractarios",                      cant:300},
+    {id:"e2_tejuela_refractaria",  nombre:"Tejuelas refractarias",                       cant:100},
+    {id:"e2_tierra_refractaria",   nombre:"Tierra refractaria x5kg",                     cant:2},
+    {id:"e2_pegamento_refractario",nombre:"Pegamento mortero refractario x20kg",         cant:7},
+    {id:"e2_separadores_porcelanato", nombre:"Separadores porcelanato (paq. x100u)",     cant:15},
+    {id:"e2_malla_revoque",        nombre:"Malla plástica revoques (rollo 1x50 110g)",   cant:6},
+    {id:"e2_clavos2",              nombre:"Clavos 2\" (paq. x1kg)",                      cant:55},
+    {id:"e2_clavos212",            nombre:"Clavos 2½\" (paq. x1kg)",                     cant:87},
+    {id:"e2_alambre_fardo",        nombre:"Alambre de fardo (kg)",                       cant:160},
+    {id:"e2_yeso_tuyango",         nombre:"Yeso Tuyango x30kg",                          cant:150},
+  ]},
+  { id:"etapa2_insumos", nombre:"Insumos y discos (Etapa 2)", items:[
+    {id:"e2_precinto",             nombre:"Precinto negro (paq. x100u)",                 cant:10},
+    {id:"e2_disco_tyrolit_114",    nombre:"Disco Tyrolit secur PL 114×1,6 OX AL",        cant:20},
+    {id:"e2_disco_tyrolit_178",    nombre:"Disco Tyrolit secur PL 178×1,6 OX AL",        cant:20},
+    {id:"e2_disco_tyrolit_230cd",  nombre:"Disco Tyrolit C/D 230×3,2 OX AL",             cant:20},
+    {id:"e2_disco_diam_rhein",     nombre:"Disco DIAM RHEIN 230",                        cant:3},
+  ]},
 ];
 
 const HIERROS_IDS = ["h6","h8","h10","h12","h16","h20"];
@@ -245,7 +281,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v27";
+const APP_VERSION = "v28";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shnos:true,esperanza:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
@@ -353,7 +389,7 @@ function bestN(n,ids,items){
 // ── APP ───────────────────────────────────────────────────────────────────────
 function App(){
   const [tab,setTab]=useState("faltantes");
-  const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false});
+  const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false,etapa2_mamposteria:false,etapa2_refractarios:false,etapa2_insumos:false});
   const [expandItem,setExpandItem]=useState({});
   const [expandEsc,setExpandEsc]=useState({});
   const [compras,setCompras]=useState({caeiro:0,dasilva:5500000,lhhnos:0,curtoni:0,shnos:17784200,esperanza:1386766});
