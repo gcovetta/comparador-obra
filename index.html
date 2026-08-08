@@ -718,7 +718,7 @@ function App(){
               e('div',{className:'mix-item-right'},
                 e('div',{className:'mix-item-total'},fmt(item.total)),
                 e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},fmt(item.u)+'/u'),
-                ahorro&&ahorro>0&&e('div',{className:'mix-item-ahorro'},'ahorra '+fmt(ahorro)+' vs '+(item.seg.prov.nombre))
+                ahorro&&ahorro>0&&e('div',{className:'mix-item-ahorro'},'ahorra '+fmt(ahorro)+' (–'+(ahorro/item.seg.total*100).toFixed(1)+'%) vs '+(item.seg.prov.nombre))
               )
             );
           })
@@ -1018,7 +1018,7 @@ function App(){
                   e('div',{className:'mix-item-right'},
                     e('div',{className:'mix-item-total'},fmt(it.total)),
                     e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},fmt(it.u)+'/u'),
-                    ah>0&&e('div',{className:'mix-item-ahorro'},'ahorra '+fmt(ah)+' vs '+it.seg.prov.nombre)
+                    ah>0&&e('div',{className:'mix-item-ahorro'},'ahorra '+fmt(ah)+' (–'+(ah/it.seg.total*100).toFixed(1)+'%) vs '+it.seg.prov.nombre)
                   )
                 );
               })
