@@ -178,7 +178,7 @@
 <body>
 <div id="root"></div>
 <script>
-const { useState, useMemo } = React;
+const { useState, useMemo, useEffect } = React;
 const e = React.createElement;
 
 // ── DATOS ────────────────────────────────────────────────────────────────────
@@ -272,7 +272,7 @@ const PROVEEDORES = [
    p:{h6:5625,h8:9585,h10:14985,h12:21375,h16:36720,h20:57330,v200:7298,v220:8033,v260:9476,v280:10206,v300:10920,v320:11655,v400:16249,v500:25473,v520:27379,ladrillo:3400,malla:44550,cemento:6480,malla1525:40500,arena_bolson:36900,piedra_bolson:61200,clavos250:4950,clavos200:4950,e2_cemento:12960,e2_malla_hierro5:40500,e2_clavos2:4950,e2_clavos212:4950},
    pendientes:["v180","arena","piedra","cano_cemento","alambre"]},
   {id:"shnos",     nombre:"7 Hnos",       color:"#047857", desc:0,  nota:"ef. 07/08",
-   p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:10000,v280:10815,v300:11550,v320:12300,v400:17200,v500:26300,v520:28300,ladrillo:3100,malla:49000,arena:34000,piedra:56000,cemento:7000,cano_cemento:36400,malla1525:44500,arena_bolson:41000,clavos250:5500,clavos200:5500,alambre:5500,e2_arena:34000,e2_piedra:56000,e2_cemento:14000,e2_malla_hierro5:44500,e2_clavos2:5500,e2_clavos212:5500,e2_alambre_fardo:5500,e2_granza:58000,e2_ladrillo_comun:16000,e2_ceramico_12x18x33:670,e2_ceramico_18x18x33:870,e2_yeso_tuyango:18000,e2_disco_tyrolit_114:3600,e2_disco_tyrolit_178:5600,e2_disco_tyrolit_230cd:9000,e2_disco_diam_rhein:31100},
+   p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:10000,v280:10815,v300:11550,v320:12300,v400:17200,v500:26300,v520:28300,ladrillo:3689.70,malla:49000,arena:34000,piedra:56000,cemento:7000,cano_cemento:36400,malla1525:44500,arena_bolson:41000,clavos250:5500,clavos200:5500,alambre:5500,e2_arena:34000,e2_piedra:56000,e2_cemento:14000,e2_malla_hierro5:44500,e2_clavos2:5500,e2_clavos212:5500,e2_alambre_fardo:5500,e2_granza:58000,e2_ladrillo_comun:16000,e2_ceramico_12x18x33:670,e2_ceramico_18x18x33:870,e2_yeso_tuyango:18000,e2_disco_tyrolit_114:3600,e2_disco_tyrolit_178:5600,e2_disco_tyrolit_230cd:9000,e2_disco_diam_rhein:31100},
    pendientes:["piedra_bolson"]},
   {id:"esperanza", nombre:"La Esperanza", color:"#BE185D", desc:0,  nota:"ef. 07/08 (hierros sin actualizar)",
    p:{h6:5037,h8:8583,h10:14245,h12:20390,h16:34660,h20:53000,v180:7300,v200:8000,v220:9000,v260:10600,v280:11400,v300:12200,v320:13000,v400:18400,v500:28000,v520:25300,ladrillo:3127,malla:46000,arena:38000,piedra:65000,cemento:6900,cano_cemento:36577,malla1525:46000,arena_bolson:45094,piedra_bolson:74727,clavos250:4500,clavos200:4500,alambre:4500,e2_arena:38000,e2_piedra:65000,e2_cemento:13800,e2_malla_hierro5:46000,e2_cal_hidraulica:5690,e2_cal_milagro:14900,e2_pegamento_klaukol:30000,e2_granza:55000,e2_ladrillo_comun:18000,e2_ceramico_12x18x33:710,e2_ceramico_18x18x33:999,e2_cerecita:179000,e2_film_polietileno:29000,e2_piedra_binder:69000,e2_ladrillo_refractario:5200,e2_tejuela_refractaria:2030,e2_pegamento_refractario:30000,e2_malla_revoque:35000,e2_clavos2:4500,e2_clavos212:4500,e2_alambre_fardo:4500,e2_yeso_tuyango:16300}},
@@ -288,8 +288,6 @@ const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
 const COMPRADOS_IDS = ["cano_cemento","malla","malla1525","arena_bolson","piedra_bolson","alambre","clavos250","clavos200","ladrillo","arena","cemento","piedra"];
-const ITEMS_DEFAULT = {};
-TODOS_ITEMS.forEach(i=>{ ITEMS_DEFAULT[i.id] = !HIERROS_IDS.includes(i.id) && !COMPRADOS_IDS.includes(i.id); });
 const STORAGE_CANT = "comparador_obra_cantidades_v4";
 const STORAGE_CARRITO = "comparador_obra_carrito_v1";
 const CANT_DEFAULT = {};
@@ -320,6 +318,14 @@ CANT_DEFAULT.e2_disco_tyrolit_114={nec:20,comp:20};
 CANT_DEFAULT.e2_disco_tyrolit_178={nec:20,comp:20};
 CANT_DEFAULT.e2_disco_tyrolit_230cd={nec:20,comp:20};
 // e2_disco_diam_rhein (3u) NO se compró todavía — sigue pendiente
+
+// Un ítem se excluye por defecto de Precios/Mix óptimo/Ahorro apenas queda 100% comprado en Faltantes
+// (se calcula DESPUÉS de todos los ajustes de CANT_DEFAULT de arriba, así siempre queda sincronizado)
+const ITEMS_DEFAULT = {};
+TODOS_ITEMS.forEach(i=>{
+  const c = CANT_DEFAULT[i.id];
+  ITEMS_DEFAULT[i.id] = !(c && c.nec>0 && c.comp>=c.nec);
+});
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 function pu(prov,id){ const r=prov.p[id]; if(!r)return null; return r*(1-prov.desc/100); }
@@ -412,7 +418,7 @@ function App(){
   const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false,etapa2_mamposteria:false,etapa2_refractarios:false,etapa2_insumos:false});
   const [expandItem,setExpandItem]=useState({});
   const [expandEsc,setExpandEsc]=useState({});
-  const [compras,setCompras]=useState({caeiro:6003160.54,dasilva:5500000,lhhnos:0,curtoni:0,shnos:17784200,esperanza:1386766,casameli:0});
+  const [compras,setCompras]=useState({caeiro:6003160.54,dasilva:5500000,lhhnos:0,curtoni:0,shnos:18139200,esperanza:1386766,casameli:0});
   const [editCompra,setEditCompra]=useState(null);
   const [addCompra,setAddCompra]=useState(null);
   const [guardado,setGuardado]=useState(false);
@@ -465,6 +471,22 @@ function App(){
       return n;
     });
   }
+
+  // En cuanto un ítem queda 100% comprado en Faltantes, se saca solo de Precios/Mix óptimo/Ahorro
+  // (no vuelve a tildarse solo si después se destildó a mano, ni si deja de estar completo)
+  useEffect(()=>{
+    setItemsAct(prev=>{
+      let changed=false;
+      const n={...prev};
+      TODOS_ITEMS.forEach(i=>{
+        const c=cants[i.id]||CANT_DEFAULT[i.id];
+        const completo = c && c.nec>0 && c.comp>=c.nec;
+        if(completo && n[i.id]!==false){ n[i.id]=false; changed=true; }
+      });
+      if(changed){ guardarItems(n); return n; }
+      return prev;
+    });
+  },[cants]);
 
   // Cargar compras guardadas
   useState(()=>{
@@ -591,6 +613,10 @@ function App(){
       e('div',{className:'alerta info',style:{marginTop:8}},
         e('span',{className:'alerta-icon'},'✓'),
         e('span',null,'08/08: comprado a Caeiro (factura Gaston 0009-00016445, $6.003.160,54) — TODAS las viguetas, granza, ladrillo y tejuela refractaria, y 3 discos (falta el disco diamantado). Marcado como "Compré" en Faltantes. Los precios de viguetas de Caeiro subieron ~2,2% vs el presupuesto anterior: actualizados acá con el valor real facturado. Si tu navegador ya tenía guardado el progreso de Faltantes/Compras antes de este cambio, puede que tengas que tildar "Compré" a mano en viguetas/granza/refractarios/discos y sumar la compra en el proveedor Caeiro, porque lo guardado en tu celular pisa estos valores por defecto.')
+      ),
+      e('div',{className:'alerta warn',style:{marginTop:8}},
+        e('span',{className:'alerta-icon'},'⚠️'),
+        e('span',null,'08/08: ajustado el ladrillo telgopor comprado a 7 Hnos (+$355.000 por error de grosor) — precio unitario pasó de $3.100 a $3.689,70 (602u) y el pago a 7 Hnos se actualizó de $17.784.200 a $18.139.200.')
       )
     );
   }
@@ -838,58 +864,68 @@ function App(){
         return {item,c,falt,best,total};
       });
       const sub=rows.reduce((a,r)=>a+r.total,0);
-      return {cat,rows,sub};
+      const hayPendientes=rows.some(r=>r.falt>0);
+      return {cat,rows,sub,hayPendientes};
     });
+    // Categorías con algo pendiente arriba; las 100% completas, al final
+    bloques.sort((a,b)=>(a.hayPendientes===b.hayPendientes)?0:(a.hayPendientes?-1:1));
 
     return e('div',{className:'section'},
       e('div',{className:'alerta info'},
         e('span',{className:'alerta-icon'},'🧮'),
         e('span',null,'Ajustá "Necesito" y "Compré" con +/− o tocando el número. El costo usa el mejor precio unitario vigente de los proveedores activos.')
       ),
-      ...bloques.map(({cat,rows,sub})=>
-        e('div',{key:cat.id},
+      ...bloques.map(({cat,rows,sub})=>{
+        const pendientes=rows.filter(r=>r.falt>0);
+        const completos=rows.filter(r=>r.falt===0);
+        function tarjeta({item,c,falt,best,total}){
+          const abierto=!!expandFalt[item.id];
+          return e('div',{key:item.id,className:'item-card',style:{padding:'10px 12px',opacity:falt===0?0.5:1}},
+            e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8,cursor:'pointer'},
+               onClick:()=>setExpandFalt(x=>({...x,[item.id]:!x[item.id]}))},
+              e('span',{className:'item-nombre'},item.nombre),
+              e('div',{style:{display:'flex',alignItems:'baseline',gap:8}},
+                falt===0
+                  ? e('span',{style:{fontSize:'0.7rem',fontWeight:600,color:'var(--c-green)'}},'✓ Completo')
+                  : best
+                    ? e('div',{style:{textAlign:'right'}},
+                        e('div',{style:{fontSize:'0.9rem',fontWeight:700,color:best.prov.color}},fmt(total)),
+                        e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},falt+' × '+fmt(best.u)+' · '+best.prov.nombre)
+                      )
+                    : e('span',{className:'consultar'},'sin cotizar'),
+                e('span',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},abierto?'▲':'▼')
+              )
+            ),
+            abierto&&e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:8,flexWrap:'wrap'}},
+              e('div',null,
+                e('div',{className:'falt-label'},'Necesito'),
+                Stepper(item.id+'_nec',c.nec,null,v=>setCant(item.id,'nec',v))
+              ),
+              e('div',null,
+                e('div',{className:'falt-label'},'Compré'),
+                Stepper(item.id+'_comp',c.comp,best?best.prov.color:null,v=>setCant(item.id,'comp',v))
+              ),
+              e('div',{style:{marginLeft:'auto',textAlign:'right'}},
+                e('div',{className:'falt-label'},'Faltan'),
+                e('div',{style:{fontSize:'1rem',fontWeight:800,color:falt>0?'var(--c-text)':'var(--c-green)'}},falt)
+              )
+            )
+          );
+        }
+        return e('div',{key:cat.id},
           e('div',{className:'cat-header',style:{cursor:'default'}},
             e('span',{className:'cat-label'},cat.nombre),
             e('span',{style:{fontSize:'0.78rem',fontWeight:700,color:sub>0?'var(--c-text)':'var(--c-text3)'}},sub>0?fmt(sub):'✓ completo')
           ),
-          e('div',{className:'cards-grid'},
-            ...rows.map(({item,c,falt,best,total})=>{
-            const abierto=!!expandFalt[item.id];
-            return e('div',{key:item.id,className:'item-card',style:{padding:'10px 12px',opacity:falt===0?0.5:1}},
-              e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8,cursor:'pointer'},
-                 onClick:()=>setExpandFalt(x=>({...x,[item.id]:!x[item.id]}))},
-                e('span',{className:'item-nombre'},item.nombre),
-                e('div',{style:{display:'flex',alignItems:'baseline',gap:8}},
-                  falt===0
-                    ? e('span',{style:{fontSize:'0.7rem',fontWeight:600,color:'var(--c-green)'}},'✓ Completo')
-                    : best
-                      ? e('div',{style:{textAlign:'right'}},
-                          e('div',{style:{fontSize:'0.9rem',fontWeight:700,color:best.prov.color}},fmt(total)),
-                          e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},falt+' × '+fmt(best.u)+' · '+best.prov.nombre)
-                        )
-                      : e('span',{className:'consultar'},'sin cotizar'),
-                  e('span',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},abierto?'▲':'▼')
-                )
-              ),
-              abierto&&e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:8,flexWrap:'wrap'}},
-                e('div',null,
-                  e('div',{className:'falt-label'},'Necesito'),
-                  Stepper(item.id+'_nec',c.nec,null,v=>setCant(item.id,'nec',v))
-                ),
-                e('div',null,
-                  e('div',{className:'falt-label'},'Compré'),
-                  Stepper(item.id+'_comp',c.comp,best?best.prov.color:null,v=>setCant(item.id,'comp',v))
-                ),
-                e('div',{style:{marginLeft:'auto',textAlign:'right'}},
-                  e('div',{className:'falt-label'},'Faltan'),
-                  e('div',{style:{fontSize:'1rem',fontWeight:800,color:falt>0?'var(--c-text)':'var(--c-green)'}},falt)
-                )
-              )
-            );
-          })
-          )
-        )
-      ),
+          e('div',{className:'cards-grid'}, ...pendientes.map(tarjeta)),
+          completos.length>0&&e('div',{style:{display:'flex',alignItems:'center',gap:8,margin:'12px 4px 6px'}},
+            e('div',{style:{flex:1,height:1,background:'var(--c-border2)'}}),
+            e('span',{style:{fontSize:'0.65rem',fontWeight:600,color:'var(--c-text3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap'}},'✓ Ya comprados ('+completos.length+')'),
+            e('div',{style:{flex:1,height:1,background:'var(--c-border2)'}})
+          ),
+          completos.length>0&&e('div',{className:'cards-grid'}, ...completos.map(tarjeta))
+        );
+      }),
       e('div',{className:'total-box'},
         e('div',{className:'total-box-label'},'Costo de lo que falta comprar'),
         e('div',{className:'total-box-amount'},fmt(granTotal)),
