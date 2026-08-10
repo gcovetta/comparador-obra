@@ -522,6 +522,7 @@ function App(){
     try{ const s=localStorage.getItem(STORAGE_CARRITO); if(s)return JSON.parse(s); }catch(e){}
     return {};
   });
+  const [ocultarProveedor,setOcultarProveedor]=useState(false);
   function guardarCarrito(n){ try{ localStorage.setItem(STORAGE_CARRITO,JSON.stringify(n)); }catch(e){} }
   function setCarritoQty(id,val){
     const v=Math.max(0,Math.round(Number(String(val).replace(/[^\d]/g,''))||0));
@@ -939,38 +940,63 @@ function App(){
   function renderCarrito(){
     const cartItems=TODOS_ITEMS.filter(i=>carrito[i.id]>0).map(i=>({...i,cant:carrito[i.id]}));
     const hay=cartItems.length>0;
+
+    // Mapeo anónimo estable (Corralón A, B, C…) para cuando se oculta el nombre real
+    const anonMap={};
+    provsActivos.forEach((p,idx)=>{ anonMap[p.id]=String.fromCharCode(65+idx); });
+    function pNombre(prov){ return ocultarProveedor?('Corralón '+(anonMap[prov.id]||'?')):prov.nombre; }
+    function pColor(prov){ return ocultarProveedor?'var(--c-text3)':prov.color; }
+    function nombreId(id){ const p=PROVEEDORES.find(x=>x.id===id); return p?pNombre(p):id; }
+
     let mixC={},totalC=0,escRows=[];
     if(hay){
       const r=calcMix(provsActivos,cartItems); mixC=r.mix; totalC=r.total;
       const nProvMix=Object.keys(mixC).length;
-      const nombre=id=>PROVEEDORES.find(p=>p.id===id).nombre;
       const u1=bestUno(provsActivos,cartItems);
       const d2=bestN(2,idsActivos,cartItems);
       const t3=bestN(3,idsActivos,cartItems);
       escRows=[
         {label:'🏆 Mix óptimo ('+nProvMix+' prov.)',val:totalC},
-        t3?{label:'Mejor trío: '+t3.s.map(nombre).join(' + '),val:t3.total}:null,
-        d2?{label:'Mejor dupla: '+d2.s.map(nombre).join(' + '),val:d2.total}:null,
-        u1?{label:'Todo a uno: '+nombre(u1.mainId)+(u1.fuera>0?' (+'+u1.fuera+' ítem'+(u1.fuera>1?'s':'')+' que no cotiza, en otro)':''),val:u1.total}:null,
+        t3?{label:'Mejor trío: '+t3.s.map(nombreId).join(' + '),val:t3.total}:null,
+        d2?{label:'Mejor dupla: '+d2.s.map(nombreId).join(' + '),val:d2.total}:null,
+        u1?{label:'Todo a uno: '+nombreId(u1.mainId)+(u1.fuera>0?' (+'+u1.fuera+' ítem'+(u1.fuera>1?'s':'')+' que no cotiza, en otro)':''),val:u1.total}:null,
       ].filter(Boolean).sort((a,b)=>a.val-b.val);
     }
+
+    // Solo ítems que todavía faltan comprar (Necesito > Compré)
+    const bloquesPend=CATEGORIAS.map(cat=>{
+      const items=cat.items.filter(item=>{
+        const c=cants[item.id]||CANT_DEFAULT[item.id]||{nec:item.cant,comp:0};
+        return Math.max(0,c.nec-c.comp)>0;
+      });
+      return {cat,items};
+    }).filter(b=>b.items.length>0);
+
     return e('div',{className:'section'},
       e('div',{className:'alerta info'},
         e('span',{className:'alerta-icon'},'🛒'),
-        e('span',null,'Tildá los ítems de tu próxima compra y ajustá cantidades: abajo te digo dónde conviene comprarla.')
+        e('span',null,'Tildá los ítems de tu próxima compra y ajustá cantidades: abajo te digo dónde conviene comprarla. Solo se listan los que todavía te faltan.')
       ),
-      e('div',{style:{display:'flex',gap:8,marginBottom:6}},
+      e('div',{style:{display:'flex',gap:8,marginBottom:6,flexWrap:'wrap'}},
         e('button',{className:'cat-toggle-btn',onClick:cargarFaltantes},'⚡ Cargar todos los faltantes'),
-        hay&&e('button',{className:'cat-toggle-btn',onClick:vaciarCarrito},'🗑 Vaciar carrito')
+        hay&&e('button',{className:'cat-toggle-btn',onClick:vaciarCarrito},'🗑 Vaciar carrito'),
+        e('button',{className:'cat-toggle-btn',onClick:()=>setOcultarProveedor(v=>!v)},
+          ocultarProveedor?'🙈 Nombres ocultos (mostrar)':'👁 Ocultar nombre del corralón'
+        )
       ),
-      ...CATEGORIAS.map(cat=>
+      ocultarProveedor&&e('div',{className:'alerta warn'},
+        e('span',{className:'alerta-icon'},'🙈'),
+        e('span',null,'Nombres de proveedor ocultos — podés compartir esta lista para pedir que te igualen precio sin revelar quién cotizó qué.')
+      ),
+      bloquesPend.length===0&&e('div',{style:{fontSize:'0.8rem',color:'var(--c-text3)',textAlign:'center',padding:'20px 0'}},'✓ No te falta comprar nada.'),
+      ...bloquesPend.map(({cat,items})=>
         e('div',{key:cat.id},
           e('div',{className:'cat-header',style:{cursor:'default'}},
             e('span',{className:'cat-label'},cat.nombre),
-            e('span',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},cat.items.filter(i=>carrito[i.id]>0).length+' en el carrito')
+            e('span',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},items.filter(i=>carrito[i.id]>0).length+' en el carrito')
           ),
           e('div',{className:'cards-grid'},
-            ...cat.items.map(item=>{
+            ...items.map(item=>{
               const enCarro=carrito[item.id]>0;
               const rank=rankingItem(item.id,1,provsActivos);
               const best=rank[0]||null;
@@ -979,16 +1005,16 @@ function App(){
                   e('input',{type:'checkbox',checked:enCarro,onClick:ev=>ev.stopPropagation(),onChange:()=>toggleCarrito(item.id),
                     style:{width:16,height:16,accentColor:'#4ADE80',flexShrink:0,cursor:'pointer'}}),
                   e('span',{className:'item-nombre'},item.nombre),
-                  enCarro&&best&&e('span',{style:{marginLeft:'auto',fontSize:'0.82rem',fontWeight:700,color:best.prov.color}},fmt(best.u*carrito[item.id]))
+                  enCarro&&best&&e('span',{style:{marginLeft:'auto',fontSize:'0.82rem',fontWeight:700,color:pColor(best.prov)}},fmt(best.u*carrito[item.id]))
                 ),
                 enCarro&&e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:7,flexWrap:'wrap'}},
                   e('div',null,
                     e('div',{className:'falt-label'},'Cantidad'),
-                    Stepper('car_'+item.id,carrito[item.id],best?best.prov.color:null,v=>setCarritoQty(item.id,v))
+                    Stepper('car_'+item.id,carrito[item.id],best?pColor(best.prov):null,v=>setCarritoQty(item.id,v))
                   ),
                   best&&e('div',{style:{marginLeft:'auto',textAlign:'right'}},
                     e('div',{className:'falt-label'},'Mejor precio'),
-                    e('div',{style:{fontSize:'0.75rem',fontWeight:600,color:best.prov.color}},best.prov.nombre+' · '+fmt(best.u)+'/u')
+                    e('div',{style:{fontSize:'0.75rem',fontWeight:600,color:pColor(best.prov)}},pNombre(best.prov)+' · '+fmt(best.u)+'/u')
                   )
                 )
               );
@@ -997,16 +1023,42 @@ function App(){
         )
       ),
       hay&&e('div',null,
+        e('div',{className:'section-title',style:{paddingTop:14}},'📋 Lista para pedir precio'),
+        e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',overflow:'hidden',border:'1px solid var(--c-border)'}},
+          e('table',{className:'resumen-table'},
+            e('thead',null,e('tr',null,
+              e('th',null,'Artículo'),e('th',null,'Cantidad'),e('th',null,'Precio a igualar'),e('th',null,'Total'),
+            )),
+            e('tbody',null,
+              ...cartItems.map(item=>{
+                const best=rankingItem(item.id,1,provsActivos)[0]||null;
+                const total=best?best.u*item.cant:null;
+                return e('tr',{key:item.id},
+                  e('td',null,item.nombre),
+                  e('td',null,item.cant),
+                  e('td',null,best?fmt(best.u):e('span',{className:'consultar'},'sin cotizar')),
+                  e('td',null,best?fmt(total):'—')
+                );
+              }),
+              e('tr',{className:'best-row'},
+                e('td',null,'TOTAL'),
+                e('td',null,''),
+                e('td',null,''),
+                e('td',null,fmt(cartItems.reduce((a,item)=>{ const best=rankingItem(item.id,1,provsActivos)[0]; return a+(best?best.u*item.cant:0); },0)))
+              )
+            )
+          )
+        ),
         e('div',{className:'section-title',style:{paddingTop:14}},'🏆 Dónde comprar este pedido'),
         e('div',{className:'cards-grid-lg'},
           ...Object.values(mixC).map(({prov,items,subtotal})=>
             e('div',{key:prov.id,className:'prov-block'},
               e('div',{className:'prov-block-hdr'},
                 e('div',{className:'prov-block-nombre'},
-                  e('span',{className:'dot',style:{background:prov.color}}),
-                  e('span',{style:{color:prov.color}},prov.nombre)
+                  e('span',{className:'dot',style:{background:pColor(prov)}}),
+                  e('span',{style:{color:pColor(prov)}},pNombre(prov))
                 ),
-                e('div',{className:'prov-block-total',style:{color:prov.color}},fmt(subtotal))
+                e('div',{className:'prov-block-total',style:{color:pColor(prov)}},fmt(subtotal))
               ),
               ...items.map(it=>{
                 const ah=it.seg?(it.seg.total-it.total):0;
@@ -1018,7 +1070,7 @@ function App(){
                   e('div',{className:'mix-item-right'},
                     e('div',{className:'mix-item-total'},fmt(it.total)),
                     e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},fmt(it.u)+'/u'),
-                    ah>0&&e('div',{className:'mix-item-ahorro'},'ahorra '+fmt(ah)+' (–'+(ah/it.seg.total*100).toFixed(1)+'%) vs '+it.seg.prov.nombre)
+                    ah>0&&e('div',{className:'mix-item-ahorro'},'ahorra '+fmt(ah)+' (–'+(ah/it.seg.total*100).toFixed(1)+'%) vs '+pNombre(it.seg.prov))
                   )
                 );
               })
