@@ -318,6 +318,7 @@ CANT_DEFAULT.e2_disco_tyrolit_114={nec:20,comp:20};
 CANT_DEFAULT.e2_disco_tyrolit_178={nec:20,comp:20};
 CANT_DEFAULT.e2_disco_tyrolit_230cd={nec:20,comp:20};
 // e2_disco_diam_rhein (3u) NO se compró todavía — sigue pendiente
+CANT_DEFAULT.arena_bolson={nec:12,comp:2};  // 2 ya comprados + 10 nuevos para el pedido de hoy
 
 // Un ítem se excluye por defecto de Precios/Mix óptimo/Ahorro apenas queda 100% comprado en Faltantes
 // (se calcula DESPUÉS de todos los ajustes de CANT_DEFAULT de arriba, así siempre queda sincronizado)
@@ -963,19 +964,45 @@ function App(){
       ].filter(Boolean).sort((a,b)=>a.val-b.val);
     }
 
-    // Solo ítems que todavía faltan comprar (Necesito > Compré)
-    const bloquesPend=CATEGORIAS.map(cat=>{
-      const items=cat.items.filter(item=>{
+    // Separa cada categoría en pendientes (Necesito > Compré) y ya completadas
+    const bloques=CATEGORIAS.map(cat=>{
+      const pendientes=[],completos=[];
+      cat.items.forEach(item=>{
         const c=cants[item.id]||CANT_DEFAULT[item.id]||{nec:item.cant,comp:0};
-        return Math.max(0,c.nec-c.comp)>0;
+        (Math.max(0,c.nec-c.comp)>0?pendientes:completos).push(item);
       });
-      return {cat,items};
-    }).filter(b=>b.items.length>0);
+      return {cat,pendientes,completos};
+    }).filter(b=>b.pendientes.length>0||b.completos.length>0);
+
+    function tarjetaCarrito(item,completo){
+      const enCarro=carrito[item.id]>0;
+      const rank=rankingItem(item.id,1,provsActivos);
+      const best=rank[0]||null;
+      return e('div',{key:item.id,className:'item-card',style:{padding:'9px 12px',opacity:enCarro?1:(completo?0.55:0.7)}},
+        e('div',{style:{display:'flex',alignItems:'center',gap:9,cursor:'pointer'},onClick:()=>toggleCarrito(item.id)},
+          e('input',{type:'checkbox',checked:enCarro,onClick:ev=>ev.stopPropagation(),onChange:()=>toggleCarrito(item.id),
+            style:{width:16,height:16,accentColor:'#4ADE80',flexShrink:0,cursor:'pointer'}}),
+          e('span',{className:'item-nombre'},item.nombre),
+          completo&&!enCarro&&e('span',{style:{fontSize:'0.65rem',color:'var(--c-green)',marginLeft:'auto'}},'✓ + agregar'),
+          enCarro&&best&&e('span',{style:{marginLeft:'auto',fontSize:'0.82rem',fontWeight:700,color:pColor(best.prov)}},fmt(best.u*carrito[item.id]))
+        ),
+        enCarro&&e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:7,flexWrap:'wrap'}},
+          e('div',null,
+            e('div',{className:'falt-label'},'Cantidad'),
+            Stepper('car_'+item.id,carrito[item.id],best?pColor(best.prov):null,v=>setCarritoQty(item.id,v))
+          ),
+          best&&e('div',{style:{marginLeft:'auto',textAlign:'right'}},
+            e('div',{className:'falt-label'},'Mejor precio'),
+            e('div',{style:{fontSize:'0.75rem',fontWeight:600,color:pColor(best.prov)}},pNombre(best.prov)+' · '+fmt(best.u)+'/u')
+          )
+        )
+      );
+    }
 
     return e('div',{className:'section'},
       e('div',{className:'alerta info'},
         e('span',{className:'alerta-icon'},'🛒'),
-        e('span',null,'Tildá los ítems de tu próxima compra y ajustá cantidades: abajo te digo dónde conviene comprarla. Solo se listan los que todavía te faltan.')
+        e('span',null,'Tildá los ítems de tu próxima compra y ajustá cantidades: abajo te digo dónde conviene comprarla. Los ya completados quedan más abajo, pero podés tildarlos igual para pedir más.')
       ),
       e('div',{style:{display:'flex',gap:8,marginBottom:6,flexWrap:'wrap'}},
         e('button',{className:'cat-toggle-btn',onClick:cargarFaltantes},'⚡ Cargar todos los faltantes'),
@@ -988,38 +1015,20 @@ function App(){
         e('span',{className:'alerta-icon'},'🙈'),
         e('span',null,'Nombres de proveedor ocultos — podés compartir esta lista para pedir que te igualen precio sin revelar quién cotizó qué.')
       ),
-      bloquesPend.length===0&&e('div',{style:{fontSize:'0.8rem',color:'var(--c-text3)',textAlign:'center',padding:'20px 0'}},'✓ No te falta comprar nada.'),
-      ...bloquesPend.map(({cat,items})=>
+      bloques.length===0&&e('div',{style:{fontSize:'0.8rem',color:'var(--c-text3)',textAlign:'center',padding:'20px 0'}},'No hay ítems cargados.'),
+      ...bloques.map(({cat,pendientes,completos})=>
         e('div',{key:cat.id},
           e('div',{className:'cat-header',style:{cursor:'default'}},
             e('span',{className:'cat-label'},cat.nombre),
-            e('span',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},items.filter(i=>carrito[i.id]>0).length+' en el carrito')
+            e('span',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},cat.items.filter(i=>carrito[i.id]>0).length+' en el carrito')
           ),
-          e('div',{className:'cards-grid'},
-            ...items.map(item=>{
-              const enCarro=carrito[item.id]>0;
-              const rank=rankingItem(item.id,1,provsActivos);
-              const best=rank[0]||null;
-              return e('div',{key:item.id,className:'item-card',style:{padding:'9px 12px',opacity:enCarro?1:0.7}},
-                e('div',{style:{display:'flex',alignItems:'center',gap:9,cursor:'pointer'},onClick:()=>toggleCarrito(item.id)},
-                  e('input',{type:'checkbox',checked:enCarro,onClick:ev=>ev.stopPropagation(),onChange:()=>toggleCarrito(item.id),
-                    style:{width:16,height:16,accentColor:'#4ADE80',flexShrink:0,cursor:'pointer'}}),
-                  e('span',{className:'item-nombre'},item.nombre),
-                  enCarro&&best&&e('span',{style:{marginLeft:'auto',fontSize:'0.82rem',fontWeight:700,color:pColor(best.prov)}},fmt(best.u*carrito[item.id]))
-                ),
-                enCarro&&e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:7,flexWrap:'wrap'}},
-                  e('div',null,
-                    e('div',{className:'falt-label'},'Cantidad'),
-                    Stepper('car_'+item.id,carrito[item.id],best?pColor(best.prov):null,v=>setCarritoQty(item.id,v))
-                  ),
-                  best&&e('div',{style:{marginLeft:'auto',textAlign:'right'}},
-                    e('div',{className:'falt-label'},'Mejor precio'),
-                    e('div',{style:{fontSize:'0.75rem',fontWeight:600,color:pColor(best.prov)}},pNombre(best.prov)+' · '+fmt(best.u)+'/u')
-                  )
-                )
-              );
-            })
-          )
+          e('div',{className:'cards-grid'}, ...pendientes.map(item=>tarjetaCarrito(item,false))),
+          completos.length>0&&e('div',{style:{display:'flex',alignItems:'center',gap:8,margin:'12px 4px 6px'}},
+            e('div',{style:{flex:1,height:1,background:'var(--c-border2)'}}),
+            e('span',{style:{fontSize:'0.65rem',fontWeight:600,color:'var(--c-text3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap'}},'✓ Ya comprados ('+completos.length+') · tildá para pedir más'),
+            e('div',{style:{flex:1,height:1,background:'var(--c-border2)'}})
+          ),
+          completos.length>0&&e('div',{className:'cards-grid'}, ...completos.map(item=>tarjetaCarrito(item,true)))
         )
       ),
       hay&&e('div',null,
