@@ -285,7 +285,7 @@ const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
 const APP_VERSION = "v30";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
-const ACTIVOS_DEFAULT = {caeiro:true,dasilva:true,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true};
+const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
 const COMPRADOS_IDS = ["cano_cemento","malla","malla1525","arena_bolson","piedra_bolson","alambre","clavos250","clavos200","ladrillo","arena","cemento","piedra"];
 const STORAGE_CANT = "comparador_obra_cantidades_v4";
@@ -615,34 +615,6 @@ function App(){
       ),
       e('div',{style:{fontSize:'0.72rem',color:'var(--c-text3)',marginTop:6,textAlign:'center'}},
         'Total comprado: '+fmt(totalComprado)+(guardado?' · ✓ Guardado':'') + ' · Tocá el monto para editar · + Sumar para agregar una compra'
-      ),
-      e('div',{className:'alerta warn',style:{marginTop:8}},
-        e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'Precios de julio confirmados: Caeiro, Da Silva, La Esperanza y 7 Hnos (08/07, telgopor corregido). Solo LH Hnos sigue al 22/06. Piedra suelta de Da Silva ($53.300) es de junio: confirmar antes de comprarle.')
-      ),
-      e('div',{className:'alerta warn',style:{marginTop:8}},
-        e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'07/08: sumado Casa Meli (nuevo, precios netos confirmados) y actualizado 7 Hnos (viguetas, cemento, piedra, malla). "Ladrillos comunes" de 7 Hnos: $160/unidad confirmado (=$16.000/pallet x100u) — el importe de $8.000 de su presupuesto estaba mal calculado, no usar ese número.')
-      ),
-      e('div',{className:'alerta warn',style:{marginTop:8}},
-        e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'07/08: Casa Caeiro presentó presupuesto completo con 10% efectivo (ya aplicado acá) — viguetas quedaron sin cambios. La Esperanza presentó presupuesto completo con vigueta 1,80m (primera cotización real) — pero su renglón de cemento dice "x25kg" con cantidad 1.359, que coincide con la cantidad de bolsas de 50kg del cómputo, no con las 2.718 que corresponden a 25kg: revisar con ellos antes de tomar ese precio como definitivo.')
-      ),
-      e('div',{className:'alerta info',style:{marginTop:8}},
-        e('span',{className:'alerta-icon'},'✓'),
-        e('span',null,'08/08: comprado a Caeiro (factura Gaston 0009-00016445, $6.003.160,54) — TODAS las viguetas, granza, ladrillo y tejuela refractaria, y 3 discos (falta el disco diamantado). Marcado como "Compré" en Faltantes. Los precios de viguetas de Caeiro subieron ~2,2% vs el presupuesto anterior: actualizados acá con el valor real facturado. Si tu navegador ya tenía guardado el progreso de Faltantes/Compras antes de este cambio, puede que tengas que tildar "Compré" a mano en viguetas/granza/refractarios/discos y sumar la compra en el proveedor Caeiro, porque lo guardado en tu celular pisa estos valores por defecto.')
-      ),
-      e('div',{className:'alerta warn',style:{marginTop:8}},
-        e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'08/08: ajustado el ladrillo telgopor comprado a 7 Hnos (+$355.000 por error de grosor) — precio unitario pasó de $3.100 a $3.689,70 (602u) y el pago a 7 Hnos se actualizó de $17.784.200 a $18.139.200.')
-      ),
-      e('div',{className:'alerta warn',style:{marginTop:8}},
-        e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'Cerecita: la arquitecta exige marca Weber. Se descartó el precio de La Esperanza ($179.000, era marca Hornero).')
-      ),
-      e('div',{className:'alerta info',style:{marginTop:8}},
-        e('span',{className:'alerta-icon'},'✓'),
-        e('span',null,'08/08: comprado a 7 Hnos por $13.125.000 ($13.045.000 + $80.000 de alambre) — ladrillo común y huecos 12/18 completos; cemento (240 de 1.359 50kg), cal (80 de 780 20kg), alambre (20 de 160kg) y cerecita Weber (1 de 2 tambores) parciales; arena bolsón completa (12/12). En vez del Hidrófugo Hornero, terminaron trayendo Cerecita marca Weber a $245.100 — válida, casi igual al precio de Casa Meli ($245.000). Pago total a 7 Hnos actualizado a $31.264.200.')
       )
     );
   }
@@ -901,6 +873,8 @@ function App(){
 
     function tarjeta({item,c,falt,best,total}){
       const abierto=!!expandFalt[item.id];
+      const pctFalta=c.nec>0?Math.min(100,(falt/c.nec)*100):0;
+      const colorUrg=pctFalta>66?'var(--c-red)':pctFalta>33?'var(--c-orange)':'var(--c-green)';
       return e('div',{key:item.id,className:'item-card',style:{padding:'10px 12px',opacity:falt===0?0.5:1}},
         e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8,cursor:'pointer'},
            onClick:()=>setExpandFalt(x=>({...x,[item.id]:!x[item.id]}))},
@@ -911,12 +885,16 @@ function App(){
               : best
                 ? e('div',{style:{textAlign:'right'}},
                     e('div',{style:{fontSize:'0.9rem',fontWeight:700,color:best.prov.color}},fmt(total)),
-                    e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},falt+' × '+fmt(best.u)+' · '+best.prov.nombre)
+                    e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},'Faltan '+falt)
                   )
-                : e('span',{className:'consultar'},'sin cotizar'),
-            e('span',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},abierto?'▲':'▼')
+                : e('span',{className:'consultar'},'Faltan '+falt+' · sin cotizar'),
+            e('span',{style:{fontSize:'0.65rem',color:abierto?'var(--c-green)':'var(--c-text3)',border:'1px solid '+(abierto?'var(--c-green)':'var(--c-border)'),borderRadius:4,padding:'2px 5px'}},abierto?'▲':'▼')
           )
         ),
+        falt>0&&e('div',{style:{height:3,background:'var(--c-border)',borderRadius:2,marginTop:7,overflow:'hidden'}},
+          e('div',{style:{height:'100%',width:pctFalta+'%',background:colorUrg,borderRadius:2}})
+        ),
+        abierto&&best&&e('div',{style:{fontSize:'0.7rem',color:'var(--c-text3)',marginTop:7}},fmt(best.u)+'/u · '+best.prov.nombre),
         abierto&&e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:8,flexWrap:'wrap'}},
           e('div',null,
             e('div',{className:'falt-label'},'Necesito'),
