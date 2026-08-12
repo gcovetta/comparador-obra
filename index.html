@@ -463,8 +463,6 @@ function App(){
       guardarItems(n); return n;
     });
   }
-  const itemsActivos=useMemo(()=>TODOS_ITEMS.filter(i=>itemsAct[i.id]!==false),[itemsAct]);
-
   const [cants,setCants]=useState(()=>{
     try{
       const s=localStorage.getItem(STORAGE_CANT);
@@ -472,6 +470,16 @@ function App(){
     }catch(e){}
     return CANT_DEFAULT;
   });
+
+  // Mix óptimo / Ahorro / Carrito usan lo que REALMENTE falta (Necesito − Compré),
+  // no la cantidad total del ítem — así un ítem parcialmente comprado no se cobra completo de nuevo.
+  const itemsActivos=useMemo(()=>TODOS_ITEMS
+    .filter(i=>itemsAct[i.id]!==false)
+    .map(i=>{
+      const c=cants[i.id]||CANT_DEFAULT[i.id]||{nec:i.cant,comp:0};
+      const falt=Math.max(0,c.nec-c.comp);
+      return falt>0?{...i,cant:falt}:i;
+    }),[itemsAct,cants]);
   function setCant(id,campo,val){
     const v=Math.max(0,Math.round(Number(String(val).replace(/[^\d]/g,''))||0));
     setCants(prev=>{
@@ -882,73 +890,76 @@ function App(){
         return {item,c,falt,best,total};
       });
       const sub=rows.reduce((a,r)=>a+r.total,0);
-      const hayPendientes=rows.some(r=>r.falt>0);
-      return {cat,rows,sub,hayPendientes};
+      const pendientes=rows.filter(r=>r.falt>0);
+      const completos=rows.filter(r=>r.falt===0);
+      return {cat,sub,pendientes,completos};
     });
-    // Categorías con algo pendiente arriba; las 100% completas, al final
-    bloques.sort((a,b)=>(a.hayPendientes===b.hayPendientes)?0:(a.hayPendientes?-1:1));
+    // Solo categorías con algo pendiente se muestran arriba
+    const bloquesPend=bloques.filter(b=>b.pendientes.length>0);
+    // Todo lo ya comprado, de todas las categorías, junto y al final
+    const todosCompletos=bloques.flatMap(b=>b.completos.map(r=>({...r,catNombre:b.cat.nombre})));
+
+    function tarjeta({item,c,falt,best,total}){
+      const abierto=!!expandFalt[item.id];
+      return e('div',{key:item.id,className:'item-card',style:{padding:'10px 12px',opacity:falt===0?0.5:1}},
+        e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8,cursor:'pointer'},
+           onClick:()=>setExpandFalt(x=>({...x,[item.id]:!x[item.id]}))},
+          e('span',{className:'item-nombre'},item.nombre),
+          e('div',{style:{display:'flex',alignItems:'baseline',gap:8}},
+            falt===0
+              ? e('span',{style:{fontSize:'0.7rem',fontWeight:600,color:'var(--c-green)'}},'✓ Completo')
+              : best
+                ? e('div',{style:{textAlign:'right'}},
+                    e('div',{style:{fontSize:'0.9rem',fontWeight:700,color:best.prov.color}},fmt(total)),
+                    e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},falt+' × '+fmt(best.u)+' · '+best.prov.nombre)
+                  )
+                : e('span',{className:'consultar'},'sin cotizar'),
+            e('span',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},abierto?'▲':'▼')
+          )
+        ),
+        abierto&&e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:8,flexWrap:'wrap'}},
+          e('div',null,
+            e('div',{className:'falt-label'},'Necesito'),
+            Stepper(item.id+'_nec',c.nec,null,v=>setCant(item.id,'nec',v))
+          ),
+          e('div',null,
+            e('div',{className:'falt-label'},'Compré'),
+            Stepper(item.id+'_comp',c.comp,best?best.prov.color:null,v=>setCant(item.id,'comp',v))
+          ),
+          e('div',{style:{marginLeft:'auto',textAlign:'right'}},
+            e('div',{className:'falt-label'},'Faltan'),
+            e('div',{style:{fontSize:'1rem',fontWeight:800,color:falt>0?'var(--c-text)':'var(--c-green)'}},falt)
+          )
+        )
+      );
+    }
 
     return e('div',{className:'section'},
       e('div',{className:'alerta info'},
         e('span',{className:'alerta-icon'},'🧮'),
         e('span',null,'Ajustá "Necesito" y "Compré" con +/− o tocando el número. El costo usa el mejor precio unitario vigente de los proveedores activos.')
       ),
-      ...bloques.map(({cat,rows,sub})=>{
-        const pendientes=rows.filter(r=>r.falt>0);
-        const completos=rows.filter(r=>r.falt===0);
-        function tarjeta({item,c,falt,best,total}){
-          const abierto=!!expandFalt[item.id];
-          return e('div',{key:item.id,className:'item-card',style:{padding:'10px 12px',opacity:falt===0?0.5:1}},
-            e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8,cursor:'pointer'},
-               onClick:()=>setExpandFalt(x=>({...x,[item.id]:!x[item.id]}))},
-              e('span',{className:'item-nombre'},item.nombre),
-              e('div',{style:{display:'flex',alignItems:'baseline',gap:8}},
-                falt===0
-                  ? e('span',{style:{fontSize:'0.7rem',fontWeight:600,color:'var(--c-green)'}},'✓ Completo')
-                  : best
-                    ? e('div',{style:{textAlign:'right'}},
-                        e('div',{style:{fontSize:'0.9rem',fontWeight:700,color:best.prov.color}},fmt(total)),
-                        e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},falt+' × '+fmt(best.u)+' · '+best.prov.nombre)
-                      )
-                    : e('span',{className:'consultar'},'sin cotizar'),
-                e('span',{style:{fontSize:'0.65rem',color:'var(--c-text3)'}},abierto?'▲':'▼')
-              )
-            ),
-            abierto&&e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:8,flexWrap:'wrap'}},
-              e('div',null,
-                e('div',{className:'falt-label'},'Necesito'),
-                Stepper(item.id+'_nec',c.nec,null,v=>setCant(item.id,'nec',v))
-              ),
-              e('div',null,
-                e('div',{className:'falt-label'},'Compré'),
-                Stepper(item.id+'_comp',c.comp,best?best.prov.color:null,v=>setCant(item.id,'comp',v))
-              ),
-              e('div',{style:{marginLeft:'auto',textAlign:'right'}},
-                e('div',{className:'falt-label'},'Faltan'),
-                e('div',{style:{fontSize:'1rem',fontWeight:800,color:falt>0?'var(--c-text)':'var(--c-green)'}},falt)
-              )
-            )
-          );
-        }
-        return e('div',{key:cat.id},
+      bloquesPend.length===0&&e('div',{style:{fontSize:'0.8rem',color:'var(--c-text3)',textAlign:'center',padding:'20px 0'}},'✓ No te falta comprar nada.'),
+      ...bloquesPend.map(({cat,sub,pendientes})=>
+        e('div',{key:cat.id},
           e('div',{className:'cat-header',style:{cursor:'default'}},
             e('span',{className:'cat-label'},cat.nombre),
-            e('span',{style:{fontSize:'0.78rem',fontWeight:700,color:sub>0?'var(--c-text)':'var(--c-text3)'}},sub>0?fmt(sub):'✓ completo')
+            e('span',{style:{fontSize:'0.78rem',fontWeight:700,color:'var(--c-text)'}},fmt(sub))
           ),
-          e('div',{className:'cards-grid'}, ...pendientes.map(tarjeta)),
-          completos.length>0&&e('div',{style:{display:'flex',alignItems:'center',gap:8,margin:'12px 4px 6px'}},
-            e('div',{style:{flex:1,height:1,background:'var(--c-border2)'}}),
-            e('span',{style:{fontSize:'0.65rem',fontWeight:600,color:'var(--c-text3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap'}},'✓ Ya comprados ('+completos.length+')'),
-            e('div',{style:{flex:1,height:1,background:'var(--c-border2)'}})
-          ),
-          completos.length>0&&e('div',{className:'cards-grid'}, ...completos.map(tarjeta))
-        );
-      }),
+          e('div',{className:'cards-grid'}, ...pendientes.map(tarjeta))
+        )
+      ),
       e('div',{className:'total-box'},
         e('div',{className:'total-box-label'},'Costo de lo que falta comprar'),
         e('div',{className:'total-box-amount'},fmt(granTotal)),
         e('div',{className:'total-box-sub'},'Cada faltante al mejor precio unitario vigente'+(sinCotizar.length?' · Sin cotizar: '+sinCotizar.join(', '):''))
-      )
+      ),
+      todosCompletos.length>0&&e('div',{style:{display:'flex',alignItems:'center',gap:8,margin:'24px 4px 6px'}},
+        e('div',{style:{flex:1,height:1,background:'var(--c-border2)'}}),
+        e('span',{style:{fontSize:'0.65rem',fontWeight:600,color:'var(--c-text3)',textTransform:'uppercase',letterSpacing:'0.05em',whiteSpace:'nowrap'}},'✓ Ya comprado ('+todosCompletos.length+')'),
+        e('div',{style:{flex:1,height:1,background:'var(--c-border2)'}})
+      ),
+      todosCompletos.length>0&&e('div',{className:'cards-grid'}, ...todosCompletos.map(tarjeta))
     );
   }
 
