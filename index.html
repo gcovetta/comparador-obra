@@ -528,10 +528,7 @@ function App(){
 
   const [expandFalt,setExpandFalt]=useState(()=>{
     const m={};
-    TODOS_ITEMS.forEach(i=>{
-      const c=cants[i.id]||CANT_DEFAULT[i.id];
-      m[i.id]=Math.max(0,c.nec-c.comp)>0;   // completos arrancan colapsados
-    });
+    TODOS_ITEMS.forEach(i=>{ m[i.id]=false; });   // todo arranca colapsado
     return m;
   });
 
