@@ -221,12 +221,12 @@ const CATEGORIAS = [
     {id:"alambre",       nombre:"Alambre fardo (kg)",       cant:5},
   ]},
   { id:"etapa2_mamposteria", nombre:"Mampostería y revoque grueso (Etapa 2)", items:[
-    {id:"e2_cemento",            nombre:"Cemento x50kg (bolsa)",                         cant:1359},
+    {id:"e2_cemento",            nombre:"Cemento x50kg (bolsa)",                         cant:1799},
     {id:"e2_cal_hidraulica",     nombre:"Cal Hidráulica x20kg (Loma Negra o sim.)",      cant:780},
     {id:"e2_cal_milagro",        nombre:"Cal Milagro x25kg",                             cant:174},
     {id:"e2_pegamento_klaukol",  nombre:"Pegamento Klaukol FLEX x25kg",                  cant:142},
-    {id:"e2_arena",              nombre:"Arena (m³)",                                    cant:166},
-    {id:"e2_piedra",             nombre:"Piedra (m³)",                                   cant:79},
+    {id:"e2_arena",              nombre:"Arena (m³)",                                    cant:199},
+    {id:"e2_piedra",             nombre:"Piedra (m³)",                                   cant:112},
     {id:"e2_granza",             nombre:"Granza (m³)",                                   cant:40},
     {id:"e2_ladrillo_comun",     nombre:"Ladrillos comunes (pallet x100u)",              cant:50},
     {id:"e2_ceramico_12x18x33",  nombre:"Lad. Cerámico 12x18x33",                        cant:2250},
@@ -234,7 +234,7 @@ const CATEGORIAS = [
     {id:"e2_ceramico_8x18x33",   nombre:"Lad. Cerámico 8x18x33",                         cant:0},
     {id:"e2_cerecita",           nombre:"Cerecita (tambor x200kg)",                      cant:2},
     {id:"e2_film_polietileno",   nombre:"Film polietileno 200 micrones (rollo x200mic 3x50)", cant:6},
-    {id:"e2_malla_hierro5",      nombre:"Malla hierro 5mm",                              cant:75},
+    {id:"e2_malla_hierro5",      nombre:"Malla hierro 5mm",                              cant:25},
     {id:"e2_piedra_binder",      nombre:"Piedra binder 4-8 (m³)",                        cant:17},
   ]},
   { id:"etapa2_refractarios", nombre:"Refractarios, revoques finos y fijaciones (Etapa 2)", items:[
@@ -283,7 +283,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v30";
+const APP_VERSION = "v31";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
@@ -323,7 +323,7 @@ CANT_DEFAULT.arena_bolson={nec:12,comp:12};  // 2 ya comprados + 10 comprados ho
 CANT_DEFAULT.e2_ladrillo_comun={nec:50,comp:50};
 CANT_DEFAULT.e2_ceramico_12x18x33={nec:2250,comp:2250};
 CANT_DEFAULT.e2_ceramico_18x18x33={nec:7360,comp:7360};
-CANT_DEFAULT.e2_cemento={nec:1359,comp:240};        // 480 bolsas de 25kg = 240 de 50kg — faltan 1119
+CANT_DEFAULT.e2_cemento={nec:1799,comp:240};        // 480 bolsas de 25kg = 240 de 50kg — faltan 1559 (incluye 440 de bases: 880 bolsas 25kg)
 CANT_DEFAULT.e2_cal_hidraulica={nec:780,comp:80};   // 64 bolsas de 25kg = 80 de 20kg — faltan 700
 CANT_DEFAULT.e2_alambre_fardo={nec:160,comp:20};    // faltan 140kg
 CANT_DEFAULT.e2_cerecita={nec:2,comp:1};            // 1 tambor Weber comprado, falta 1
