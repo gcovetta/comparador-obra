@@ -283,7 +283,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v35";
+const APP_VERSION = "v37";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
@@ -473,13 +473,14 @@ function App(){
 
   // Mix óptimo / Ahorro / Carrito usan lo que REALMENTE falta (Necesito − Compré),
   // no la cantidad total del ítem — así un ítem parcialmente comprado no se cobra completo de nuevo.
+  // Ya no depende de itemsAct (era el tilde manual de la vieja pestaña Precios, eliminada):
+  // acá entra TODO lo que todavía falta comprar, sin exclusiones manuales.
   const itemsActivos=useMemo(()=>TODOS_ITEMS
-    .filter(i=>itemsAct[i.id]!==false)
     .map(i=>{
       const c=cants[i.id]||CANT_DEFAULT[i.id]||{nec:i.cant,comp:0};
       const falt=Math.max(0,c.nec-c.comp);
-      return falt>0?{...i,cant:falt}:i;
-    }),[itemsAct,cants]);
+      return falt>0?{...i,cant:falt}:null;
+    }).filter(Boolean),[cants]);
   function setCant(id,campo,val){
     const v=Math.max(0,Math.round(Number(String(val).replace(/[^\d]/g,''))||0));
     setCants(prev=>{
@@ -957,15 +958,16 @@ function App(){
         e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',overflow:'hidden',border:'1px solid var(--c-border)'}},
           e('table',{className:'resumen-table'},
             e('thead',null,e('tr',null,
-              e('th',null,'Ítem'),e('th',null,'Categoría'),e('th',{style:{textAlign:'right'}},'Faltan')
+              e('th',null,'Ítem'),e('th',null,'Categoría'),e('th',{style:{textAlign:'right'}},'Faltan'),e('th',{style:{textAlign:'right'}},'Total $')
             )),
             e('tbody',null,
               ...bloquesPend.flatMap(({cat,pendientes})=>
-                pendientes.map(({item,falt})=>
+                pendientes.map(({item,falt,total,best})=>
                   e('tr',{key:item.id},
                     e('td',null,item.nombre),
                     e('td',{style:{color:'var(--c-text3)',fontSize:'0.75rem'}},cat.nombre),
-                    e('td',{style:{textAlign:'right',fontWeight:700}},falt)
+                    e('td',{style:{textAlign:'right',fontWeight:700}},falt),
+                    e('td',{style:{textAlign:'right',fontWeight:700,color:best?best.prov.color:'var(--c-text3)'}},best?fmt(total):'sin cotizar')
                   )
                 )
               )
