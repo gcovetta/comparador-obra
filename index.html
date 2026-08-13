@@ -283,7 +283,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v31";
+const APP_VERSION = "v32";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
@@ -872,6 +872,8 @@ function App(){
       const abierto=!!expandFalt[item.id];
       const pctFalta=c.nec>0?Math.min(100,(falt/c.nec)*100):0;
       const colorUrg=pctFalta>66?'var(--c-red)':pctFalta>33?'var(--c-orange)':'var(--c-green)';
+      const qtyProv=falt>0?falt:c.nec;
+      const rankFull=abierto?rankingItem(item.id,qtyProv,provsActivos):[];
       return e('div',{key:item.id,className:'item-card',style:{padding:'10px 12px',opacity:falt===0?0.5:1}},
         e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8,cursor:'pointer'},
            onClick:()=>setExpandFalt(x=>({...x,[item.id]:!x[item.id]}))},
@@ -891,7 +893,30 @@ function App(){
         falt>0&&e('div',{style:{height:3,background:'var(--c-border)',borderRadius:2,marginTop:7,overflow:'hidden'}},
           e('div',{style:{height:'100%',width:pctFalta+'%',background:colorUrg,borderRadius:2}})
         ),
-        abierto&&best&&e('div',{style:{fontSize:'0.7rem',color:'var(--c-text3)',marginTop:7}},fmt(best.u)+'/u · '+best.prov.nombre),
+        abierto&&e('div',{className:'item-body',style:{marginTop:7}},
+          ...provsActivos.map(p=>{
+            const u=pu(p,item.id);
+            const t=u?u*qtyProv:null;
+            const pos=rankFull.findIndex(r=>r.prov.id===p.id);
+            const isWin=pos===0&&t!==null;
+            const pend=isPend(p,item.id)&&!t;
+            return e('div',{key:p.id,className:'item-prov-row'+(isWin?' winner':'')},
+              e('div',{className:'item-prov-name'},
+                e('span',{className:'dot',style:{background:p.color}}),
+                p.nombre,
+                pos>=0&&e('span',{className:'rank-chip '+(pos===0?'rank-1':pos===1?'rank-2':'rank-n'),style:{marginLeft:4}},pos+1+'°')
+              ),
+              pend
+                ? e('span',{className:'consultar'},'consultar')
+                : t!==null
+                  ? e('div',{className:'item-prov-right'},
+                      e('div',{className:'item-prov-total',style:{color:isWin?p.color:'inherit'}},fmt(t)),
+                      e('div',{className:'item-prov-unit'},fmt(u)+'/u')
+                    )
+                  : e('span',{style:{fontSize:'0.7rem',color:'var(--c-text3)'}},'—')
+            );
+          })
+        ),
         abierto&&e('div',{style:{display:'flex',alignItems:'center',gap:12,marginTop:8,flexWrap:'wrap'}},
           e('div',null,
             e('div',{className:'falt-label'},'Necesito'),
