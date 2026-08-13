@@ -283,7 +283,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v34";
+const APP_VERSION = "v35";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
@@ -880,7 +880,6 @@ function App(){
       const pctFalta=c.nec>0?Math.min(100,(falt/c.nec)*100):0;
       const colorUrg=pctFalta>66?'var(--c-red)':pctFalta>33?'var(--c-orange)':'var(--c-green)';
       const qtyProv=falt>0?falt:c.nec;
-      const rankFull=abierto?rankingItem(item.id,qtyProv,provsActivos):[];
       return e('div',{key:item.id,className:'item-card',style:{padding:'10px 12px',opacity:falt===0?0.5:1}},
         e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:8,cursor:'pointer'},
            onClick:()=>setExpandFalt(x=>({...x,[item.id]:!x[item.id]}))},
@@ -904,9 +903,16 @@ function App(){
           ...provsActivos.map(p=>{
             const u=pu(p,item.id);
             const t=u?u*qtyProv:null;
-            const pos=rankFull.findIndex(r=>r.prov.id===p.id);
-            const isWin=pos===0&&t!==null;
             const pend=isPend(p,item.id)&&!t;
+            return {p,u,t,pend};
+          }).sort((a,b)=>{
+            if(a.t==null&&b.t==null)return 0;
+            if(a.t==null)return 1;
+            if(b.t==null)return -1;
+            return a.t-b.t;
+          }).map(({p,u,t,pend},idx)=>{
+            const isWin=idx===0&&t!==null;
+            const pos=t!==null?idx:-1;
             return e('div',{key:p.id,className:'item-prov-row'+(isWin?' winner':'')},
               e('div',{className:'item-prov-name'},
                 e('span',{className:'dot',style:{background:p.color}}),
@@ -945,6 +951,27 @@ function App(){
       e('div',{className:'alerta info'},
         e('span',{className:'alerta-icon'},'🧮'),
         e('span',null,'Ajustá "Necesito" y "Compré" con +/− o tocando el número. El costo usa el mejor precio unitario vigente de los proveedores activos.')
+      ),
+      bloquesPend.length>0&&e('div',{style:{marginBottom:18}},
+        e('div',{className:'section-title'},'📋 Resumen de faltantes'),
+        e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',overflow:'hidden',border:'1px solid var(--c-border)'}},
+          e('table',{className:'resumen-table'},
+            e('thead',null,e('tr',null,
+              e('th',null,'Ítem'),e('th',null,'Categoría'),e('th',{style:{textAlign:'right'}},'Faltan')
+            )),
+            e('tbody',null,
+              ...bloquesPend.flatMap(({cat,pendientes})=>
+                pendientes.map(({item,falt})=>
+                  e('tr',{key:item.id},
+                    e('td',null,item.nombre),
+                    e('td',{style:{color:'var(--c-text3)',fontSize:'0.75rem'}},cat.nombre),
+                    e('td',{style:{textAlign:'right',fontWeight:700}},falt)
+                  )
+                )
+              )
+            )
+          )
+        )
       ),
       bloquesPend.length===0&&e('div',{style:{fontSize:'0.8rem',color:'var(--c-text3)',textAlign:'center',padding:'20px 0'}},'✓ No te falta comprar nada.'),
       ...bloquesPend.map(({cat,sub,pendientes})=>
