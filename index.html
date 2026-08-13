@@ -283,7 +283,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v33";
+const APP_VERSION = "v34";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
@@ -557,13 +557,19 @@ function App(){
   }
   function vaciarCarrito(){ setCarrito({}); guardarCarrito({}); }
 
-  const {mix,total:totalMix}=useMemo(()=>calcMix(provsActivos,itemsActivos),[provsActivos,itemsActivos]);
+  // Mix óptimo y Ahorro trabajan sobre el carrito cuando tiene algo tildado;
+  // si el carrito está vacío, caen de nuevo a todos los faltantes.
+  const cartActivos=useMemo(()=>TODOS_ITEMS.filter(i=>carrito[i.id]>0).map(i=>({...i,cant:carrito[i.id]})),[carrito]);
+  const usaCarritoEnCalculo=cartActivos.length>0;
+  const itemsParaCalculo=usaCarritoEnCalculo?cartActivos:itemsActivos;
+
+  const {mix,total:totalMix}=useMemo(()=>calcMix(provsActivos,itemsParaCalculo),[provsActivos,itemsParaCalculo]);
   const totalComprado=Object.values(compras).reduce((a,b)=>a+b,0);
 
-  const b1=useMemo(()=>bestUno(provsActivos,itemsActivos),[provsActivos,itemsActivos]);
-  const b2=useMemo(()=>bestN(2,idsActivos,itemsActivos),[idsActivos,itemsActivos]);
-  const b3=useMemo(()=>bestN(3,idsActivos,itemsActivos),[idsActivos,itemsActivos]);
-  const mixAll=useMemo(()=>({s:idsActivos,...calcSet(idsActivos,itemsActivos)}),[idsActivos,itemsActivos]);
+  const b1=useMemo(()=>bestUno(provsActivos,itemsParaCalculo),[provsActivos,itemsParaCalculo]);
+  const b2=useMemo(()=>bestN(2,idsActivos,itemsParaCalculo),[idsActivos,itemsParaCalculo]);
+  const b3=useMemo(()=>bestN(3,idsActivos,itemsParaCalculo),[idsActivos,itemsParaCalculo]);
+  const mixAll=useMemo(()=>({s:idsActivos,...calcSet(idsActivos,itemsParaCalculo)}),[idsActivos,itemsParaCalculo]);
   const base=b1?.total||0;
   const nAct=provsActivos.length;
 
@@ -683,14 +689,14 @@ function App(){
 
   // ── RENDER MIX ÓPTIMO ──────────────────────────────────────────────────────
   function renderMix(){
-    if(!itemsActivos.length)return e('div',{className:'section'},
+    if(!itemsParaCalculo.length)return e('div',{className:'section'},
       e('div',{className:'alerta warn'},e('span',{className:'alerta-icon'},'⚠️'),
         e('span',null,'No hay ítems pendientes: ya está todo comprado.'))
     );
     return e('div',{className:'section'},
       e('div',{className:'alerta info'},
         e('span',{className:'alerta-icon'},'✓'),
-        e('span',null,'Cada ítem al proveedor más barato. '+itemsActivos.length+' de '+TODOS_ITEMS.length+' ítems incluidos.')
+        e('span',null,'Cada ítem al proveedor más barato. '+itemsParaCalculo.length+(usaCarritoEnCalculo?' ítems tildados en el carrito.':' de '+TODOS_ITEMS.length+' ítems faltantes (carrito vacío).'))
       ),
       e('div',{className:'cards-grid-lg'},
       ...Object.values(mix).map(({prov,items,subtotal})=>{
@@ -722,7 +728,7 @@ function App(){
       e('div',{className:'total-box'},
         e('div',{className:'total-box-label'},'Total mix óptimo'),
         e('div',{className:'total-box-amount'},fmt(totalMix)),
-        e('div',{className:'total-box-sub'},'Sobre '+itemsActivos.length+' de '+TODOS_ITEMS.length+' ítems · Comprado hasta ahora: '+fmt(totalComprado)),
+        e('div',{className:'total-box-sub'},(usaCarritoEnCalculo?'Sobre '+itemsParaCalculo.length+' ítems del carrito':'Sobre '+itemsParaCalculo.length+' de '+TODOS_ITEMS.length+' ítems faltantes')+' · Comprado hasta ahora: '+fmt(totalComprado)),
       ),
       // Comparativa escenarios
       e('div',{className:'section-title',style:{paddingTop:12}},'Comparativa todos los escenarios'),
@@ -757,13 +763,14 @@ function App(){
 
   // ── RENDER ESCENARIOS ──────────────────────────────────────────────────────
   function renderEscenarios(){
-    if(!itemsActivos.length)return e('div',{className:'section'},
+    if(!itemsParaCalculo.length)return e('div',{className:'section'},
       e('div',{className:'alerta warn'},e('span',{className:'alerta-icon'},'⚠️'),
         e('span',null,'No hay ítems pendientes: ya está todo comprado.'))
     );
     return e('div',{className:'section'},
       e('div',{style:{fontSize:'0.8rem',color:'var(--c-text2)',marginBottom:10,lineHeight:1.5}},
-        'Cuánto ahorrás sumando proveedores vs comprarle todo a uno solo. Tocá para ver el desglose.'
+        'Cuánto ahorrás sumando proveedores vs comprarle todo a uno solo. Tocá para ver el desglose. '+
+        (usaCarritoEnCalculo?'Calculado sobre los '+itemsParaCalculo.length+' ítems tildados en el carrito.':'Carrito vacío: calculado sobre todos los ítems faltantes.')
       ),
       e('div',{className:'cards-grid-lg'},
       ...ESCENARIOS.map((esc,idx)=>{
