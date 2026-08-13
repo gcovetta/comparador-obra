@@ -283,7 +283,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v32";
+const APP_VERSION = "v33";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
@@ -685,7 +685,7 @@ function App(){
   function renderMix(){
     if(!itemsActivos.length)return e('div',{className:'section'},
       e('div',{className:'alerta warn'},e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'No hay ítems incluidos. Tildá al menos uno en la pestaña Precios.'))
+        e('span',null,'No hay ítems pendientes: ya está todo comprado.'))
     );
     return e('div',{className:'section'},
       e('div',{className:'alerta info'},
@@ -759,7 +759,7 @@ function App(){
   function renderEscenarios(){
     if(!itemsActivos.length)return e('div',{className:'section'},
       e('div',{className:'alerta warn'},e('span',{className:'alerta-icon'},'⚠️'),
-        e('span',null,'No hay ítems incluidos. Tildá al menos uno en la pestaña Precios.'))
+        e('span',null,'No hay ítems pendientes: ya está todo comprado.'))
     );
     return e('div',{className:'section'},
       e('div',{style:{fontSize:'0.8rem',color:'var(--c-text2)',marginBottom:10,lineHeight:1.5}},
@@ -1143,7 +1143,6 @@ function App(){
   const TABS=[
     {id:'faltantes',  label:'🧮 Faltantes'},
     {id:'carrito',    label:'🛒 Carrito'},
-    {id:'comparacion',label:'📊 Precios'},
     {id:'mix',        label:'🏆 Mix óptimo'},
     {id:'escenarios', label:'💰 Ahorro'},
   ];
@@ -1180,7 +1179,6 @@ function App(){
 
     tab==='faltantes'&&renderFaltantes(),
     tab==='carrito'&&renderCarrito(),
-    tab==='comparacion'&&renderComparacion(),
     tab==='mix'&&renderMix(),
     tab==='escenarios'&&renderEscenarios(),
   );
