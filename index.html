@@ -185,11 +185,11 @@ const e = React.createElement;
 
 const CATEGORIAS = [
   { id:"hierros", nombre:"Hierros", items:[
-    {id:"h6", nombre:"Hierro ø6",  cant:436},
+    {id:"h6", nombre:"Hierro ø6",  cant:456}, // 436 estructura (7 Hnos) + 20 bases (Da Silva, cómputo original decía 3 — se compraron 20)
     {id:"h8", nombre:"Hierro ø8",  cant:59},
     {id:"h10",nombre:"Hierro ø10", cant:109},
-    {id:"h12",nombre:"Hierro ø12", cant:166},
-    {id:"h16",nombre:"Hierro ø16", cant:34},
+    {id:"h12",nombre:"Hierro ø12", cant:229}, // 166 estructura (7 Hnos) + 63 bases (Da Silva)
+    {id:"h16",nombre:"Hierro ø16", cant:73},  // 34 estructura (7 Hnos) + 39 bases (Da Silva)
     {id:"h20",nombre:"Hierro ø20", cant:6},
   ]},
   { id:"viguetas", nombre:"Viguetas", items:[
@@ -283,20 +283,22 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v37";
+const APP_VERSION = "v39";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
 const COMPRADOS_IDS = ["cano_cemento","malla","malla1525","arena_bolson","piedra_bolson","alambre","clavos250","clavos200","ladrillo","arena","cemento","piedra"];
 const STORAGE_CANT = "comparador_obra_cantidades_v4";
 const STORAGE_CARRITO = "comparador_obra_carrito_v1";
+const STORAGE_BITACORA = "comparador_obra_bitacora_v1";
+const STORAGE_CONSUMO_INICIO = "comparador_obra_consumo_inicio_v1";
 const CANT_DEFAULT = {};
 TODOS_ITEMS.forEach(i=>{
   let comp=0;
   if(HIERROS_IDS.includes(i.id))comp=i.cant;         // hierros ya comprados (7 Hnos)
   else if(i.id==='cemento')comp=745;                  // 80 Esperanza + 15 previas + 650 7 Hnos 08/07
   else if(COMPRADOS_IDS.includes(i.id))comp=i.cant;   // varios ya comprados (caño, mallas 15×25, bolsones, clavos, alambre)
-  CANT_DEFAULT[i.id]={nec:i.cant,comp};
+  CANT_DEFAULT[i.id]={nec:i.cant,comp,cons:0};        // cons = consumido en obra (lo reporta la arquitecta)
 });
 CANT_DEFAULT.arena={nec:46,comp:46};   // cómputo real 46 m³ (se devolvieron 6 pedidos de más)
 CANT_DEFAULT.piedra={nec:46,comp:46};  // comprada 08/07 a 7 Hnos, $53.000/m³
@@ -323,7 +325,9 @@ CANT_DEFAULT.arena_bolson={nec:12,comp:12};  // 2 ya comprados + 10 comprados ho
 CANT_DEFAULT.e2_ladrillo_comun={nec:50,comp:50};
 CANT_DEFAULT.e2_ceramico_12x18x33={nec:2250,comp:2250};
 CANT_DEFAULT.e2_ceramico_18x18x33={nec:7360,comp:7360};
-CANT_DEFAULT.e2_cemento={nec:1799,comp:240};        // 480 bolsas de 25kg = 240 de 50kg — faltan 1559 (incluye 440 de bases: 880 bolsas 25kg)
+CANT_DEFAULT.e2_cemento={nec:1799,comp:285};        // 480 bolsas 25kg (240 de 50kg, 7 Hnos) + 90 bolsas 25kg (45 de 50kg, Da Silva bases) — faltan 1514
+CANT_DEFAULT.e2_arena={nec:199,comp:4};              // 4 m³ Da Silva (primera compra bases)
+CANT_DEFAULT.e2_piedra={nec:112,comp:4};             // 4 m³ Da Silva (primera compra bases)
 CANT_DEFAULT.e2_cal_hidraulica={nec:780,comp:80};   // 64 bolsas de 25kg = 80 de 20kg — faltan 700
 CANT_DEFAULT.e2_alambre_fardo={nec:160,comp:20};    // faltan 140kg
 CANT_DEFAULT.e2_cerecita={nec:2,comp:1};            // 1 tambor Weber comprado, falta 1
@@ -427,10 +431,28 @@ function App(){
   const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false,etapa2_mamposteria:false,etapa2_refractarios:false,etapa2_insumos:false});
   const [expandItem,setExpandItem]=useState({});
   const [expandEsc,setExpandEsc]=useState({});
-  const [compras,setCompras]=useState({caeiro:6003160.54,dasilva:5500000,lhhnos:0,curtoni:0,shnos:31264200,esperanza:1386766,casameli:0});
+  const [compras,setCompras]=useState({caeiro:6003160.54,dasilva:5500000,lhhnos:0,curtoni:0,shnos:31264100,esperanza:1386766,casameli:0}); // shnos corregido -100 (factura real 11/08: $13.124.900, no $13.125.000)
   const [editCompra,setEditCompra]=useState(null);
   const [addCompra,setAddCompra]=useState(null);
   const [guardado,setGuardado]=useState(false);
+  function hoyISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  const [addForm,setAddForm]=useState({monto:'',fecha:hoyISO(),nota:''});
+  const [bitacora,setBitacora]=useState(()=>{
+    try{ const s=localStorage.getItem(STORAGE_BITACORA); if(s)return JSON.parse(s); }catch(e){}
+    return [];
+  });
+  function guardarBitacora(arr){ try{ localStorage.setItem(STORAGE_BITACORA,JSON.stringify(arr)); }catch(e){} }
+  function eliminarBitacora(id){
+    setBitacora(prev=>{
+      const entry=prev.find(b=>b.id===id);
+      const arr=prev.filter(b=>b.id!==id);
+      guardarBitacora(arr);
+      if(entry){
+        setCompras(c=>{ const n={...c,[entry.provId]:Math.max(0,(c[entry.provId]||0)-entry.monto)}; guardarCompras(n); return n; });
+      }
+      return arr;
+    });
+  }
   const [activos,setActivos]=useState(()=>{
     try{ const s=localStorage.getItem(STORAGE_ACTIVOS); if(s)return {...ACTIVOS_DEFAULT,...JSON.parse(s)}; }catch(e){}
     return ACTIVOS_DEFAULT;
@@ -518,11 +540,14 @@ function App(){
     const n={...compras,[id]:Number(String(val).replace(/\D/g,''))||0};
     setCompras(n); guardarCompras(n); setEditCompra(null);
   }
-  function sumarCompra(id,val){
-    const monto=Number(String(val).replace(/\D/g,''))||0;
+  function abrirAdd(provId){ setAddForm({monto:'',fecha:hoyISO(),nota:''}); setAddCompra(provId); }
+  function confirmarAdd(provId){
+    const monto=Number(String(addForm.monto).replace(/\D/g,''))||0;
     if(monto>0){
-      const n={...compras,[id]:(compras[id]||0)+monto};
+      const n={...compras,[provId]:(compras[provId]||0)+monto};
       setCompras(n); guardarCompras(n);
+      const entry={id:Date.now()+'_'+provId, fecha:addForm.fecha||hoyISO(), provId, monto, nota:addForm.nota||''};
+      setBitacora(prev=>{ const arr=[entry,...prev]; guardarBitacora(arr); return arr; });
     }
     setAddCompra(null);
   }
@@ -532,6 +557,18 @@ function App(){
     TODOS_ITEMS.forEach(i=>{ m[i.id]=false; });   // todo arranca colapsado
     return m;
   });
+
+  // Fecha desde la que se empieza a medir el ritmo de consumo (para proyectar semanas de stock)
+  const [fechaInicioConsumo,setFechaInicioConsumo]=useState(()=>{
+    try{ const s=localStorage.getItem(STORAGE_CONSUMO_INICIO); if(s)return s; }catch(e){}
+    return '';
+  });
+  function cambiarFechaInicioConsumo(v){
+    setFechaInicioConsumo(v);
+    try{ localStorage.setItem(STORAGE_CONSUMO_INICIO,v); }catch(e){}
+  }
+  const [mostrarReporte,setMostrarReporte]=useState(false);
+  const [reporteCopiado,setReporteCopiado]=useState(false);
 
   const [carrito,setCarrito]=useState(()=>{
     try{ const s=localStorage.getItem(STORAGE_CARRITO); if(s)return JSON.parse(s); }catch(e){}
@@ -606,10 +643,21 @@ function App(){
                   c>0?fmt(c):'—'
                 ),
             isAdd
-              ? e('input',{className:'compra-input',style:{borderColor:p.color,color:p.color,marginTop:4},autoFocus:true,placeholder:'+ monto a sumar',inputMode:'numeric',
-                  onBlur:ev=>sumarCompra(p.id,ev.target.value),
-                  onKeyDown:ev=>{if(ev.key==='Enter')sumarCompra(p.id,ev.target.value);if(ev.key==='Escape')setAddCompra(null);}})
-              : !isEdit&&e('button',{className:'compra-add-btn',style:{color:p.color,borderColor:p.color+'55'},onClick:()=>setAddCompra(p.id)},'+ Sumar'),
+              ? e('div',{style:{marginTop:5,display:'flex',flexDirection:'column',gap:5}},
+                  e('input',{className:'compra-input',style:{borderColor:p.color,color:p.color},autoFocus:true,placeholder:'Monto',inputMode:'numeric',
+                    value:addForm.monto,onChange:ev=>setAddForm(f=>({...f,monto:ev.target.value})),
+                    onKeyDown:ev=>{if(ev.key==='Enter')confirmarAdd(p.id);if(ev.key==='Escape')setAddCompra(null);}}),
+                  e('input',{type:'date',className:'compra-input',style:{borderColor:p.color,color:p.color,fontSize:'0.68rem'},
+                    value:addForm.fecha,onChange:ev=>setAddForm(f=>({...f,fecha:ev.target.value}))}),
+                  e('input',{className:'compra-input',style:{borderColor:p.color,color:p.color,fontSize:'0.68rem'},placeholder:'Nota (opcional)',
+                    value:addForm.nota,onChange:ev=>setAddForm(f=>({...f,nota:ev.target.value})),
+                    onKeyDown:ev=>{if(ev.key==='Enter')confirmarAdd(p.id);if(ev.key==='Escape')setAddCompra(null);}}),
+                  e('div',{style:{display:'flex',gap:6}},
+                    e('button',{className:'compra-add-btn',style:{color:p.color,borderColor:p.color+'55',flex:1},onClick:()=>confirmarAdd(p.id)},'Guardar'),
+                    e('button',{className:'compra-add-btn',style:{color:'var(--c-text3)',borderColor:'var(--c-border)',flex:1},onClick:()=>setAddCompra(null)},'Cancelar')
+                  )
+                )
+              : !isEdit&&e('button',{className:'compra-add-btn',style:{color:p.color,borderColor:p.color+'55'},onClick:()=>abrirAdd(p.id)},'+ Sumar'),
             c>0&&e('div',null,
               e('div',{className:'compra-bar-wrap'},e('div',{className:'compra-bar',style:{width:Math.min(pct,100)+'%',background:p.color}})),
               e('div',{className:'compra-pct'},pct.toFixed(0)+'% · '+fmtM(pres))
@@ -619,6 +667,26 @@ function App(){
       ),
       e('div',{style:{fontSize:'0.72rem',color:'var(--c-text3)',marginTop:6,textAlign:'center'}},
         'Total comprado: '+fmt(totalComprado)+(guardado?' · ✓ Guardado':'') + ' · Tocá el monto para editar · + Sumar para agregar una compra'
+      ),
+      bitacora.length>0&&e('div',{style:{marginTop:14}},
+        e('div',{className:'section-title',style:{fontSize:'0.8rem'}},'📜 Historial de compras ('+bitacora.length+')'),
+        e('div',{style:{fontSize:'0.65rem',color:'var(--c-text3)',marginBottom:6}},'Solo registra lo que sumes de acá en adelante con "+ Sumar" · los totales viejos no tienen historial'),
+        e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',border:'1px solid var(--c-border)',overflow:'hidden'}},
+          ...bitacora.map((b,idx)=>{
+            const p=PROVEEDORES.find(x=>x.id===b.provId);
+            return e('div',{key:b.id,style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 10px',borderTop:idx>0?'1px solid var(--c-border)':'none',fontSize:'0.75rem'}},
+              e('div',null,
+                e('span',{style:{color:'var(--c-text3)'}},b.fecha+' · '),
+                e('span',{style:{color:p?p.color:'inherit',fontWeight:600}},p?p.nombre:b.provId),
+                b.nota&&e('span',{style:{color:'var(--c-text3)'}},' · '+b.nota)
+              ),
+              e('div',{style:{display:'flex',alignItems:'center',gap:8}},
+                e('span',{style:{fontWeight:700}},fmt(b.monto)),
+                e('button',{onClick:()=>eliminarBitacora(b.id),title:'Eliminar (también resta del total)',style:{fontSize:'0.7rem',color:'var(--c-red)',background:'none',border:'none',cursor:'pointer'}},'✕')
+              )
+            );
+          })
+        )
       )
     );
   }
@@ -940,18 +1008,73 @@ function App(){
             e('div',{className:'falt-label'},'Compré'),
             Stepper(item.id+'_comp',c.comp,best?best.prov.color:null,v=>setCant(item.id,'comp',v))
           ),
+          e('div',null,
+            e('div',{className:'falt-label'},'Consumido'),
+            Stepper(item.id+'_cons',c.cons||0,'var(--c-orange)',v=>setCant(item.id,'cons',v))
+          ),
           e('div',{style:{marginLeft:'auto',textAlign:'right'}},
             e('div',{className:'falt-label'},'Faltan'),
             e('div',{style:{fontSize:'1rem',fontWeight:800,color:falt>0?'var(--c-text)':'var(--c-green)'}},falt)
           )
-        )
+        ),
+        abierto&&(function(){
+          const cons=c.cons||0;
+          const stock=c.comp-cons;
+          const sobre=stock<0;
+          let ritmo=null;
+          if(cons>0&&fechaInicioConsumo){
+            const dias=Math.max(1,(Date.now()-new Date(fechaInicioConsumo+'T00:00:00').getTime())/86400000);
+            const semanal=cons/dias*7;
+            if(semanal>0)ritmo=stock>0?(stock/semanal):0;
+          }
+          return e('div',{style:{marginTop:8,padding:'6px 9px',borderRadius:6,background:sobre?'rgba(239,68,68,0.12)':'rgba(120,120,120,0.08)',fontSize:'0.72rem',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:6}},
+            e('span',{style:{color:'var(--c-text3)'}},'Stock en obra (Compré − Consumido)'),
+            e('div',{style:{display:'flex',alignItems:'center',gap:10}},
+              sobre&&e('span',{style:{color:'var(--c-red)',fontWeight:700}},'⚠️ consumido supera lo comprado'),
+              ritmo!==null&&e('span',{style:{color:'var(--c-text3)'}},'≈ '+ritmo.toFixed(1)+' sem. de stock al ritmo actual'),
+              e('span',{style:{fontWeight:800,color:sobre?'var(--c-red)':'var(--c-text)'}},stock)
+            )
+          );
+        })()
       );
+    }
+
+    function textoReporte(){
+      const fecha=new Date().toLocaleDateString('es-AR');
+      let txt='📋 Resumen de obra — '+fecha+'\n\n';
+      let huboItems=false;
+      TODOS_ITEMS.forEach(item=>{
+        const c=cants[item.id]||CANT_DEFAULT[item.id]||{nec:item.cant,comp:0,cons:0};
+        if(!(c.comp>0))return;
+        huboItems=true;
+        const cons=c.cons||0;
+        const stock=c.comp-cons;
+        txt+='• '+item.nombre+': comprado '+c.comp+' / necesito '+c.nec+(cons>0?' / consumido '+cons:'')+' → stock en obra '+stock+(stock<0?' ⚠️':'')+'\n';
+      });
+      if(!huboItems)txt+='(Todavía no hay nada marcado como comprado.)\n';
+      txt+='\n¿Me confirmás cuánto se consumió de cada uno para ajustar el stock en obra?';
+      return txt;
+    }
+    async function copiarReporte(){
+      try{ await navigator.clipboard.writeText(textoReporte()); setReporteCopiado(true); setTimeout(()=>setReporteCopiado(false),2000); }catch(e){}
     }
 
     return e('div',{className:'section'},
       e('div',{className:'alerta info'},
         e('span',{className:'alerta-icon'},'🧮'),
-        e('span',null,'Ajustá "Necesito" y "Compré" con +/− o tocando el número. El costo usa el mejor precio unitario vigente de los proveedores activos.')
+        e('span',null,'Ajustá "Necesito", "Compré" y "Consumido" (lo reporta la arquitecta) con +/− o tocando el número. El costo usa el mejor precio unitario vigente de los proveedores activos.')
+      ),
+      e('div',{style:{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',marginBottom:14}},
+        e('button',{className:'cat-toggle-btn',onClick:()=>setMostrarReporte(x=>!x)},mostrarReporte?'▲ Ocultar reporte para la arquitecta':'📤 Generar reporte para la arquitecta'),
+        e('label',{style:{fontSize:'0.7rem',color:'var(--c-text3)',display:'flex',alignItems:'center',gap:5}},
+          'Medir ritmo de consumo desde:',
+          e('input',{type:'date',value:fechaInicioConsumo,onChange:ev=>cambiarFechaInicioConsumo(ev.target.value),
+            style:{fontSize:'0.7rem',padding:'2px 5px',borderRadius:4,border:'1px solid var(--c-border)',background:'var(--c-surface)',color:'var(--c-text)'}})
+        )
+      ),
+      mostrarReporte&&e('div',{style:{marginBottom:16}},
+        e('textarea',{readOnly:true,value:textoReporte(),style:{width:'100%',minHeight:160,fontSize:'0.74rem',padding:9,borderRadius:8,border:'1px solid var(--c-border)',background:'var(--c-surface)',color:'var(--c-text)',fontFamily:'inherit',boxSizing:'border-box'}}),
+        e('button',{className:'cat-toggle-btn',style:{marginTop:6},onClick:copiarReporte},reporteCopiado?'✓ Copiado':'Copiar al portapapeles')
       ),
       bloquesPend.length>0&&e('div',{style:{marginBottom:18}},
         e('div',{className:'section-title'},'📋 Resumen de faltantes'),
