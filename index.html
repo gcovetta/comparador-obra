@@ -314,7 +314,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v40";
+const APP_VERSION = "v41";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,sanibon:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
@@ -600,6 +600,7 @@ function App(){
   }
   const [mostrarReporte,setMostrarReporte]=useState(false);
   const [reporteCopiado,setReporteCopiado]=useState(false);
+  const [expandResumenCat,setExpandResumenCat]=useState({}); // ausente = expandido
 
   const [carrito,setCarrito]=useState(()=>{
     try{ const s=localStorage.getItem(STORAGE_CARRITO); if(s)return JSON.parse(s); }catch(e){}
@@ -1112,19 +1113,30 @@ function App(){
         e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',overflow:'hidden',border:'1px solid var(--c-border)'}},
           e('table',{className:'resumen-table'},
             e('thead',null,e('tr',null,
-              e('th',null,'Ítem'),e('th',null,'Categoría'),e('th',{style:{textAlign:'right'}},'Faltan'),e('th',{style:{textAlign:'right'}},'Total $')
+              e('th',null,'Ítem'),e('th',{style:{textAlign:'right'}},'Faltan'),e('th',{style:{textAlign:'right'}},'Total $')
             )),
             e('tbody',null,
-              ...bloquesPend.flatMap(({cat,pendientes})=>
-                pendientes.map(({item,falt,total,best})=>
-                  e('tr',{key:item.id},
-                    e('td',null,item.nombre),
-                    e('td',{style:{color:'var(--c-text3)',fontSize:'0.75rem'}},cat.nombre),
-                    e('td',{style:{textAlign:'right',fontWeight:700}},falt),
-                    e('td',{style:{textAlign:'right',fontWeight:700,color:best?best.prov.color:'var(--c-text3)'}},best?fmt(total):'sin cotizar')
+              ...bloquesPend.flatMap(({cat,sub,pendientes})=>{
+                const exp=expandResumenCat[cat.id]!==false;
+                const filas=[
+                  e('tr',{key:cat.id+'_hdr',onClick:()=>setExpandResumenCat(x=>({...x,[cat.id]:!exp})),
+                     style:{cursor:'pointer',background:'rgba(120,120,120,0.10)'}},
+                    e('td',{colSpan:3,style:{padding:'7px 10px',fontWeight:700,fontSize:'0.7rem',textTransform:'uppercase',letterSpacing:'0.05em',color:'var(--c-text2)'}},
+                      (exp?'▾ ':'▸ ')+cat.nombre+' · '+pendientes.length+' ítem'+(pendientes.length>1?'s':'')+' · '+fmt(sub)
+                    )
                   )
-                )
-              )
+                ];
+                if(exp){
+                  pendientes.forEach(({item,falt,total,best})=>{
+                    filas.push(e('tr',{key:item.id},
+                      e('td',null,item.nombre),
+                      e('td',{style:{textAlign:'right',fontWeight:700}},falt),
+                      e('td',{style:{textAlign:'right',fontWeight:700,color:best?best.prov.color:'var(--c-text3)'}},best?fmt(total):'sin cotizar')
+                    ));
+                  });
+                }
+                return filas;
+              })
             )
           )
         )
