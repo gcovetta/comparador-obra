@@ -256,6 +256,35 @@ const CATEGORIAS = [
     {id:"e2_disco_tyrolit_230cd",  nombre:"Disco Tyrolit C/D 230×3,2 OX AL",             cant:20},
     {id:"e2_disco_diam_rhein",     nombre:"Disco DIAM RHEIN 230",                        cant:3},
   ]},
+  { id:"calefaccion", nombre:"Calefacción — Piso radiante (Sanibon, falta cotizar calderas)", items:[
+    {id:"cal_termostato",     nombre:"Termostato ambiente 220V",                cant:8},
+    {id:"cal_cabezal_term",   nombre:"Cabezal termostático 220V",               cant:14},
+    {id:"cal_cano_pex_200",   nombre:"Caño Hidroflex PEX 20mm ×200m",           cant:1},
+    {id:"cal_cano_pex_400",   nombre:"Caño Hidroflex PEX 20mm ×400m",           cant:3},
+    {id:"cal_colector_2s",    nombre:"Colector STD 2 salidas 20mm Hidroflex",   cant:1},
+    {id:"cal_colector_3s",    nombre:"Colector STD 3 salidas 20mm Hidroflex",   cant:2},
+    {id:"cal_colector_5s",    nombre:"Colector STD 5 salidas 20mm Hidroflex",   cant:1},
+    {id:"cal_colector_6s",    nombre:"Colector STD 6 salidas 20mm Hidroflex",   cant:1},
+    {id:"cal_curva_tubo",     nombre:"Curva para tubos 20mm Hidroflex",         cant:38},
+    {id:"cal_gabinete_35",    nombre:"Gabinete p/colector 35×45×11",            cant:1},
+    {id:"cal_gabinete_45",    nombre:"Gabinete p/colector 45×45×11",            cant:2},
+    {id:"cal_gabinete_55",    nombre:"Gabinete p/colector 55×45×11",            cant:2},
+    {id:"cal_precinto",       nombre:"Precinto plástico 200mm (paq. x100u)",    cant:28},
+    {id:"cal_membrana",       nombre:"Membrana térmica Hidroflex 1×20",         cant:17},
+    {id:"cal_cano_h3_114",    nombre:"Caño H3 Unifusión 1¼\" ×4m",              cant:2},
+    {id:"cal_cano_h3_1",      nombre:"Caño H3 Unifusión 1\" ×4m",               cant:26},
+    {id:"cal_coverthor_1",    nombre:"Coverthor blanco H3 1\" ×2m",             cant:52},
+    {id:"cal_coverthor_114",  nombre:"Coverthor blanco H3 1¼\" ×2m",            cant:4},
+    {id:"cal_codo90_114",     nombre:"Codo 90 fusión 1¼\" H3",                  cant:4},
+    {id:"cal_codo90_1",       nombre:"Codo 90 fusión 1\" H3",                   cant:38},
+    {id:"cal_tee_114",        nombre:"Tee fusión 1¼\" H3",                      cant:2},
+    {id:"cal_tee_1",          nombre:"Tee fusión 1\" H3",                       cant:4},
+    {id:"cal_sobrepaso",      nombre:"Sobrepaso fusión 1\" H3",                 cant:6},
+    {id:"cal_cupla",          nombre:"Cupla F.RM metal 1\" H3",                 cant:10},
+    {id:"cal_codo90rh_1",     nombre:"Codo 90RH metal 1\" H3",                  cant:2},
+    {id:"cal_codo90rh_114",   nombre:"Codo 90RH metal 1¼\" H3",                 cant:2},
+    {id:"cal_buje_red",       nombre:"Buje reducción fusión 1¼\"×1\" H3",       cant:4},
+  ]},
 ];
 
 const HIERROS_IDS = ["h6","h8","h10","h12","h16","h20"];
@@ -279,13 +308,15 @@ const PROVEEDORES = [
   {id:"casameli",  nombre:"Casa Meli",    color:"#EA580C", desc:0,  nota:"neto 07/08",
    p:{cemento:6800,v260:11000,v280:11900,v300:12700,v320:13600,v400:18900,v500:28500,v520:30600,malla1525:45600,arena_bolson:38000,piedra_bolson:60000,e2_cemento:13600,e2_malla_hierro5:45600,e2_cerecita:245000,e2_cal_hidraulica:7000,e2_cal_milagro:15000,e2_pegamento_klaukol:9000,e2_granza:52000,e2_ladrillo_comun:17500,e2_ceramico_12x18x33:670,e2_ceramico_18x18x33:900,e2_ladrillo_refractario:4970,e2_tejuela_refractaria:1890,e2_pegamento_refractario:36400,e2_precinto:3000,e2_disco_tyrolit_114:3900,e2_disco_tyrolit_178:6100,e2_disco_tyrolit_230cd:9350,e2_disco_diam_rhein:20000,e2_clavos2:4700,e2_clavos212:4700,e2_alambre_fardo:5000},
    pendientes:["h6","h8","h10","h12","h16","h20","v180","v200","v220","cano_cemento","e2_yeso_tuyango"]},
+  {id:"sanibon",   nombre:"Sanibon SRL",  color:"#0F766E", desc:0,  nota:"presup. 12/08 · precio CON IVA, -20% efectivo ya aplicado",
+   p:{cal_termostato:45685.42,cal_cabezal_term:85161.23,cal_cano_pex_200:311191.76,cal_cano_pex_400:622382.21,cal_colector_2s:350969.53,cal_colector_3s:401629.95,cal_colector_5s:514228.15,cal_colector_6s:560050.53,cal_curva_tubo:3829.23,cal_gabinete_35:113080.38,cal_gabinete_45:127693.80,cal_gabinete_55:139600.52,cal_precinto:6917.88,cal_membrana:82213.44,cal_cano_h3_114:25055.92,cal_cano_h3_1:15279.86,cal_coverthor_1:2251.30,cal_coverthor_114:3812.15,cal_codo90_114:2503.74,cal_codo90_1:1144.49,cal_tee_114:3623.70,cal_tee_1:1583.67,cal_sobrepaso:4365.03,cal_cupla:8152.77,cal_codo90rh_1:7074.74,cal_codo90rh_114:24825.93,cal_buje_red:672.88}},
 ];
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v39";
+const APP_VERSION = "v40";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
-const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true};
+const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,sanibon:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
 const COMPRADOS_IDS = ["cano_cemento","malla","malla1525","arena_bolson","piedra_bolson","alambre","clavos250","clavos200","ladrillo","arena","cemento","piedra"];
 const STORAGE_CANT = "comparador_obra_cantidades_v4";
@@ -428,7 +459,7 @@ function bestN(n,ids,items){
 // ── APP ───────────────────────────────────────────────────────────────────────
 function App(){
   const [tab,setTab]=useState("faltantes");
-  const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false,etapa2_mamposteria:false,etapa2_refractarios:false,etapa2_insumos:false});
+  const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false,etapa2_mamposteria:false,etapa2_refractarios:false,etapa2_insumos:false,calefaccion:false});
   const [expandItem,setExpandItem]=useState({});
   const [expandEsc,setExpandEsc]=useState({});
   const [compras,setCompras]=useState({caeiro:6003160.54,dasilva:5500000,lhhnos:0,curtoni:0,shnos:31264100,esperanza:1386766,casameli:0}); // shnos corregido -100 (factura real 11/08: $13.124.900, no $13.125.000)
