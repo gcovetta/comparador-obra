@@ -314,7 +314,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v41";
+const APP_VERSION = "v42";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,sanibon:true};
 const STORAGE_ITEMS = "comparador_obra_items_v4";
@@ -323,6 +323,17 @@ const STORAGE_CANT = "comparador_obra_cantidades_v4";
 const STORAGE_CARRITO = "comparador_obra_carrito_v1";
 const STORAGE_BITACORA = "comparador_obra_bitacora_v1";
 const STORAGE_CONSUMO_INICIO = "comparador_obra_consumo_inicio_v1";
+const STORAGE_PENDCOTIZAR = "comparador_obra_pendcotizar_v1";
+const PENDIENTES_COTIZAR_DEFAULT = [
+  {id:"piso_revest",          nombre:"Piso y revestimientos",        estimado:0},
+  {id:"electricidad",         nombre:"Electricidad",                 estimado:0},
+  {id:"aberturas",            nombre:"Aberturas",                    estimado:0},
+  {id:"griferia_sanitarios",  nombre:"Griferías y sanitarios",       estimado:0},
+  {id:"caldera",              nombre:"Caldera (piso radiante)",      estimado:0},
+  {id:"termotanques",         nombre:"Termotanques",                 estimado:0},
+  {id:"techo_chapa",          nombre:"Materiales techo (chapa)",     estimado:0},
+  {id:"canerias_sanitarios",  nombre:"Cañerías para sanitarios",     estimado:25000000},
+];
 const CANT_DEFAULT = {};
 TODOS_ITEMS.forEach(i=>{
   let comp=0;
@@ -601,6 +612,21 @@ function App(){
   const [mostrarReporte,setMostrarReporte]=useState(false);
   const [reporteCopiado,setReporteCopiado]=useState(false);
   const [expandResumenCat,setExpandResumenCat]=useState({}); // ausente = expandido
+
+  const [pendCotizar,setPendCotizar]=useState(()=>{
+    try{ const s=localStorage.getItem(STORAGE_PENDCOTIZAR); if(s)return JSON.parse(s); }catch(e){}
+    return PENDIENTES_COTIZAR_DEFAULT;
+  });
+  const [editPend,setEditPend]=useState(null);
+  function guardarPendCotizar(arr){ try{ localStorage.setItem(STORAGE_PENDCOTIZAR,JSON.stringify(arr)); }catch(e){} }
+  function actualizarEstimadoPend(id,val){
+    const n=Number(String(val).replace(/\D/g,''))||0;
+    setPendCotizar(prev=>{ const arr=prev.map(x=>x.id===id?{...x,estimado:n}:x); guardarPendCotizar(arr); return arr; });
+    setEditPend(null);
+  }
+  function eliminarPend(id){
+    setPendCotizar(prev=>{ const arr=prev.filter(x=>x.id!==id); guardarPendCotizar(arr); return arr; });
+  }
 
   const [carrito,setCarrito]=useState(()=>{
     try{ const s=localStorage.getItem(STORAGE_CARRITO); if(s)return JSON.parse(s); }catch(e){}
@@ -1139,6 +1165,31 @@ function App(){
               })
             )
           )
+        )
+      ),
+      pendCotizar.length>0&&e('div',{style:{marginBottom:18}},
+        e('div',{className:'section-title'},'📌 Pendiente de cotizar y dimensionar'),
+        e('div',{style:{fontSize:'0.68rem',color:'var(--c-text3)',marginBottom:6}},'Todavía no tienen ítems ni proveedores cargados — esto es solo una lista de lo que falta pedir. Los estimados NO están incluidos en "Costo de lo que falta comprar".'),
+        e('div',{style:{background:'var(--c-surface)',borderRadius:'var(--radius)',border:'1px solid var(--c-border)',overflow:'hidden'}},
+          ...pendCotizar.map((p,idx)=>{
+            const isEdit=editPend===p.id;
+            return e('div',{key:p.id,style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 10px',borderTop:idx>0?'1px solid var(--c-border)':'none',fontSize:'0.78rem',gap:8}},
+              e('span',null,p.nombre),
+              e('div',{style:{display:'flex',alignItems:'center',gap:8}},
+                isEdit
+                  ? e('input',{className:'compra-input',style:{width:130,borderColor:'var(--c-border2)'},autoFocus:true,defaultValue:p.estimado||'',placeholder:'estimado $',inputMode:'numeric',
+                      onBlur:ev=>actualizarEstimadoPend(p.id,ev.target.value),
+                      onKeyDown:ev=>{if(ev.key==='Enter')actualizarEstimadoPend(p.id,ev.target.value);if(ev.key==='Escape')setEditPend(null);}})
+                  : e('span',{style:{color:p.estimado>0?'var(--c-text)':'var(--c-text3)',fontWeight:700,cursor:'pointer'},onClick:()=>setEditPend(p.id)},
+                      p.estimado>0?fmt(p.estimado)+' (est.)':'sin estimar'
+                    ),
+                e('button',{onClick:()=>eliminarPend(p.id),title:'Ya lo agregué como categoría real, sacar de esta lista',style:{fontSize:'0.7rem',color:'var(--c-red)',background:'none',border:'none',cursor:'pointer'}},'✕')
+              )
+            );
+          })
+        ),
+        e('div',{style:{fontSize:'0.72rem',color:'var(--c-text3)',marginTop:6,textAlign:'right'}},
+          'Suma de estimados: '+fmt(pendCotizar.reduce((a,p)=>a+(p.estimado||0),0))
         )
       ),
       bloquesPend.length===0&&e('div',{style:{fontSize:'0.8rem',color:'var(--c-text3)',textAlign:'center',padding:'20px 0'}},'✓ No te falta comprar nada.'),
