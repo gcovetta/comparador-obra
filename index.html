@@ -461,6 +461,7 @@ const PENDIENTES_COTIZAR_DEFAULT = [
   {id:"termotanques",         nombre:"Termotanques",                 estimado:0},
   {id:"techo_chapa",          nombre:"Materiales techo (chapa)",     estimado:0},
   {id:"canerias_sanitarios",  nombre:"Cañerías para sanitarios",     estimado:25000000},
+  {id:"gas",                  nombre:"Gas",                          estimado:0},
 ];
 const CANT_DEFAULT = {};
 TODOS_ITEMS.forEach(i=>{
@@ -1308,8 +1309,11 @@ function App(){
                   ? e('input',{className:'compra-input',style:{width:130,borderColor:'var(--c-border2)'},autoFocus:true,defaultValue:p.estimado||'',placeholder:'estimado $',inputMode:'numeric',
                       onBlur:ev=>actualizarEstimadoPend(p.id,ev.target.value),
                       onKeyDown:ev=>{if(ev.key==='Enter')actualizarEstimadoPend(p.id,ev.target.value);if(ev.key==='Escape')setEditPend(null);}})
-                  : e('span',{style:{color:p.estimado>0?'var(--c-text)':'var(--c-text3)',fontWeight:700,cursor:'pointer'},onClick:()=>setEditPend(p.id)},
-                      p.estimado>0?fmt(p.estimado)+' (est.)':'sin estimar'
+                  : e('div',{style:{display:'flex',alignItems:'center',gap:5}},
+                      e('span',{style:{color:p.estimado>0?'var(--c-text)':'var(--c-text3)',fontWeight:700}},
+                        p.estimado>0?fmt(p.estimado)+' (est.)':'sin estimar'
+                      ),
+                      e('button',{onClick:()=>setEditPend(p.id),title:'Editar estimado',style:{fontSize:'0.7rem',color:'var(--c-accent)',background:'none',border:'none',cursor:'pointer',padding:'2px 4px'}},'✎')
                     ),
                 e('button',{onClick:()=>eliminarPend(p.id),title:'Ya lo agregué como categoría real, sacar de esta lista',style:{fontSize:'0.7rem',color:'var(--c-red)',background:'none',border:'none',cursor:'pointer'}},'✕')
               )
