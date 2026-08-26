@@ -443,11 +443,21 @@ const PROVEEDORES = [
    p:{cal_cano_pex_400:692248.56,cal_cano_pex_120:207675.55,cal_colector_2s:367408.64,cal_colector_3s:420561.77,cal_colector_5s:538467.56,cal_colector_6s:586449.9,cal_curva_tubo:4130.83,cal_gabinete_45:141843.67,cal_gabinete_35:125610.9,cal_gabinete_55:155069.76,cal_precinto:8563.52,cal_cano_h3_114:28239.66,cal_cano_h3_1:17221.39,cal_coverthor_1:2480.69,cal_coverthor_114:4200.62,cal_codo90_114:2821.88,cal_codo90_1:1289.92,cal_cupla:9188.73,cal_sobrepaso:4919.68,cal_tee_114:4084.14,cal_tee_1:1784.91,cal_buje_red:758.37,cal_codo90rh_114:27980.45,cal_codo90rh_1:7973.68,clo_6082072:4748.29,clo_8088631:44594.61,clo_6082095:9287.19,clo_6083020:10422.61,clo_6082009:4473.02,clo_6082007:1921.99,clo_6082008:2353.22,clo_6082004:3297.25,clo_6082002:1698.33,clo_6082003:1829.68,clo_6082019:5568.92,clo_6082017:1829.27,clo_6082018:2546.61,clo_6082014:4328.04,clo_6082042:3300.26,clo_6082073:8906.07,clo_6082070:2998.86,clo_6082071:3758.65,clo_6082055:6268.77,clo_8087040:345.38,clo_8087050:474.25,clo_8087063:624.83,clo_8087110:861.25,clo_6082006:1440.82,clo_6082001:1134.73,clo_6082016:1247.75,clo_6082028:1467.39,clo_6082038:4235.45,clo_6082035:1551.47,clo_6082036:1974.2,clo_6082037:2139.99,clo_6082077:6204.14,clo_6083072:10181.41,clo_6081036:30556.81,clo_6081008:10876.48,clo_6081017:13674.89,clo_6081026:16943.69,clo_41040034:125.62,clo_8088632:8378.08,clo_34310234:7095.73,agu_81008520:2283.84,agu_81008525:3192.96,agu_81008532:4973.77,agu_81013050:7309.38,agu_81013025:1262.65,agu_81013032:1836.85,agu_81013040:4375.74,agu_81015527:31499.51,agu_81015528:41414.69,agu_81015529:66723.93,agu_81015530:100431.29,agu_81016026:19903.7,agu_81016340:42225.61,agu_81016350:68068.27,agu_81024125:901.74,agu_81024133:1351.97,agu_81024141:2444.16,agu_81024150:3676.51,agu_81024151:3421.0,agu_81033032:4920.95,agu_81033041:12826.34,agu_81033050:15288.69,agu_81034020:490.21,agu_81034025:662.61,agu_81034032:1248.79,agu_81009134:8914.34,agu_81904520:969.02,agu_81904525:1232.57,agu_81904532:2136.46,agu_81904540:3919.54,agu_81904550:6131.78,agu_81909032:1333.14,agu_81909020:564.72,agu_81909025:875.73,agu_81909040:2925.39,agu_81909050:4902.12,agu_81016325:19655.01,agu_81016332:27036.12,agu_81024140:2635.19,agu_81030020:528.84,agu_81030025:934.83,agu_81030032:1180.16,agu_81030040:2993.18,agu_81030050:4227.7,agu_36010018:21808.25,agu_1050704:9623.28,agu_1050703:7940.71,agu_1059251:16435.18,agu_1059201:15102.59,agu_18020120:10681.44,agu_18013002:51116.68,agu_36020050:1471.28,agu_81027126:5217.86,agu_81027133:9195.3,agu_81027226:6854.58,agu_81027233:12241.01,agu_81033025:4226.71,agu_56010060:5647.78,agu_60920017:771.59,agu_34310162:5076.91,agu_34310104:1484.31,agu_30102150:26317.5,agu_81027150:35387.19,agu_81009120:3190.76,agu_1060211:417.55,agu_1060209:201.79,agu_1060210:235.83,agu_81013020:809.56,agu_1059351:29187.14,agu_1050706:25496.1,agu_82000074:7227.39,agu_58080308:591840.05,agu_81010020:8831.16,agu_81011240:27614.04,agu_81011250:37013.22,agu_81010025:12842.07,agu_81010032:19976.81,agu_81027250:3742.08}},
 ];
 
-const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items);
+const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items.map(it=>({...it,catId:c.id})));
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v44";
+const APP_VERSION = "v45";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,sanibon:true,sancanuelas:true};
+// Grupos de afinidad para la pestaña Ahorro: cada catálogo de proveedores compite solo
+// contra sí mismo (no tiene sentido comparar corralones de hierro vs Sanibon).
+const GRUPOS_AHORRO = [
+  {id:'corralones', label:'🧱 Materiales de obra (corralones)',
+   catIds:['hierros','viguetas','otros','varios','etapa2_mamposteria','etapa2_refractarios','etapa2_insumos'],
+   provIds:['caeiro','dasilva','lhhnos','curtoni','shnos','esperanza','casameli']},
+  {id:'sanitarios', label:'🚿 Agua, cloaca y calefacción',
+   catIds:['cloaca','agua','calefaccion'],
+   provIds:['sanibon','sancanuelas']},
+];
 const STORAGE_ITEMS = "comparador_obra_items_v4";
 const COMPRADOS_IDS = ["cano_cemento","malla","malla1525","arena_bolson","piedra_bolson","alambre","clavos250","clavos200","ladrillo","arena","cemento","piedra"];
 const STORAGE_CANT = "comparador_obra_cantidades_v4";
@@ -1026,76 +1036,113 @@ function App(){
       e('div',{className:'alerta warn'},e('span',{className:'alerta-icon'},'⚠️'),
         e('span',null,'No hay ítems pendientes: ya está todo comprado.'))
     );
-    return e('div',{className:'section'},
-      e('div',{style:{fontSize:'0.8rem',color:'var(--c-text2)',marginBottom:10,lineHeight:1.5}},
-        'Cuánto ahorrás sumando proveedores vs comprarle todo a uno solo. Tocá para ver el desglose. '+
-        (usaCarritoEnCalculo?'Calculado sobre los '+itemsParaCalculo.length+' ítems tildados en el carrito.':'Carrito vacío: calculado sobre todos los ítems faltantes.')
-      ),
-      e('div',{className:'cards-grid-lg'},
-      ...ESCENARIOS.map((esc,idx)=>{
-        if(!esc.r)return null;
-        const ahorro=base-esc.r.total;
-        const ahorroP=base>0?((ahorro/base)*100):0;
-        const prev=idx>0?ESCENARIOS[idx-1].r?.total:null;
-        const marginal=prev?prev-esc.r.total:0;
-        const marginalP=prev?((marginal/prev)*100):0;
-        const vsLabel=idx>0?ESCENARIOS[idx-1].short:'';
-        const barW=base>0?(esc.r.total/base*100):0;
-        const isExp=expandEsc[esc.n];
-        const mainProv=esc.r.mainId?PROVEEDORES.find(p=>p.id===esc.r.mainId):null;
 
-        return e('div',{key:esc.n,className:'esc-card'+(esc.isBest?' best':esc.isBase?' base':'')},
-          e('div',{className:'esc-hdr',onClick:()=>setExpandEsc(x=>({...x,[esc.n]:!x[esc.n]}))},
-            e('div',null,
-              e('div',{className:'esc-label',style:{color:esc.isBest?'var(--c-green)':esc.isBase?'var(--c-red)':'var(--c-text)'}},
-                (esc.isBest?'🏆 ':esc.isBase?'📦 ':'')+esc.label
-              ),
-              e('div',{className:'esc-sub'},
-                mainProv
-                  ? mainProv.nombre+(esc.r.fuera>0?' · '+esc.r.fuera+' ítem'+(esc.r.fuera>1?'s':'')+' que no cotiza, al mejor precio de otro':'')
-                  : esc.r.s.map(id=>PROVEEDORES.find(p=>p.id===id).nombre).join(' · ')
-              )
+    // Tarjeta reutilizable (misma UI que antes) para un escenario dentro de un grupo/catálogo dado
+    function cardEsc(esc,idx,arr,baseG,keyPrefix){
+      if(!esc.r)return null;
+      const ahorro=baseG-esc.r.total;
+      const ahorroP=baseG>0?((ahorro/baseG)*100):0;
+      const prev=idx>0?arr[idx-1].r?.total:null;
+      const marginal=prev?prev-esc.r.total:0;
+      const marginalP=prev?((marginal/prev)*100):0;
+      const vsLabel=idx>0?arr[idx-1].short:'';
+      const barW=baseG>0?(esc.r.total/baseG*100):0;
+      const key=keyPrefix+'_'+esc.n;
+      const isExp=expandEsc[key];
+      const mainProv=esc.r.mainId?PROVEEDORES.find(p=>p.id===esc.r.mainId):null;
+
+      return e('div',{key:key,className:'esc-card'+(esc.isBest?' best':esc.isBase?' base':'')},
+        e('div',{className:'esc-hdr',onClick:()=>setExpandEsc(x=>({...x,[key]:!x[key]}))},
+          e('div',null,
+            e('div',{className:'esc-label',style:{color:esc.isBest?'var(--c-green)':esc.isBase?'var(--c-red)':'var(--c-text)'}},
+              (esc.isBest?'🏆 ':esc.isBase?'📦 ':'')+esc.label
             ),
-            e('div',{className:'esc-right'},
-              e('div',{className:'esc-total',style:{color:esc.isBest?'var(--c-green)':'inherit'}},fmtM(esc.r.total)),
-              idx>0&&e('div',{className:'esc-pct'},'–'+marginalP.toFixed(1)+'% vs '+vsLabel),
-              e('span',{style:{fontSize:'0.7rem',color:'var(--c-text3)'}},isExp?'▲':'▼')
+            e('div',{className:'esc-sub'},
+              mainProv
+                ? mainProv.nombre+(esc.r.fuera>0?' · '+esc.r.fuera+' ítem'+(esc.r.fuera>1?'s':'')+' que no cotiza, al mejor precio de otro':'')
+                : esc.r.s.map(id=>PROVEEDORES.find(p=>p.id===id).nombre).join(' · ')
             )
           ),
-          e('div',{className:'bar-wrap'},
-            e('div',{className:'bar',style:{width:barW+'%',background:esc.isBest?'var(--c-green)':esc.isBase?'var(--c-red)':'var(--c-accent)'}})
-          ),
-          e('div',{className:'esc-chips'},
-            esc.isBase&&e('span',{className:'chip chip-red'},'Costo más alto'),
-            idx>0&&marginal>5000&&e('span',{className:'chip chip-blue'},'Sumar proveedor ahorra '+fmt(marginal)),
-            idx>0&&marginal<=5000&&e('span',{className:'chip chip-grey'},'Mejora mínima vs '+vsLabel),
-            idx>0&&e('span',{className:'chip chip-green'},'Total vs 1 prov.: –'+fmt(ahorro)+' (–'+ahorroP.toFixed(1)+'%)')
-          ),
-          e('div',{className:'esc-provs'},
-            ...esc.r.s.map(id=>{
-              const p=PROVEEDORES.find(x=>x.id===id);
-              return e('span',{key:id,className:'prov-pill',style:{background:p.color+'18',color:p.color}},
-                e('span',{className:'dot',style:{background:p.color}}),p.nombre
-              );
-            })
-          ),
-          // Desglose expandido
-          isExp&&e('div',{style:{borderTop:'1px solid var(--c-border)'}},
-            ...Object.values(esc.r.desglose).map(({prov,items,subtotal})=>
-              e('div',{key:prov.id,style:{borderLeft:'3px solid '+prov.color,margin:'8px 10px',paddingLeft:10}},
-                e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,fontSize:'0.82rem',color:prov.color}},
-                  e('span',null,prov.nombre),e('span',null,fmt(subtotal))
-                ),
-                ...items.map((item,ii)=>e('div',{key:item.id,style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontSize:'0.75rem',borderTop:ii>0?'0.5px solid var(--c-border)':'none'}},
-                  e('span',{style:{color:'var(--c-text2)'}},item.nombre+' ×'+item.cant),
-                  e('span',{style:{fontWeight:600}},fmt(item.total))
-                ))
-              )
-            ),
-            e('div',{style:{height:8}})
+          e('div',{className:'esc-right'},
+            e('div',{className:'esc-total',style:{color:esc.isBest?'var(--c-green)':'inherit'}},fmtM(esc.r.total)),
+            idx>0&&e('div',{className:'esc-pct'},'–'+marginalP.toFixed(1)+'% vs '+vsLabel),
+            e('span',{style:{fontSize:'0.7rem',color:'var(--c-text3)'}},isExp?'▲':'▼')
           )
-        );
-      }))
+        ),
+        e('div',{className:'bar-wrap'},
+          e('div',{className:'bar',style:{width:barW+'%',background:esc.isBest?'var(--c-green)':esc.isBase?'var(--c-red)':'var(--c-accent)'}})
+        ),
+        e('div',{className:'esc-chips'},
+          esc.isBase&&e('span',{className:'chip chip-red'},'Costo más alto'),
+          idx>0&&marginal>5000&&e('span',{className:'chip chip-blue'},'Sumar proveedor ahorra '+fmt(marginal)),
+          idx>0&&marginal<=5000&&e('span',{className:'chip chip-grey'},'Mejora mínima vs '+vsLabel),
+          idx>0&&e('span',{className:'chip chip-green'},'Total vs 1 prov.: –'+fmt(ahorro)+' (–'+ahorroP.toFixed(1)+'%)')
+        ),
+        e('div',{className:'esc-provs'},
+          ...esc.r.s.map(id=>{
+            const p=PROVEEDORES.find(x=>x.id===id);
+            return e('span',{key:id,className:'prov-pill',style:{background:p.color+'18',color:p.color}},
+              e('span',{className:'dot',style:{background:p.color}}),p.nombre
+            );
+          })
+        ),
+        isExp&&e('div',{style:{borderTop:'1px solid var(--c-border)'}},
+          ...Object.values(esc.r.desglose).map(({prov,items,subtotal})=>
+            e('div',{key:prov.id,style:{borderLeft:'3px solid '+prov.color,margin:'8px 10px',paddingLeft:10}},
+              e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,fontSize:'0.82rem',color:prov.color}},
+                e('span',null,prov.nombre),e('span',null,fmt(subtotal))
+              ),
+              ...items.map((item,ii)=>e('div',{key:item.id,style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontSize:'0.75rem',borderTop:ii>0?'0.5px solid var(--c-border)':'none'}},
+                e('span',{style:{color:'var(--c-text2)'}},item.nombre+' ×'+item.cant),
+                e('span',{style:{fontWeight:600}},fmt(item.total))
+              ))
+            )
+          ),
+          e('div',{style:{height:8}})
+        )
+      );
+    }
+
+    // Un grupo por cada catálogo de proveedores con productos afines
+    // (no tiene sentido comparar un corralón de hierros contra un sanitario de cloaca)
+    const gruposRender=GRUPOS_AHORRO.map(g=>{
+      const itemsG=itemsParaCalculo.filter(it=>g.catIds.includes(it.catId));
+      if(!itemsG.length)return null;
+      const provsG=provsActivos.filter(p=>g.provIds.includes(p.id));
+      if(!provsG.length)return e('div',{key:g.id,className:'section'},
+        e('div',{className:'section-title'},g.label),
+        e('div',{className:'alerta warn'},e('span',{className:'alerta-icon'},'⚠️'),
+          e('span',null,'No hay proveedores activos de este catálogo.'))
+      );
+      const idsG=provsG.map(p=>p.id);
+      const b1G=bestUno(provsG,itemsG);
+      const b2G=idsG.length>=2?bestN(2,idsG,itemsG):null;
+      const b3G=idsG.length>=3?bestN(3,idsG,itemsG):null;
+      const mixG={s:idsG,...calcSet(idsG,itemsG)};
+      const baseG=b1G?.total||0;
+      const escsG=[
+        {n:1,label:"1 proveedor",short:"1 prov.",r:b1G,isBase:true},
+        idsG.length>=2&&{n:2,label:"2 proveedores",short:"2 prov.",r:b2G},
+        idsG.length>=3&&{n:3,label:"3 proveedores",short:"3 prov.",r:b3G},
+        {n:5,label:"Mix óptimo ("+idsG.length+")",short:idsG.length+" prov.",r:mixG,isBest:true},
+      ].filter(Boolean);
+      return e('div',{key:g.id,className:'section'},
+        e('div',{className:'section-title'},g.label),
+        e('div',{style:{fontSize:'0.72rem',color:'var(--c-text3)',marginBottom:8}},
+          itemsG.length+' ítem'+(itemsG.length>1?'s':'')+' de este catálogo · '+idsG.length+' proveedor'+(idsG.length>1?'es':'')+' activo'+(idsG.length>1?'s':'')
+        ),
+        e('div',{className:'cards-grid-lg'},
+          ...escsG.map((esc,idx)=>cardEsc(esc,idx,escsG,baseG,g.id))
+        )
+      );
+    }).filter(Boolean);
+
+    return e('div',{className:'section'},
+      e('div',{style:{fontSize:'0.8rem',color:'var(--c-text2)',marginBottom:10,lineHeight:1.5}},
+        'Cuánto ahorrás sumando proveedores vs comprarle todo a uno solo, separado por catálogo de productos (no tiene sentido comparar un corralón contra un sanitario). Tocá para ver el desglose. '+
+        (usaCarritoEnCalculo?'Calculado sobre los '+itemsParaCalculo.length+' ítems tildados en el carrito.':'Carrito vacío: calculado sobre todos los ítems faltantes.')
+      ),
+      ...gruposRender
     );
   }
 
