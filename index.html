@@ -429,11 +429,38 @@ const PROVEEDORES = [
   {id:"curtoni",   nombre:"Curtoni",      color:"#0369A1", desc:0,  nota:"–10% ef.",
    p:{h6:5625,h8:9585,h10:14985,h12:21375,h16:36720,h20:57330,v200:7298,v220:8033,v260:9476,v280:10206,v300:10920,v320:11655,v400:16249,v500:25473,v520:27379,ladrillo:3400,malla:44550,cemento:6480,malla1525:40500,arena_bolson:36900,piedra_bolson:61200,clavos250:4950,clavos200:4950,e2_cemento:12960,e2_malla_hierro5:40500,e2_clavos2:4950,e2_clavos212:4950},
    pendientes:["v180","arena","piedra","cano_cemento","alambre"]},
-  {id:"shnos",     nombre:"7 Hnos",       color:"#047857", desc:0,  nota:"ef. 07/08",
-   p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:10000,v280:10815,v300:11550,v320:12300,v400:17200,v500:26300,v520:28300,ladrillo:3689.70,malla:49000,arena:34000,piedra:56000,cemento:6800,cano_cemento:36400,malla1525:44500,arena_bolson:39000,clavos250:5500,clavos200:5500,alambre:4000,e2_arena:34000,e2_piedra:56000,e2_cemento:13600,e2_malla_hierro5:44500,e2_clavos2:5500,e2_clavos212:5500,e2_alambre_fardo:4000,e2_granza:58000,e2_ladrillo_comun:16000,e2_ceramico_12x18x33:670,e2_ceramico_18x18x33:870,e2_cal_hidraulica:5440,e2_cerecita:245100,e2_yeso_tuyango:18000,e2_disco_tyrolit_114:3600,e2_disco_tyrolit_178:5600,e2_disco_tyrolit_230cd:9000,e2_disco_diam_rhein:31100},
+  {id:"shnos",     nombre:"7 Hnos",       color:"#047857", desc:0,  nota:"ef. 07/08 (cotiz. materiales faltantes 03/09)",
+   // Cotización 03/09/2026 (corralón, doc. no válido como factura): cemento $7.000/25kg (=$14.000/50kg),
+   // cal cacique $7.000/25kg (=$5.600/20kg equiv.), ceresita $255.000, fardo de alambre $5.500/kg,
+   // disco Bremen 9-3/16 $25.000 (reemplaza referencia disco Tyrolit/DIAM Rhein), tierra refractaria
+   // $12.200 los 10kg (=$6.100/5kg, primera cotización — antes sin cotizar), Weber p/porcelanato flex
+   // $36.000/25kg (equivalente a e2_pegamento_klaukol, antes sin precio de 7 Hnos), pegamento mortero
+   // refractario $19.000/10kg (=$38.000/20kg equiv. — corrección 03/09, la cotización original decía
+   // 2x10kg y en realidad son 14x10kg=140kg, cantidad ya coincide con lo que falta); sigue sin ganar,
+   // La Esperanza a $30.000/20kg es más barata.
+   // Clavos 2"/2½", yeso Tuyango, arena, piedra y malla no cambiaron de precio.
+   // Sin cargar todavía (cantidad/unidad no coincide con lo pedido o es un producto distinto, a confirmar
+   // con el corralón): separador nivelador arco (no es lo mismo que separadores porcelanato), precintos
+   // 4.8x250 (10u, tamaño de paq. no confirmado), nylon 4m de ancho (rollo de otro ancho al que se venía comparando).
+   p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:10000,v280:10815,v300:11550,v320:12300,v400:17200,v500:26300,v520:28300,ladrillo:3689.70,malla:49000,arena:34000,piedra:56000,cemento:6800,cano_cemento:36400,malla1525:44500,arena_bolson:39000,clavos250:5500,clavos200:5500,alambre:4000,e2_arena:34000,e2_piedra:56000,e2_cemento:14000,e2_malla_hierro5:44500,e2_clavos2:5500,e2_clavos212:5500,e2_alambre_fardo:5500,e2_granza:58000,e2_ladrillo_comun:16000,e2_ceramico_12x18x33:670,e2_ceramico_18x18x33:870,e2_cal_hidraulica:5600,e2_cerecita:255000,e2_yeso_tuyango:18000,e2_disco_tyrolit_114:3600,e2_disco_tyrolit_178:5600,e2_disco_tyrolit_230cd:9000,e2_disco_diam_rhein:25000,e2_tierra_refractaria:6100,e2_pegamento_klaukol:36000,e2_pegamento_refractario:38000},
    pendientes:["piedra_bolson"]},
-  {id:"esperanza", nombre:"La Esperanza", color:"#BE185D", desc:0,  nota:"ef. 07/08 (hierros sin actualizar)",
-   p:{h6:5037,h8:8583,h10:14245,h12:20390,h16:34660,h20:53000,v180:7300,v200:8000,v220:9000,v260:10600,v280:11400,v300:12200,v320:13000,v400:18400,v500:28000,v520:25300,ladrillo:3127,malla:46000,arena:38000,piedra:65000,cemento:6900,cano_cemento:36577,malla1525:46000,arena_bolson:45094,piedra_bolson:74727,clavos250:4500,clavos200:4500,alambre:4500,e2_arena:38000,e2_piedra:65000,e2_cemento:13800,e2_malla_hierro5:46000,e2_cal_hidraulica:5690,e2_cal_milagro:14900,e2_pegamento_klaukol:30000,e2_granza:55000,e2_ladrillo_comun:18000,e2_ceramico_12x18x33:710,e2_ceramico_18x18x33:999,e2_film_polietileno:29000,e2_piedra_binder:69000,e2_ladrillo_refractario:5200,e2_tejuela_refractaria:2030,e2_pegamento_refractario:30000,e2_malla_revoque:35000,e2_clavos2:4500,e2_clavos212:4500,e2_alambre_fardo:4500,e2_yeso_tuyango:16300}},
+  {id:"esperanza", nombre:"La Esperanza", color:"#BE185D", desc:0,  nota:"ef. 07/08 (hierros sin actualizar) · cotiz. materiales faltantes 03/09 (COT. 7128, corregida)",
+   // Cotización 03/09/2026 (corralón La Esperanza, doc. no válido como factura, bonificación por línea ya
+   // aplicada en estos precios): cemento $6.709/25kg (=$13.216,72/50kg equiv., cotización corregida a
+   // 3028u=1514 bolsas de 50kg — la primera versión traía la mitad de cantidad, ya resuelto), cal santa
+   // elena $5.690/20kg (=$5.604,65 con bonif.), cal milagro $16.106,72, Klaukol Flex $43.908,35 (subió
+   // fuerte vs los $30.000 anteriores), arena $38.317, piedra $66.102, malla hierro 5mm $49.929,78,
+   // piedra binder $70.189, separador de losa x100 $10.831 (cotización corregida a 15u, antes traía 6 —
+   // ya resuelto; no es exactamente el mismo producto que "separadores porcelanato" de Caeiro, pero mismo uso),
+   // red de fibra (malla revoque) $38.837,40, clavos 2"/2½" y alambre de fardo $4.815,08/kg-paq, yeso
+   // Tuyango $17.344,87.
+   // Sin cargar todavía (unidad/producto a confirmar con el corralón): presinto 4.8x300mm x100u ($9.612,
+   // tamaño distinto al de otras cotizaciones), sierra circular 9" 230mm ($21.500, es hoja de sierra, no
+   // disco de amoladora como el resto de las cotizaciones de este ítem), agrotileno 200mic x2m de ancho
+   // ($586,66/m — tercer ancho distinto cotizado para "film polietileno", falta definir el ancho real
+   // que se necesita). Ítem nuevo no cargado en el catálogo: Hidrófugo x220 Hornero, 1u, $181.524,42 —
+   // no está en la lista de faltantes, confirmar con Garo si hace falta agregarlo.
+   p:{h6:5037,h8:8583,h10:14245,h12:20390,h16:34660,h20:53000,v180:7300,v200:8000,v220:9000,v260:10600,v280:11400,v300:12200,v320:13000,v400:18400,v500:28000,v520:25300,ladrillo:3127,malla:46000,arena:38000,piedra:65000,cemento:6900,cano_cemento:36577,malla1525:46000,arena_bolson:45094,piedra_bolson:74727,clavos250:4500,clavos200:4500,alambre:4500,e2_arena:38317,e2_piedra:66102,e2_cemento:13216.72,e2_malla_hierro5:49929.78,e2_cal_hidraulica:5604.65,e2_cal_milagro:16106.72,e2_pegamento_klaukol:43908.35,e2_granza:55000,e2_ladrillo_comun:18000,e2_ceramico_12x18x33:710,e2_ceramico_18x18x33:999,e2_film_polietileno:29000,e2_piedra_binder:70189,e2_ladrillo_refractario:5200,e2_tejuela_refractaria:2030,e2_pegamento_refractario:30000,e2_malla_revoque:38837.40,e2_clavos2:4815.08,e2_clavos212:4815.08,e2_alambre_fardo:4815.08,e2_yeso_tuyango:17344.87,e2_separadores_porcelanato:10831}},
   {id:"casameli",  nombre:"Casa Meli",    color:"#EA580C", desc:0,  nota:"neto 07/08",
    p:{cemento:6800,v260:11000,v280:11900,v300:12700,v320:13600,v400:18900,v500:28500,v520:30600,malla1525:45600,arena_bolson:38000,piedra_bolson:60000,e2_cemento:13600,e2_malla_hierro5:45600,e2_cerecita:245000,e2_cal_hidraulica:7000,e2_cal_milagro:15000,e2_pegamento_klaukol:9000,e2_granza:52000,e2_ladrillo_comun:17500,e2_ceramico_12x18x33:670,e2_ceramico_18x18x33:900,e2_ladrillo_refractario:4970,e2_tejuela_refractaria:1890,e2_pegamento_refractario:36400,e2_precinto:3000,e2_disco_tyrolit_114:3900,e2_disco_tyrolit_178:6100,e2_disco_tyrolit_230cd:9350,e2_disco_diam_rhein:20000,e2_clavos2:4700,e2_clavos212:4700,e2_alambre_fardo:5000},
    pendientes:["h6","h8","h10","h12","h16","h20","v180","v200","v220","cano_cemento","e2_yeso_tuyango"]},
@@ -445,7 +472,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items.map(it=>({...it,catId:c.id})));
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v48";
+const APP_VERSION = "v51";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,sanibon:true,sancanuelas:true};
 // Grupos de afinidad para la pestaña Ahorro: cada catálogo de proveedores compite solo
