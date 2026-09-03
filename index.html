@@ -445,7 +445,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items.map(it=>({...it,catId:c.id})));
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v47";
+const APP_VERSION = "v48";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,sanibon:true,sancanuelas:true};
 // Grupos de afinidad para la pestaña Ahorro: cada catálogo de proveedores compite solo
@@ -486,6 +486,7 @@ TODOS_ITEMS.forEach(i=>{
 });
 CANT_DEFAULT.arena={nec:46,comp:46};   // cómputo real 46 m³ (se devolvieron 6 pedidos de más)
 CANT_DEFAULT.piedra={nec:46,comp:46};  // comprada 08/07 a 7 Hnos, $53.000/m³
+CANT_DEFAULT.cemento={nec:750,comp:750};  // últimas 5 bolsas confirmadas 03/09 — fijado acá en código porque el conteo manual en Faltantes no persistía (revisar guardado en localStorage del navegador)
 // Compra Caeiro 08/08 (factura Gaston 0009-00016445): todas las viguetas + granza + refractarios + 3 discos
 CANT_DEFAULT.v180={nec:6, comp:6};
 CANT_DEFAULT.v200={nec:1, comp:1};
