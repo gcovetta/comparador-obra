@@ -472,9 +472,9 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items.map(it=>({...it,catId:c.id})));
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v51";
+const APP_VERSION = "v52";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
-const ACTIVOS_DEFAULT = {caeiro:true,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,sanibon:true,sancanuelas:true};
+const ACTIVOS_DEFAULT = {caeiro:false,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,sanibon:true,sancanuelas:true}; // Caeiro desactivado 03/09 — mala experiencia de entrega, no reactivar salvo que lo pida Garo
 // Grupos de afinidad para la pestaña Ahorro: cada catálogo de proveedores compite solo
 // contra sí mismo (no tiene sentido comparar corralones de hierro vs Sanibon).
 const GRUPOS_AHORRO = [
