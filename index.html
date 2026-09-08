@@ -510,10 +510,14 @@ const PROVEEDORES = [
    // Nuevos mejores precios también en: arena m³ $33.700 (vs 7 Hnos $34.000), piedra m³ $54.000 (vs 7 Hnos
    // $56.000), malla de hierro 5mm $37.020 (vs 7 Hnos $44.500), separadores de porcelanato $10.000 (vs
    // Esperanza $10.831).
-   // No compiten (bastante más caros que lo ya cargado): cal hidráulica $6.640 (+19% vs 7 Hnos), cal milagro
-   // $20.355 (+38% vs La Esperanza $14.775), film polietileno $67.000 (+131% vs Esperanza — otro ancho más,
-   // "4x50"), piedra binder $95.238,10 (+36% vs Esperanza), tierra refractaria $15.000 (+146% vs 7 Hnos),
-   // malla de revoque $47.000 (+21% vs Esperanza), clavos 2" $9.036,36 (+98% vs La Esperanza $4.559), clavos
+   // Cal hidráulica: CORREGIDO 08/09 — cotizaron $6.640 en bolsa de 25kg (700u), pero el catálogo pide la
+   // unidad nativa de 20kg (mismo error de bolsa que Casa Meli con este ítem) — llevado a 20kg equivalente
+   // ($6.640 x20/25 = $5.312) pasa a ser NUEVO MEJOR PRECIO, le gana a 7 Hnos ($5.600). Ya no aplica para
+   // esta compra (el ítem se cerró completo con La Esperanza el 08/09) pero queda cargado bien para el futuro.
+   // No compiten (bastante más caros que lo ya cargado): cal milagro $20.355 (+38% vs La Esperanza $14.775),
+   // film polietileno $67.000 (+131% vs Esperanza — otro ancho más, "4x50"), piedra binder $95.238,10 (+36%
+   // vs Esperanza), tierra refractaria $15.000 (+146% vs 7 Hnos), malla de revoque $47.000 (+21% vs
+   // Esperanza), clavos 2" $9.036,36 (+98% vs La Esperanza $4.559), clavos
    // 2½" $7.400 (+62% vs La Esperanza $4.559), alambre de fardo $6.500 (+43% vs La Esperanza $4.559),
    // precinto $5.600 (+115% vs Casa Meli), disco DIAM Rhein $30.000 (+50% vs Casa Meli).
    // Piedra binder: la cantidad cotizada está escrita ambigua ("21", ya de por sí más de lo que hace falta,
@@ -523,7 +527,7 @@ const PROVEEDORES = [
    // No cotizaron Cerecita (único de los 20 ítems que falta). Cotizaron además Hidrófugo El Hornero x220kg
    // $170.000 (mismo producto que ya había cotizado Esperanza a $181.524,42, acá sale más barato) — no está
    // en el catálogo de faltantes, sigue pendiente que Garo confirme si hace falta agregarlo.
-   p:{e2_cemento:13750,e2_cal_hidraulica:6640,e2_cal_milagro:20355,e2_pegamento_klaukol:21011.27,e2_arena:33700,e2_piedra:54000,e2_film_polietileno:67000,e2_malla_hierro5:37020,e2_piedra_binder:95238.10,e2_tierra_refractaria:15000,e2_pegamento_refractario:34285.71,e2_separadores_porcelanato:10000,e2_malla_revoque:47000,e2_clavos2:9036.36,e2_clavos212:7400,e2_alambre_fardo:6500,e2_yeso_tuyango:12750,e2_precinto:5600,e2_disco_diam_rhein:30000},
+   p:{e2_cemento:13750,e2_cal_hidraulica:5312,e2_cal_milagro:20355,e2_pegamento_klaukol:21011.27,e2_arena:33700,e2_piedra:54000,e2_film_polietileno:67000,e2_malla_hierro5:37020,e2_piedra_binder:95238.10,e2_tierra_refractaria:15000,e2_pegamento_refractario:34285.71,e2_separadores_porcelanato:10000,e2_malla_revoque:47000,e2_clavos2:9036.36,e2_clavos212:7400,e2_alambre_fardo:6500,e2_yeso_tuyango:12750,e2_precinto:5600,e2_disco_diam_rhein:30000},
    pendientes:["e2_cerecita"]},
   {id:"sanibon",   nombre:"Sanibon SRL",  color:"#0F766E", desc:0,  nota:"⚠️ 26/08: cerrado paquete cloaca+agua+calefacción (sin termostato/cabezal) por $15.000.000 efectivo sin factura — precios de estos ítems son el prorrateo de ese pago, no su lista original",
    p:{cal_termostato:43401.15,cal_cabezal_term:80903.17,cal_cano_pex_200:270515.69,cal_cano_pex_400:541030.25,cal_colector_2s:305007.16,cal_colector_3s:349132.65,cal_colector_5s:447013.07,cal_colector_6s:486845.98,cal_curva_tubo:3328.71,cal_gabinete_35:98299.58,cal_gabinete_45:111002.87,cal_gabinete_55:121353.25,cal_precinto:6013.64,cal_membrana:71467.27,cal_cano_h3_114:21780.84,cal_cano_h3_1:13282.61,cal_coverthor_1:1957.04,cal_coverthor_114:3313.86,cal_codo90_114:2176.48,cal_codo90_1:994.89,cal_tee_114:3150.04,cal_tee_1:1376.67,cal_sobrepaso:3794.48,cal_cupla:7087.12,cal_codo90rh_1:6149.98,cal_codo90rh_114:21580.92,cal_buje_red:584.93,clo_6082072:3325.67,clo_8088631:29587.8,clo_6082095:6504.7,clo_6083020:8268.94,clo_6082002:1189.51,clo_6082003:1281.49,clo_6082004:2309.38,clo_6082007:1346.15,clo_6082008:1648.18,clo_6082009:3132.88,clo_6082014:3031.34,clo_6082017:1281.2,clo_6082018:1783.64,clo_6082019:3900.45,clo_6082042:2311.48,clo_6082055:4390.62,clo_6082070:2100.4,clo_6082071:2632.55,clo_6082073:6237.77,clo_8087040:174.69,clo_8087050:278.14,clo_8087063:322.09,clo_8087110:682.54,clo_6081008:7617.84,clo_6081017:9577.82,clo_6081026:11867.27,clo_6081036:21401.82,clo_6082001:794.75,clo_6082006:1009.14,clo_6082016:873.92,clo_6082028:1027.76,clo_6082035:1086.64,clo_6082036:1382.73,clo_6082037:1498.85,clo_6082038:2966.47,clo_6082077:4345.35,clo_6083072:7131.01,clo_39000008:3176.21,clo_41040034:115.5,clo_8088632:5373.43,clo_34310234:4826.69,agu_81008520:1403.37,agu_81008525:1922.26,agu_81008532:2985.05,agu_81010020:6650.86,agu_81013025:944.08,agu_81013032:1373.4,agu_81013040:3271.71,agu_81013050:5465.19,agu_81015527:15307.47,agu_81015528:21176.71,agu_81015529:29587.8,agu_81015530:45012.44,agu_81016026:14881.89,agu_81016340:31571.86,agu_81016350:50894.29,agu_81024125:674.23,agu_81024133:1010.86,agu_81024141:1827.49,agu_81024150:2748.9,agu_81024151:2557.85,agu_81033032:3679.36,agu_81033041:9590.18,agu_81033050:11431.27,agu_81034020:366.52,agu_81034025:495.43,agu_81034032:933.72,agu_81904520:724.52,agu_81904525:921.58,agu_81904532:1597.42,agu_81904540:2930.61,agu_81904550:4584.71,agu_81909020:422.25,agu_81909025:654.79,agu_81909032:996.77,agu_81909040:2187.31,agu_81909050:3665.29,agu_81009134:6665.2,agu_81010025:9671.52,agu_81010032:15044.78,agu_81011240:20646.86,agu_81011250:27674.61,agu_81016325:14695.94,agu_81016332:20214.77,agu_81024140:1970.3,agu_81030020:395.41,agu_81030025:698.97,agu_81030032:882.42,agu_81030040:2237.98,agu_81030050:3161.04,agu_36010018:8656.77,agu_1059201:6697.23,agu_1059251:10373.39,agu_1050703:4933.66,agu_1050704:7062.11,agu_1060701:251.44,agu_1060702:307.6,agu_18013002:20513.56,agu_18020120:5691.64,agu_36020050:1142.47,agu_81027126:3901.36,agu_81027133:6875.27,agu_81027226:5125.13,agu_81027233:9152.55,agu_81033025:3160.28,agu_56010060:2972.16,agu_60920017:2005.66,agu_34310162:7009.83,agu_81027250:27979.3,agu_34310104:1537.5,agu_30102150:29100.62,agu_81027150:26458.82,agu_81009120:2385.71,agu_1060209:174.06,agu_1060210:189.35,agu_1060211:318.74,agu_81013020:605.31,agu_1059351:18492.57,agu_1050706:13149.06,agu_1060704:473.5,agu_82000074:5812.11,agu_58080308:405408.35}},
@@ -533,7 +537,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items.map(it=>({...it,catId:c.id})));
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v59";
+const APP_VERSION = "v60";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:false,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,petion:true,sanibon:true,sancanuelas:true}; // Caeiro desactivado 03/09 — mala experiencia de entrega, no reactivar salvo que lo pida Garo. Petión sumado 03/09 (presup. 8708/8710).
 // Grupos de afinidad para la pestaña Ahorro: cada catálogo de proveedores compite solo
