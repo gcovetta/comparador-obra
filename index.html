@@ -233,7 +233,7 @@ const CATEGORIAS = [
     {id:"e2_ceramico_18x18x33",  nombre:"Lad. Cerámico 18x18x33",                        cant:7360},
     {id:"e2_ceramico_8x18x33",   nombre:"Lad. Cerámico 8x18x33",                         cant:0},
     {id:"e2_cerecita",           nombre:"Cerecita (tambor x200kg)",                      cant:2},
-    {id:"e2_film_polietileno",   nombre:"Film polietileno 200 micrones (rollo x200mic 3x50)", cant:6},
+    {id:"e2_film_polietileno",   nombre:"Film polietileno 200 micrones (metro lineal, ancho 2m)", cant:600},
     {id:"e2_malla_hierro5",      nombre:"Malla hierro 5mm",                              cant:25},
     {id:"e2_piedra_binder",      nombre:"Piedra binder 4-8 (m³)",                        cant:17},
   ]},
@@ -414,6 +414,62 @@ const CATEGORIAS = [
     {id:"agu_58080308", nombre:"TANQUE ROTOPLAS ARENA 1000 LTS FLAT CON EQUIPAMIENTO", cant:2},
   ]},
 
+  // Electricidad — cómputo de Garo del 08/09, todavía SIN COTIZAR (ningún proveedor cargado).
+  // Supuestos al transcribir (revisar si algo no cierra):
+  // - "Rectangulares de chapa 50und" se cargó como una caja de chapa de otra medida, distinta de la de
+  //   120und ("Caja rectangular de chapa") — no se aclaraba la medida de ninguna de las dos.
+  // - "Micnon" se interpretó como caja "mignón" (chica, para módulos/tomas).
+  // - Tablero de embutir 120 bocas, tablero 72 bocas, jabalina 1,50m x3/4 con morseto: sin cantidad
+  //   especificada — se cargó 1 de cada uno (ajustar en la app con +/- si son más).
+  // - "Cable cintenac" se interpretó como cable SINTENAX 4x10mm.
+  { id:"electricidad", nombre:"Electricidad (sin cotizar)", items:[
+    {id:"ele_cable_25_celeste",        nombre:"Cable 2,5mm Celeste (rollo)",             cant:15},
+    {id:"ele_cable_25_marron",         nombre:"Cable 2,5mm Marrón (rollo)",              cant:5},
+    {id:"ele_cable_25_rojo",           nombre:"Cable 2,5mm Rojo (rollo)",                cant:5},
+    {id:"ele_cable_25_negro",          nombre:"Cable 2,5mm Negro (rollo)",               cant:5},
+    {id:"ele_cable_25_verdeamarillo",  nombre:"Cable 2,5mm Verde/Amarillo (rollo)",      cant:20},
+    {id:"ele_cable_15_celeste",        nombre:"Cable 1,5mm Celeste (rollo)",             cant:15},
+    {id:"ele_cable_15_blanco",         nombre:"Cable 1,5mm Blanco (rollo)",              cant:5},
+    {id:"ele_cable_15_rojo",           nombre:"Cable 1,5mm Rojo (rollo)",                cant:5},
+    {id:"ele_cable_15_negro",          nombre:"Cable 1,5mm Negro (rollo)",               cant:5},
+    {id:"ele_cable_15_marron",         nombre:"Cable 1,5mm Marrón (rollo)",              cant:4},
+    {id:"ele_cable_4_celeste",         nombre:"Cable 4mm Celeste (rollo)",               cant:3},
+    {id:"ele_cable_4_negro",           nombre:"Cable 4mm Negro (rollo)",                 cant:1},
+    {id:"ele_cable_4_marron",          nombre:"Cable 4mm Marrón (rollo)",                cant:1},
+    {id:"ele_cable_4_rojo",            nombre:"Cable 4mm Rojo (rollo)",                  cant:1},
+    {id:"ele_cable_4_verdeamarillo",   nombre:"Cable 4mm Verde/Amarillo (rollo)",        cant:2},
+    {id:"ele_cable_6_celeste",         nombre:"Cable 6mm Celeste (rollo)",               cant:2},
+    {id:"ele_cable_6_marron",          nombre:"Cable 6mm Marrón (rollo)",                cant:1},
+    {id:"ele_cable_6_negro",           nombre:"Cable 6mm Negro (rollo)",                 cant:1},
+    {id:"ele_cable_6_verdeamarillo",   nombre:"Cable 6mm Verde/Amarillo (rollo)",        cant:1},
+    {id:"ele_corrugado_78",            nombre:"Caño corrugado 7/8\" (unidad)",           cant:20},
+    {id:"ele_corrugado_1",             nombre:"Caño corrugado 1\" (unidad)",             cant:10},
+    {id:"ele_corrugado_34",            nombre:"Caño corrugado 3/4\" (unidad)",           cant:5},
+    {id:"ele_rigido_78",               nombre:"Caño rígido 7/8\" (paquete)",             cant:10},
+    {id:"ele_rigido_1",                nombre:"Caño rígido 1\" (paquete)",               cant:5},
+    {id:"ele_caja_rect_chapa",         nombre:"Caja rectangular de chapa (unidad)",      cant:120},
+    {id:"ele_caja_rect_chapa_2",       nombre:"Caja rectangular de chapa, otra medida (unidad)", cant:50},
+    {id:"ele_caja_mignon",             nombre:"Caja mignón (unidad)",                    cant:20},
+    {id:"ele_caja_exagonal_pvc",       nombre:"Caja exagonal de PVC (unidad)",           cant:150},
+    {id:"ele_caja_paso_chapa_202010",  nombre:"Caja de paso de chapa 20x20x10 (unidad)", cant:10},
+    {id:"ele_caja_paso_pvc_202010",    nombre:"Caja de paso de PVC 20x20x10 (unidad)",   cant:4},
+    {id:"ele_conector_chapa_78",       nombre:"Conector de chapa 7/8\" (unidad)",        cant:500},
+    {id:"ele_conector_chapa_1",        nombre:"Conector de chapa 1\" (unidad)",          cant:200},
+    {id:"ele_conector_chapa_34",       nombre:"Conector de chapa 3/4\" (unidad)",        cant:200},
+    {id:"ele_conector_pvc_78",         nombre:"Conector de PVC 7/8\" (unidad)",          cant:600},
+    {id:"ele_curva_pvc_78",            nombre:"Curva de PVC 7/8\" (unidad)",             cant:100},
+    {id:"ele_curva_pvc_1",             nombre:"Curva de PVC 1\" (unidad)",               cant:100},
+    {id:"ele_union_pvc_78",            nombre:"Unión de PVC 7/8\" (unidad)",             cant:150},
+    {id:"ele_union_pvc_1",             nombre:"Unión de PVC 1\" (unidad)",               cant:100},
+    {id:"ele_cinta_aisladora",         nombre:"Cinta aisladora (rollo)",                 cant:20},
+    {id:"ele_precinto_25cm",           nombre:"Precinto 25cm (paquete)",                 cant:20},
+    {id:"ele_tablero_embutir_120b",    nombre:"Tablero de embutir de chapa 120 bocas (planta baja)", cant:1},
+    {id:"ele_tablero_embutir_72b",     nombre:"Tablero de embutir de chapa 72 bocas",    cant:1},
+    {id:"ele_jabalina_150_34",         nombre:"Jabalina 1,50m x3/4\" con morseto",       cant:1},
+    {id:"ele_caja_inspeccion",         nombre:"Caja de inspección (unidad)",             cant:1},
+    {id:"ele_cable_sintenax_4x10",     nombre:"Cable Sintenax 4x10mm (ml)",              cant:50},
+  ]},
+
 ];
 
 const HIERROS_IDS = ["h6","h8","h10","h12","h16","h20"];
@@ -461,13 +517,16 @@ const PROVEEDORES = [
    // (primera vez que la cotiza Esperanza — empata con Casa Meli, sigue sin ganarle a 7 Hnos $6.100).
    // Sin cargar todavía (unidad/producto a confirmar con el corralón): presinto 4.8x300mm x100u ($9.612,
    // tamaño distinto al de otras cotizaciones), sierra circular 9" 230mm ($21.500, es hoja de sierra, no
-   // disco de amoladora como el resto de las cotizaciones de este ítem). Agrotileno (film polietileno)
-   // recotizado 04/09 por metro lineal a 2m de ancho: $574,93/m con bonif. (300m cotizados) — sigue sin
-   // resolver el ancho real que se necesita (catálogo pide rollos de 3x50, van 4 anchos distintos cotizados
-   // entre corralones), así que NO se actualiza el placeholder de $29.000 hasta definir la equivalencia con
-   // la arquitecta. Ítem nuevo no cargado en el catálogo: Hidrófugo x220 Hornero, 1u, $181.524,42 — no está
-   // en la lista de faltantes, confirmar con Garo si hace falta agregarlo.
-   p:{h6:5037,h8:8583,h10:14245,h12:20390,h16:34660,h20:53000,v180:7300,v200:8000,v220:9000,v260:10600,v280:11400,v300:12200,v320:13000,v400:18400,v500:28000,v520:25300,ladrillo:3127,malla:46000,arena:38000,piedra:65000,cemento:6900,cano_cemento:36577,malla1525:46000,arena_bolson:45094,piedra_bolson:74727,clavos250:4500,clavos200:4500,alambre:4500,e2_arena:38317,e2_piedra:66102,e2_cemento:13216.72,e2_malla_hierro5:49929.78,e2_cal_hidraulica:5604.65,e2_cal_milagro:14775.00,e2_pegamento_klaukol:43908.35,e2_granza:55000,e2_ladrillo_comun:18000,e2_ceramico_12x18x33:710,e2_ceramico_18x18x33:999,e2_film_polietileno:29000,e2_piedra_binder:70189,e2_ladrillo_refractario:5200,e2_tejuela_refractaria:2030,e2_pegamento_refractario:30000,e2_malla_revoque:38837.40,e2_clavos2:4559.00,e2_clavos212:4559.00,e2_alambre_fardo:4559.00,e2_yeso_tuyango:17344.87,e2_separadores_porcelanato:10831,e2_tierra_refractaria:11900}},
+   // disco de amoladora como el resto de las cotizaciones de este ítem). Ítem nuevo no cargado en el
+   // catálogo: Hidrófugo x220 Hornero, 1u, $181.524,42 — no está en la lista de faltantes, confirmar con
+   // Garo si hace falta agregarlo.
+   // COMPRA CONFIRMADA 08/09 (COT.7276, $24.352.172,70): cemento, cal milagro, piedra binder, malla de
+   // revoque (red de fibra) y film polietileno. Esperanza dejó de vender el film por rollo y ahora lo
+   // vende por metro lineal a 2m de ancho ($574,93/m con bonif.) — se cambió la unidad del catálogo de
+   // "rollo x200mic 3x50" a "metro lineal, ancho 2m" y se recalculó el necesito a 600 (Garo compró 600m,
+   // más que suficiente frente al cómputo original de 6 rollos ≈900 m²). NO incluye alambre de fardo,
+   // clavos 2"/2½", tierra refractaria ni pegamento Klaukol — esos siguen pendientes por separado.
+   p:{h6:5037,h8:8583,h10:14245,h12:20390,h16:34660,h20:53000,v180:7300,v200:8000,v220:9000,v260:10600,v280:11400,v300:12200,v320:13000,v400:18400,v500:28000,v520:25300,ladrillo:3127,malla:46000,arena:38000,piedra:65000,cemento:6900,cano_cemento:36577,malla1525:46000,arena_bolson:45094,piedra_bolson:74727,clavos250:4500,clavos200:4500,alambre:4500,e2_arena:38317,e2_piedra:66102,e2_cemento:13216.72,e2_malla_hierro5:49929.78,e2_cal_hidraulica:5604.65,e2_cal_milagro:14775.00,e2_pegamento_klaukol:43908.35,e2_granza:55000,e2_ladrillo_comun:18000,e2_ceramico_12x18x33:710,e2_ceramico_18x18x33:999,e2_film_polietileno:574.93,e2_piedra_binder:70189,e2_ladrillo_refractario:5200,e2_tejuela_refractaria:2030,e2_pegamento_refractario:30000,e2_malla_revoque:38837.40,e2_clavos2:4559.00,e2_clavos212:4559.00,e2_alambre_fardo:4559.00,e2_yeso_tuyango:17344.87,e2_separadores_porcelanato:10831,e2_tierra_refractaria:11900}},
   {id:"casameli",  nombre:"Casa Meli",    color:"#EA580C", desc:0,  nota:"neto 07/08 · pedido materiales faltantes 03/09",
    // Pedido 03/09/2026 (Casa Meli): re-confirma sin cambios cal milagro $15.000, malla hierro $45.600,
    // pegamento refractario $36.400, clavos 2"/2½" $4.700, alambre de fardo $5.000. Nuevos: arena $35.000,
@@ -537,7 +596,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items.map(it=>({...it,catId:c.id})));
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v61";
+const APP_VERSION = "v64";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:false,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,petion:true,sanibon:true,sancanuelas:true}; // Caeiro desactivado 03/09 — mala experiencia de entrega, no reactivar salvo que lo pida Garo. Petión sumado 03/09 (presup. 8708/8710).
 // Grupos de afinidad para la pestaña Ahorro: cada catálogo de proveedores compite solo
@@ -565,7 +624,6 @@ const PENDIENTES_COTIZAR_DEFAULT = [
   {id:"caldera",              nombre:"Caldera (piso radiante)",      estimado:21000000},
   {id:"termotanques",         nombre:"Termotanques",                 estimado:5000000},
   {id:"techo_chapa",          nombre:"Materiales techo (chapa)",     estimado:26000000},
-  {id:"canerias_sanitarios",  nombre:"Cañerías para sanitarios",     estimado:25000000},
   {id:"gas",                  nombre:"Gas",                          estimado:13000000},
 ];
 const CANT_DEFAULT = {};
@@ -605,12 +663,21 @@ CANT_DEFAULT.e2_ceramico_18x18x33={nec:7360,comp:7360};
 CANT_DEFAULT.e2_arena={nec:199,comp:4};              // 4 m³ Da Silva (primera compra bases)
 CANT_DEFAULT.e2_piedra={nec:112,comp:4};             // 4 m³ Da Silva (primera compra bases)
 CANT_DEFAULT.e2_cerecita={nec:2,comp:1};            // 1 tambor Weber comprado, falta 1
-// Presupuesto La Esperanza COT.7148 (08/09) y Petión 8685: pendiente de confirmar, ver reparto abajo.
-// Revertido 08/09: se había marcado como comprado a La Esperanza pero Garo decidió repartir — cal hidráulica
-// pasa a Petión (mejor precio corregido) y el resto queda pendiente de confirmar ítem por ítem.
-CANT_DEFAULT.e2_cemento={nec:1799,comp:285};       // 480 bolsas 25kg (240 de 50kg, 7 Hnos) + 90 bolsas 25kg (45 de 50kg, Da Silva bases) — faltan 1514
-CANT_DEFAULT.e2_cal_hidraulica={nec:780,comp:80};   // 64 bolsas de 25kg = 80 de 20kg — faltan 700
-CANT_DEFAULT.e2_alambre_fardo={nec:160,comp:20};    // faltan 140kg
+// Presupuesto Petión 8685: cal hidráulica pasa a Petión (mejor precio corregido) — sigue pendiente de confirmar.
+CANT_DEFAULT.e2_cal_hidraulica={nec:780,comp:80};   // 64 bolsas de 25kg = 80 de 20kg — faltan 700 (a confirmar con Petión)
+CANT_DEFAULT.e2_alambre_fardo={nec:160,comp:20};    // faltan 140kg — no incluido en la compra COT.7276, sigue pendiente
+// Compra La Esperanza 08/09/2026 (COT.7276, $24.352.172,70 — reemplaza a la revertida COT.7148, con menos
+// ítems: quedan afuera alambre de fardo, clavos 2"/2½", tierra refractaria y pegamento Klaukol, que siguen
+// pendientes por separado):
+CANT_DEFAULT.e2_cemento={nec:1799,comp:1799};       // 480 bolsas 25kg (7 Hnos) + 90 bolsas 25kg (Da Silva) + 1514 de 50kg (Esperanza COT.7276) = completo
+CANT_DEFAULT.e2_cal_milagro={nec:174,comp:174};     // completo, COT.7276
+CANT_DEFAULT.e2_piedra_binder={nec:17,comp:17};     // completo, COT.7276
+CANT_DEFAULT.e2_malla_revoque={nec:6,comp:6};       // completo, COT.7276
+// Film polietileno: cambiado de unidad "rollo x200mic 3x50" a "metro lineal, ancho 2m" (Esperanza dejó de
+// vender por rollo). Garo confirmó 600m (2 líneas de 300m en la factura COT.7276) tras la alerta de que
+// 300m solos quedaban cortos frente al cómputo original de 6 rollos (≈900 m²) — 600m x 2m = 1200 m²,
+// cubre de sobra. Se recalculó el "necesito" a la nueva unidad (600) y se cargó completo.
+CANT_DEFAULT.e2_film_polietileno={nec:600,comp:600};
 
 // Compra Sanibon 26/08: cloaca + agua + calefacción completo por $15.000.000 efectivo sin factura,
 // excepto termostato/cabezal (siguen pendientes) y el caño Hidroflex ×120m (ya no se necesita)
@@ -718,10 +785,10 @@ function bestN(n,ids,items){
 // ── APP ───────────────────────────────────────────────────────────────────────
 function App(){
   const [tab,setTab]=useState("faltantes");
-  const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false,etapa2_mamposteria:false,etapa2_refractarios:false,etapa2_insumos:false,calefaccion:false,cloaca:false,agua:false});
+  const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false,etapa2_mamposteria:false,etapa2_refractarios:false,etapa2_insumos:false,calefaccion:false,cloaca:false,agua:false,electricidad:true});
   const [expandItem,setExpandItem]=useState({});
   const [expandEsc,setExpandEsc]=useState({});
-  const [compras,setCompras]=useState({caeiro:6003160.54,dasilva:5500000,lhhnos:0,curtoni:0,shnos:31264100,esperanza:1386766,casameli:0,petion:0,sanibon:15000000}); // shnos corregido -100 (factura real 11/08: $13.124.900, no $13.125.000). esperanza revertido 08/09: la compra COT.7148 ($29.412.387,66) se había cargado como confirmada pero Garo la puso pendiente de nuevo para repartir (cal hidráulica va a Petión) — vuelve a $1.386.766 (solo la compra real del 03/07). sanibon $15.000.000 confirmado por Garo 08/09 — materiales de cañerías de agua (mismo paquete efectivo sin factura del 26/08 que ya dejó cloaca+agua+calefacción marcados como comprados en CANT_DEFAULT, ahora también registrado acá en $ gastados)
+  const [compras,setCompras]=useState({caeiro:6003160.54,dasilva:5500000,lhhnos:0,curtoni:0,shnos:31264100,esperanza:25738938.70,casameli:0,petion:0,sanibon:15000000}); // shnos corregido -100 (factura real 11/08: $13.124.900, no $13.125.000). esperanza: $1.386.766 (compra 03/07) + $24.352.172,70 compra 08/09 (COT.7276: cemento, cal milagro, film polietileno 600m/2m ancho, piedra binder, malla de revoque — NO incluye alambre de fardo, clavos, tierra refractaria ni pegamento Klaukol, que siguen pendientes) = $25.738.938,70. sanibon $15.000.000 confirmado por Garo 08/09 — materiales de cañerías de agua (mismo paquete efectivo sin factura del 26/08 que ya dejó cloaca+agua+calefacción marcados como comprados en CANT_DEFAULT, ahora también registrado acá en $ gastados)
   const [editCompra,setEditCompra]=useState(null);
   const [addCompra,setAddCompra]=useState(null);
   const [guardado,setGuardado]=useState(false);
