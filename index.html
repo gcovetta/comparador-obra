@@ -498,7 +498,7 @@ const PROVEEDORES = [
    // Sin cargar todavía (cantidad/unidad no coincide con lo pedido o es un producto distinto, a confirmar
    // con el corralón): separador nivelador arco (no es lo mismo que separadores porcelanato), precintos
    // 4.8x250 (10u, tamaño de paq. no confirmado), nylon 4m de ancho (rollo de otro ancho al que se venía comparando).
-   p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:10000,v280:10815,v300:11550,v320:12300,v400:17200,v500:26300,v520:28300,ladrillo:3689.70,malla:49000,arena:34000,piedra:56000,cemento:6800,cano_cemento:36400,malla1525:44500,arena_bolson:39000,clavos250:5500,clavos200:5500,alambre:4000,e2_arena:34000,e2_piedra:56000,e2_cemento:14000,e2_malla_hierro5:44500,e2_clavos2:5500,e2_clavos212:5500,e2_alambre_fardo:5500,e2_granza:58000,e2_ladrillo_comun:16000,e2_ceramico_12x18x33:670,e2_ceramico_18x18x33:870,e2_cal_hidraulica:5600,e2_cerecita:255000,e2_yeso_tuyango:18000,e2_disco_tyrolit_114:3600,e2_disco_tyrolit_178:5600,e2_disco_tyrolit_230cd:9000,e2_disco_diam_rhein:25000,e2_tierra_refractaria:6100,e2_pegamento_klaukol:36000,e2_pegamento_refractario:38000},
+   p:{h6:5130,h8:8460,h10:13140,h12:18900,h16:32400,h20:50850,v180:6700,v200:7500,v220:8200,v260:10000,v280:10815,v300:11550,v320:12300,v400:17200,v500:26300,v520:28300,ladrillo:3689.70,malla:49000,arena:34000,piedra:56000,cemento:6800,cano_cemento:36400,malla1525:44500,arena_bolson:39000,clavos250:5500,clavos200:5500,alambre:4000,e2_arena:34000,e2_piedra:56000,e2_cemento:14000,e2_malla_hierro5:44500,e2_clavos2:5500,e2_clavos212:5500,e2_alambre_fardo:5500,e2_granza:58000,e2_ladrillo_comun:16000,e2_ceramico_12x18x33:670,e2_ceramico_18x18x33:870,e2_cal_hidraulica:5600,e2_cerecita:255000,e2_yeso_tuyango:18000,e2_disco_tyrolit_114:3600,e2_disco_tyrolit_178:5600,e2_disco_tyrolit_230cd:9000,e2_disco_diam_rhein:25000,e2_tierra_refractaria:6500,e2_pegamento_klaukol:36000,e2_pegamento_refractario:38000},
    pendientes:["piedra_bolson"]},
   {id:"esperanza", nombre:"La Esperanza", color:"#BE185D", desc:0,  nota:"ef. 07/08 (hierros sin actualizar) · cotiz. materiales faltantes 04/09 (COT. 7148, mejora sobre 7128)",
    // Cotización 03/09/2026 (corralón La Esperanza, doc. no válido como factura, bonificación por línea ya
@@ -596,7 +596,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items.map(it=>({...it,catId:c.id})));
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v66";
+const APP_VERSION = "v67";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:false,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,petion:true,sanibon:true,sancanuelas:true}; // Caeiro desactivado 03/09 — mala experiencia de entrega, no reactivar salvo que lo pida Garo. Petión sumado 03/09 (presup. 8708/8710).
 // Grupos de afinidad para la pestaña Ahorro: cada catálogo de proveedores compite solo
@@ -619,6 +619,10 @@ const STORAGE_CANT = "comparador_obra_cantidades_v4";
 // valores nuevos del código; después de eso, cualquier ajuste manual de Garo en la app vuelve a mandar.
 const STORAGE_MIGR_V65 = "comparador_obra_migr_v65";
 const MIGR_V65_IDS = ["e2_cemento","e2_cal_hidraulica","e2_cal_milagro","e2_film_polietileno","e2_piedra_binder","e2_malla_revoque","e2_arena","e2_piedra","e2_malla_hierro5","e2_yeso_tuyango"];
+// Migración de una sola vez (v67): compra 7 Hnos 09/09 (Cerecita + Tierra refractaria) — mismo motivo que
+// la migración v65, para que el localStorage viejo del navegador no tape estos dos ítems recién completados.
+const STORAGE_MIGR_V67 = "comparador_obra_migr_v67";
+const MIGR_V67_IDS = ["e2_cerecita","e2_tierra_refractaria"];
 const STORAGE_CARRITO = "comparador_obra_carrito_v1";
 const STORAGE_BITACORA = "comparador_obra_bitacora_v1";
 const STORAGE_CONSUMO_INICIO = "comparador_obra_consumo_inicio_v1";
@@ -667,7 +671,10 @@ CANT_DEFAULT.arena_bolson={nec:12,comp:12};  // 2 ya comprados + 10 comprados ho
 CANT_DEFAULT.e2_ladrillo_comun={nec:50,comp:50};
 CANT_DEFAULT.e2_ceramico_12x18x33={nec:2250,comp:2250};
 CANT_DEFAULT.e2_ceramico_18x18x33={nec:7360,comp:7360};
-CANT_DEFAULT.e2_cerecita={nec:2,comp:1};            // 1 tambor Weber comprado, falta 1
+// Compra 7 Hnos 09/09/2026: Cerecita (la unidad que faltaba) $255.000, y Tierra refractaria $13.000 los
+// 10kg (=$6.500/5kg nativo, actualizado desde $6.100 de la cotización de 03/09) — ambos completos.
+CANT_DEFAULT.e2_cerecita={nec:2,comp:2};
+CANT_DEFAULT.e2_tierra_refractaria={nec:2,comp:2};
 CANT_DEFAULT.e2_alambre_fardo={nec:160,comp:20};    // faltan 140kg — no incluido en la compra COT.7276, sigue pendiente
 // Compra Petión 09/09/2026 (presup. 00008726, pedido y pagado — $18.510.000, incluye $1.000.000 a cuenta
 // ya entregado antes con el presup. 8685; ojo que el presupuesto original tenía un desfasaje de $60.000
@@ -803,7 +810,7 @@ function App(){
   const [expandCat,setExpandCat]=useState({hierros:true,viguetas:true,otros:true,varios:false,etapa2_mamposteria:false,etapa2_refractarios:false,etapa2_insumos:false,calefaccion:false,cloaca:false,agua:false,electricidad:true});
   const [expandItem,setExpandItem]=useState({});
   const [expandEsc,setExpandEsc]=useState({});
-  const [compras,setCompras]=useState({caeiro:6003160.54,dasilva:5500000,lhhnos:0,curtoni:0,shnos:31264100,esperanza:25738938.70,casameli:0,petion:18510000,sanibon:15000000}); // shnos corregido -100 (factura real 11/08: $13.124.900, no $13.125.000). esperanza: $1.386.766 (compra 03/07) + $24.352.172,70 compra 08/09 (COT.7276: cemento, cal milagro, film polietileno 600m/2m ancho, piedra binder, malla de revoque — NO incluye alambre de fardo, clavos, tierra refractaria ni pegamento Klaukol, que siguen pendientes) = $25.738.938,70. petion $18.510.000 — pedido y pagado 09/09 (presup. 00008726: arena, piedra, malla de hierro, yeso Tuyango completos + 500 bolsas de cal hidráulica a propósito de menos; incluye el $1.000.000 a cuenta ya entregado antes; ojo, posible +$60.000 por el desfasaje sin explicar del presupuesto — ver comentario en CANT_DEFAULT). sanibon $15.000.000 confirmado por Garo 08/09 — materiales de cañerías de agua (mismo paquete efectivo sin factura del 26/08 que ya dejó cloaca+agua+calefacción marcados como comprados en CANT_DEFAULT, ahora también registrado acá en $ gastados)
+  const [compras,setCompras]=useState({caeiro:6003160.54,dasilva:5500000,lhhnos:0,curtoni:0,shnos:31532100,esperanza:25738938.70,casameli:0,petion:18510000,sanibon:15000000}); // shnos corregido -100 (factura real 11/08: $13.124.900, no $13.125.000) + $268.000 compra 09/09 (Cerecita $255.000 + Tierra refractaria $13.000 los 10kg) = $31.532.100. esperanza: $1.386.766 (compra 03/07) + $24.352.172,70 compra 08/09 (COT.7276: cemento, cal milagro, film polietileno 600m/2m ancho, piedra binder, malla de revoque — NO incluye alambre de fardo, clavos, tierra refractaria ni pegamento Klaukol, que siguen pendientes) = $25.738.938,70. petion $18.510.000 — pedido y pagado 09/09 (presup. 00008726: arena, piedra, malla de hierro, yeso Tuyango completos + 500 bolsas de cal hidráulica a propósito de menos; incluye el $1.000.000 a cuenta ya entregado antes; ojo, posible +$60.000 por el desfasaje sin explicar del presupuesto — ver comentario en CANT_DEFAULT). sanibon $15.000.000 confirmado por Garo 08/09 — materiales de cañerías de agua (mismo paquete efectivo sin factura del 26/08 que ya dejó cloaca+agua+calefacción marcados como comprados en CANT_DEFAULT, ahora también registrado acá en $ gastados)
   const [editCompra,setEditCompra]=useState(null);
   const [addCompra,setAddCompra]=useState(null);
   const [guardado,setGuardado]=useState(false);
@@ -860,17 +867,22 @@ function App(){
   const [cants,setCants]=useState(()=>{
     try{
       const s=localStorage.getItem(STORAGE_CANT);
-      const yaMigrado=localStorage.getItem(STORAGE_MIGR_V65);
+      const migraciones=[[STORAGE_MIGR_V65,MIGR_V65_IDS],[STORAGE_MIGR_V67,MIGR_V67_IDS]];
       if(s){
         const p=JSON.parse(s); const m={};
         TODOS_ITEMS.forEach(i=>{ m[i.id]={...CANT_DEFAULT[i.id],...(p[i.id]||{})}; });
-        if(!yaMigrado){
-          MIGR_V65_IDS.forEach(id=>{ if(CANT_DEFAULT[id])m[id]={...CANT_DEFAULT[id]}; });
-          try{ localStorage.setItem(STORAGE_CANT,JSON.stringify(m)); localStorage.setItem(STORAGE_MIGR_V65,"1"); }catch(e){}
-        }
+        let huboMigracion=false;
+        migraciones.forEach(([flagKey,ids])=>{
+          if(!localStorage.getItem(flagKey)){
+            ids.forEach(id=>{ if(CANT_DEFAULT[id])m[id]={...CANT_DEFAULT[id]}; });
+            try{ localStorage.setItem(flagKey,"1"); }catch(e){}
+            huboMigracion=true;
+          }
+        });
+        if(huboMigracion){ try{ localStorage.setItem(STORAGE_CANT,JSON.stringify(m)); }catch(e){} }
         return m;
       }
-      if(!yaMigrado){ try{ localStorage.setItem(STORAGE_MIGR_V65,"1"); }catch(e){} }
+      migraciones.forEach(([flagKey])=>{ if(!localStorage.getItem(flagKey)){ try{ localStorage.setItem(flagKey,"1"); }catch(e){} } });
     }catch(e){}
     return CANT_DEFAULT;
   });
