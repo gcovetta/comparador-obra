@@ -414,15 +414,24 @@ const CATEGORIAS = [
     {id:"agu_58080308", nombre:"TANQUE ROTOPLAS ARENA 1000 LTS FLAT CON EQUIPAMIENTO", cant:2},
   ]},
 
-  // Electricidad — cómputo de Garo del 08/09, todavía SIN COTIZAR (ningún proveedor cargado).
-  // Supuestos al transcribir (revisar si algo no cierra):
-  // - "Rectangulares de chapa 50und" se cargó como una caja de chapa de otra medida, distinta de la de
-  //   120und ("Caja rectangular de chapa") — no se aclaraba la medida de ninguna de las dos.
-  // - "Micnon" se interpretó como caja "mignón" (chica, para módulos/tomas).
-  // - Tablero de embutir 120 bocas, tablero 72 bocas, jabalina 1,50m x3/4 con morseto: sin cantidad
-  //   especificada — se cargó 1 de cada uno (ajustar en la app con +/- si son más).
-  // - "Cable cintenac" se interpretó como cable SINTENAX 4x10mm.
-  { id:"electricidad", nombre:"Electricidad (sin cotizar)", items:[
+  // Electricidad — cómputo de Garo del 08/09, cotizado por FEVESA (ver claude/electricidad-fevesa.md).
+  // Descuento del 10% por pago en efectivo aplicado (desc:10 en el proveedor) — los precios de p:{} son
+  // de LISTA (sin descontar), la función pu() aplica el descuento automáticamente.
+  // Supuestos al transcribir, CONFIRMADOS por el presupuesto de Fevesa (08/09):
+  // - "Rectangulares de chapa 50und" = caja profunda (distinta de la normal de 120und). ✅
+  // - "Micnon" = caja mignón (20und). ✅
+  // - "Cable cintenac" = cable Sintenax subterráneo 4x10mm² (50m). ✅
+  // - "Caja exagonal de PVC" = caja octogonal PVC 84x84x47mm de Fevesa (150u, cierra exacto). ✅
+  // ⚠️ 4 puntos sin resolver (Garo: "lo resuelvo más adelante" — no tocar sin que lo pida):
+  // 1. Tablero: Fevesa cotizó UN SOLO tablero ("Caja TM Din 80 bocas", Q01H) pero acá hay DOS ítems
+  //    (120 bocas y 72 bocas). No cargado precio en ninguno — pendiente confirmar con Fevesa o el
+  //    cómputo de la arquitecta si reemplaza a ambos o falta pedir el segundo.
+  // 2. Curva de PVC 1" (M25): no cotizada por Fevesa (solo cotizaron la de 7/8"/M22) — sin precio.
+  // 3. Dos ítems que cotizó Fevesa y no están en este catálogo: tomacable jabalina 3/4" bronce
+  //    ($2.400 lista) y caño corrugado PVC 50mm ($67.834 lista, rollo 25m) — no agregados, a confirmar.
+  // 4. Precinto: la app pide "paquete", Fevesa cotiza por unidad suelta (2.000u) — se asumió paquete=100u
+  //    (2.000/20=100, cierra), sin confirmar con el proveedor.
+  { id:"electricidad", nombre:"Electricidad", items:[
     {id:"ele_cable_25_celeste",        nombre:"Cable 2,5mm Celeste (rollo)",             cant:15},
     {id:"ele_cable_25_marron",         nombre:"Cable 2,5mm Marrón (rollo)",              cant:5},
     {id:"ele_cable_25_rojo",           nombre:"Cable 2,5mm Rojo (rollo)",                cant:5},
@@ -592,13 +601,22 @@ const PROVEEDORES = [
    p:{cal_termostato:43401.15,cal_cabezal_term:80903.17,cal_cano_pex_200:270515.69,cal_cano_pex_400:541030.25,cal_colector_2s:305007.16,cal_colector_3s:349132.65,cal_colector_5s:447013.07,cal_colector_6s:486845.98,cal_curva_tubo:3328.71,cal_gabinete_35:98299.58,cal_gabinete_45:111002.87,cal_gabinete_55:121353.25,cal_precinto:6013.64,cal_membrana:71467.27,cal_cano_h3_114:21780.84,cal_cano_h3_1:13282.61,cal_coverthor_1:1957.04,cal_coverthor_114:3313.86,cal_codo90_114:2176.48,cal_codo90_1:994.89,cal_tee_114:3150.04,cal_tee_1:1376.67,cal_sobrepaso:3794.48,cal_cupla:7087.12,cal_codo90rh_1:6149.98,cal_codo90rh_114:21580.92,cal_buje_red:584.93,clo_6082072:3325.67,clo_8088631:29587.8,clo_6082095:6504.7,clo_6083020:8268.94,clo_6082002:1189.51,clo_6082003:1281.49,clo_6082004:2309.38,clo_6082007:1346.15,clo_6082008:1648.18,clo_6082009:3132.88,clo_6082014:3031.34,clo_6082017:1281.2,clo_6082018:1783.64,clo_6082019:3900.45,clo_6082042:2311.48,clo_6082055:4390.62,clo_6082070:2100.4,clo_6082071:2632.55,clo_6082073:6237.77,clo_8087040:174.69,clo_8087050:278.14,clo_8087063:322.09,clo_8087110:682.54,clo_6081008:7617.84,clo_6081017:9577.82,clo_6081026:11867.27,clo_6081036:21401.82,clo_6082001:794.75,clo_6082006:1009.14,clo_6082016:873.92,clo_6082028:1027.76,clo_6082035:1086.64,clo_6082036:1382.73,clo_6082037:1498.85,clo_6082038:2966.47,clo_6082077:4345.35,clo_6083072:7131.01,clo_39000008:3176.21,clo_41040034:115.5,clo_8088632:5373.43,clo_34310234:4826.69,agu_81008520:1403.37,agu_81008525:1922.26,agu_81008532:2985.05,agu_81010020:6650.86,agu_81013025:944.08,agu_81013032:1373.4,agu_81013040:3271.71,agu_81013050:5465.19,agu_81015527:15307.47,agu_81015528:21176.71,agu_81015529:29587.8,agu_81015530:45012.44,agu_81016026:14881.89,agu_81016340:31571.86,agu_81016350:50894.29,agu_81024125:674.23,agu_81024133:1010.86,agu_81024141:1827.49,agu_81024150:2748.9,agu_81024151:2557.85,agu_81033032:3679.36,agu_81033041:9590.18,agu_81033050:11431.27,agu_81034020:366.52,agu_81034025:495.43,agu_81034032:933.72,agu_81904520:724.52,agu_81904525:921.58,agu_81904532:1597.42,agu_81904540:2930.61,agu_81904550:4584.71,agu_81909020:422.25,agu_81909025:654.79,agu_81909032:996.77,agu_81909040:2187.31,agu_81909050:3665.29,agu_81009134:6665.2,agu_81010025:9671.52,agu_81010032:15044.78,agu_81011240:20646.86,agu_81011250:27674.61,agu_81016325:14695.94,agu_81016332:20214.77,agu_81024140:1970.3,agu_81030020:395.41,agu_81030025:698.97,agu_81030032:882.42,agu_81030040:2237.98,agu_81030050:3161.04,agu_36010018:8656.77,agu_1059201:6697.23,agu_1059251:10373.39,agu_1050703:4933.66,agu_1050704:7062.11,agu_1060701:251.44,agu_1060702:307.6,agu_18013002:20513.56,agu_18020120:5691.64,agu_36020050:1142.47,agu_81027126:3901.36,agu_81027133:6875.27,agu_81027226:5125.13,agu_81027233:9152.55,agu_81033025:3160.28,agu_56010060:2972.16,agu_60920017:2005.66,agu_34310162:7009.83,agu_81027250:27979.3,agu_34310104:1537.5,agu_30102150:29100.62,agu_81027150:26458.82,agu_81009120:2385.71,agu_1060209:174.06,agu_1060210:189.35,agu_1060211:318.74,agu_81013020:605.31,agu_1059351:18492.57,agu_1050706:13149.06,agu_1060704:473.5,agu_82000074:5812.11,agu_58080308:405408.35}},
   {id:"sancanuelas", nombre:"Sanitarios Cañuelas",  color:"#9333EA", desc:15,  nota:"cotiz. 7654/7655/67133 · 15% desc. efectivo confirmado 25/08 · precio CON IVA (calc. desde neto+21%, desc. aplicado sobre el total) · sin tacos nylon, sin juntas p/brida PVC, sin termostato/cabezal/membrana",
    p:{cal_cano_pex_400:692248.56,cal_cano_pex_120:207675.55,cal_colector_2s:367408.64,cal_colector_3s:420561.77,cal_colector_5s:538467.56,cal_colector_6s:586449.9,cal_curva_tubo:4130.83,cal_gabinete_45:141843.67,cal_gabinete_35:125610.9,cal_gabinete_55:155069.76,cal_precinto:8563.52,cal_cano_h3_114:28239.66,cal_cano_h3_1:17221.39,cal_coverthor_1:2480.69,cal_coverthor_114:4200.62,cal_codo90_114:2821.88,cal_codo90_1:1289.92,cal_cupla:9188.73,cal_sobrepaso:4919.68,cal_tee_114:4084.14,cal_tee_1:1784.91,cal_buje_red:758.37,cal_codo90rh_114:27980.45,cal_codo90rh_1:7973.68,clo_6082072:4748.29,clo_8088631:44594.61,clo_6082095:9287.19,clo_6083020:10422.61,clo_6082009:4473.02,clo_6082007:1921.99,clo_6082008:2353.22,clo_6082004:3297.25,clo_6082002:1698.33,clo_6082003:1829.68,clo_6082019:5568.92,clo_6082017:1829.27,clo_6082018:2546.61,clo_6082014:4328.04,clo_6082042:3300.26,clo_6082073:8906.07,clo_6082070:2998.86,clo_6082071:3758.65,clo_6082055:6268.77,clo_8087040:345.38,clo_8087050:474.25,clo_8087063:624.83,clo_8087110:861.25,clo_6082006:1440.82,clo_6082001:1134.73,clo_6082016:1247.75,clo_6082028:1467.39,clo_6082038:4235.45,clo_6082035:1551.47,clo_6082036:1974.2,clo_6082037:2139.99,clo_6082077:6204.14,clo_6083072:10181.41,clo_6081036:30556.81,clo_6081008:10876.48,clo_6081017:13674.89,clo_6081026:16943.69,clo_41040034:125.62,clo_8088632:8378.08,clo_34310234:7095.73,agu_81008520:2283.84,agu_81008525:3192.96,agu_81008532:4973.77,agu_81013050:7309.38,agu_81013025:1262.65,agu_81013032:1836.85,agu_81013040:4375.74,agu_81015527:31499.51,agu_81015528:41414.69,agu_81015529:66723.93,agu_81015530:100431.29,agu_81016026:19903.7,agu_81016340:42225.61,agu_81016350:68068.27,agu_81024125:901.74,agu_81024133:1351.97,agu_81024141:2444.16,agu_81024150:3676.51,agu_81024151:3421.0,agu_81033032:4920.95,agu_81033041:12826.34,agu_81033050:15288.69,agu_81034020:490.21,agu_81034025:662.61,agu_81034032:1248.79,agu_81009134:8914.34,agu_81904520:969.02,agu_81904525:1232.57,agu_81904532:2136.46,agu_81904540:3919.54,agu_81904550:6131.78,agu_81909032:1333.14,agu_81909020:564.72,agu_81909025:875.73,agu_81909040:2925.39,agu_81909050:4902.12,agu_81016325:19655.01,agu_81016332:27036.12,agu_81024140:2635.19,agu_81030020:528.84,agu_81030025:934.83,agu_81030032:1180.16,agu_81030040:2993.18,agu_81030050:4227.7,agu_36010018:21808.25,agu_1050704:9623.28,agu_1050703:7940.71,agu_1059251:16435.18,agu_1059201:15102.59,agu_18020120:10681.44,agu_18013002:51116.68,agu_36020050:1471.28,agu_81027126:5217.86,agu_81027133:9195.3,agu_81027226:6854.58,agu_81027233:12241.01,agu_81033025:4226.71,agu_56010060:5647.78,agu_60920017:771.59,agu_34310162:5076.91,agu_34310104:1484.31,agu_30102150:26317.5,agu_81027150:35387.19,agu_81009120:3190.76,agu_1060211:417.55,agu_1060209:201.79,agu_1060210:235.83,agu_81013020:809.56,agu_1059351:29187.14,agu_1050706:25496.1,agu_82000074:7227.39,agu_58080308:591840.05,agu_81010020:8831.16,agu_81011240:27614.04,agu_81011250:37013.22,agu_81010025:12842.07,agu_81010032:19976.81,agu_81027250:3742.08}},
+  {id:"fevesa",    nombre:"Fevesa",       color:"#CA8A04", desc:10, nota:"presup. P 0003-00438857 (08/09) · –10% ef. · Electricidad, base — ver claude/electricidad-fevesa.md",
+   // Primer presupuesto de Electricidad (Nicolás Turdo, Greba, Cañuelas). Precios de LISTA (p:{} de abajo),
+   // el 10% de descuento por efectivo lo aplica pu() automáticamente vía desc:10.
+   // Sin cargar (ver comentario en la categoría "electricidad" más arriba): ele_tablero_embutir_120b,
+   // ele_tablero_embutir_72b (Fevesa cotizó un solo tablero, ambigüedad sin resolver) y
+   // ele_curva_pvc_1 (no cotizada). Fevesa cotizó además 2 ítems fuera de catálogo (tomacable jabalina
+   // y caño corrugado 50mm) — no agregados. Todo esto queda "para más adelante" (Garo, 09/09).
+   p:{ele_cable_25_celeste:80062.22,ele_cable_25_marron:80062.22,ele_cable_25_rojo:80062.22,ele_cable_25_negro:80062.22,ele_cable_25_verdeamarillo:80062.22,ele_cable_15_celeste:49546.67,ele_cable_15_blanco:49546.67,ele_cable_15_rojo:49546.67,ele_cable_15_negro:49546.67,ele_cable_15_marron:49546.67,ele_cable_4_celeste:128961.11,ele_cable_4_negro:128961.11,ele_cable_4_marron:128961.11,ele_cable_4_rojo:128961.11,ele_cable_4_verdeamarillo:128961.11,ele_cable_6_celeste:188697.78,ele_cable_6_marron:188697.78,ele_cable_6_negro:188697.78,ele_cable_6_verdeamarillo:188697.78,ele_corrugado_78:18583.89,ele_corrugado_1:11858.33,ele_corrugado_34:7474.17,ele_rigido_78:63252.80,ele_rigido_1:66374.40,ele_caja_rect_chapa:373.97,ele_caja_rect_chapa_2:929.74,ele_caja_mignon:373.97,ele_caja_exagonal_pvc:365.83,ele_caja_paso_chapa_202010:19724.17,ele_caja_paso_pvc_202010:8990.97,ele_conector_chapa_78:377.19,ele_conector_chapa_1:488.73,ele_conector_chapa_34:255.97,ele_conector_pvc_78:279.91,ele_curva_pvc_78:394.08,ele_union_pvc_78:146.74,ele_union_pvc_1:158.99,ele_cinta_aisladora:1282.89,ele_precinto_25cm:3640.00,ele_jabalina_150_34:29982.61,ele_caja_inspeccion:6199.92,ele_cable_sintenax_4x10:14542.11},
+   pendientes:["ele_tablero_embutir_120b","ele_tablero_embutir_72b","ele_curva_pvc_1"]},
 ];
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items.map(it=>({...it,catId:c.id})));
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v67";
+const APP_VERSION = "v68";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
-const ACTIVOS_DEFAULT = {caeiro:false,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,petion:true,sanibon:true,sancanuelas:true}; // Caeiro desactivado 03/09 — mala experiencia de entrega, no reactivar salvo que lo pida Garo. Petión sumado 03/09 (presup. 8708/8710).
+const ACTIVOS_DEFAULT = {caeiro:false,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,petion:true,sanibon:true,sancanuelas:true,fevesa:true}; // Caeiro desactivado 03/09 — mala experiencia de entrega, no reactivar salvo que lo pida Garo. Petión sumado 03/09 (presup. 8708/8710). Fevesa sumado 09/09 (Electricidad, presup. P 0003-00438857).
 // Grupos de afinidad para la pestaña Ahorro: cada catálogo de proveedores compite solo
 // contra sí mismo (no tiene sentido comparar corralones de hierro vs Sanibon).
 const GRUPOS_AHORRO = [
@@ -608,6 +626,9 @@ const GRUPOS_AHORRO = [
   {id:'sanitarios', label:'🚿 Agua, cloaca y calefacción',
    catIds:['cloaca','agua','calefaccion'],
    provIds:['sanibon','sancanuelas']},
+  {id:'electricidad', label:'⚡ Electricidad',
+   catIds:['electricidad'],
+   provIds:['fevesa']},
 ];
 const STORAGE_ITEMS = "comparador_obra_items_v4";
 const COMPRADOS_IDS = ["cano_cemento","malla","malla1525","arena_bolson","piedra_bolson","alambre","clavos250","clavos200","ladrillo","arena","cemento","piedra"];
@@ -629,7 +650,6 @@ const STORAGE_CONSUMO_INICIO = "comparador_obra_consumo_inicio_v1";
 const STORAGE_PENDCOTIZAR = "comparador_obra_pendcotizar_v1";
 const PENDIENTES_COTIZAR_DEFAULT = [
   {id:"piso_revest",          nombre:"Piso y revestimientos",        estimado:46000000},
-  {id:"electricidad",         nombre:"Electricidad",                 estimado:42000000},
   {id:"aberturas",            nombre:"Aberturas",                    estimado:70500000},
   {id:"griferia_sanitarios",  nombre:"Griferías y sanitarios",       estimado:21000000},
   {id:"caldera",              nombre:"Caldera (piso radiante)",      estimado:21000000},
