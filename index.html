@@ -596,7 +596,7 @@ const PROVEEDORES = [
 
 const TODOS_ITEMS = CATEGORIAS.flatMap(c=>c.items.map(it=>({...it,catId:c.id})));
 const STORAGE_KEY = "comparador_obra_github_v4";
-const APP_VERSION = "v65";
+const APP_VERSION = "v66";
 const STORAGE_ACTIVOS = "comparador_obra_activos_v1";
 const ACTIVOS_DEFAULT = {caeiro:false,dasilva:false,lhhnos:true,curtoni:false,shnos:true,esperanza:true,casameli:true,petion:true,sanibon:true,sancanuelas:true}; // Caeiro desactivado 03/09 — mala experiencia de entrega, no reactivar salvo que lo pida Garo. Petión sumado 03/09 (presup. 8708/8710).
 // Grupos de afinidad para la pestaña Ahorro: cada catálogo de proveedores compite solo
@@ -612,6 +612,13 @@ const GRUPOS_AHORRO = [
 const STORAGE_ITEMS = "comparador_obra_items_v4";
 const COMPRADOS_IDS = ["cano_cemento","malla","malla1525","arena_bolson","piedra_bolson","alambre","clavos250","clavos200","ladrillo","arena","cemento","piedra"];
 const STORAGE_CANT = "comparador_obra_cantidades_v4";
+// Migración de una sola vez (v65): estos ítems se marcaron como comprados en el código por las compras a
+// La Esperanza (COT.7276) y Petión (presup. 00008726, 08-09/09/2026), pero el navegador de Garo tenía
+// guardados valores viejos de Necesito/Compré para estos mismos ítems (de antes de esas compras), que
+// pisaban el default del código y seguían mostrando todo como faltante. Se fuerza una sola vez a los
+// valores nuevos del código; después de eso, cualquier ajuste manual de Garo en la app vuelve a mandar.
+const STORAGE_MIGR_V65 = "comparador_obra_migr_v65";
+const MIGR_V65_IDS = ["e2_cemento","e2_cal_hidraulica","e2_cal_milagro","e2_film_polietileno","e2_piedra_binder","e2_malla_revoque","e2_arena","e2_piedra","e2_malla_hierro5","e2_yeso_tuyango"];
 const STORAGE_CARRITO = "comparador_obra_carrito_v1";
 const STORAGE_BITACORA = "comparador_obra_bitacora_v1";
 const STORAGE_CONSUMO_INICIO = "comparador_obra_consumo_inicio_v1";
@@ -853,7 +860,17 @@ function App(){
   const [cants,setCants]=useState(()=>{
     try{
       const s=localStorage.getItem(STORAGE_CANT);
-      if(s){ const p=JSON.parse(s); const m={}; TODOS_ITEMS.forEach(i=>{ m[i.id]={...CANT_DEFAULT[i.id],...(p[i.id]||{})}; }); return m; }
+      const yaMigrado=localStorage.getItem(STORAGE_MIGR_V65);
+      if(s){
+        const p=JSON.parse(s); const m={};
+        TODOS_ITEMS.forEach(i=>{ m[i.id]={...CANT_DEFAULT[i.id],...(p[i.id]||{})}; });
+        if(!yaMigrado){
+          MIGR_V65_IDS.forEach(id=>{ if(CANT_DEFAULT[id])m[id]={...CANT_DEFAULT[id]}; });
+          try{ localStorage.setItem(STORAGE_CANT,JSON.stringify(m)); localStorage.setItem(STORAGE_MIGR_V65,"1"); }catch(e){}
+        }
+        return m;
+      }
+      if(!yaMigrado){ try{ localStorage.setItem(STORAGE_MIGR_V65,"1"); }catch(e){} }
     }catch(e){}
     return CANT_DEFAULT;
   });
